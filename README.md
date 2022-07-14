@@ -11,8 +11,8 @@
 ## 代码结构
 ddp---java后端代码  
 h5-auth-manager --- 权限前端代码  
-h5-datax-manager --- 指标中心代码  
-h5-enginex-manager -- 规则引擎代码  
+h5-datax-manager --- 指标中心前端代码  
+h5-enginex-manager -- 规则引擎前端代码  
 sql --- sql初始化脚本  
 
 ## 开源交流
