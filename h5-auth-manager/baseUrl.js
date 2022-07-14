@@ -47,7 +47,7 @@ switch (process.env.NODE_ENV) {
 	case 'niu': // 牛环境
 		proxyObj = {
 			'/Riskmanage': {
-				target: 'http://ex.fibo.cn:80', // 生产环境
+				target: 'http://192.168.50.3:8080', // 生产环境
 				changeOrigin: true, // 是否跨域
 				pathRewrite: {
 					'^/Riskmanage': '/Riskmanage'
@@ -58,7 +58,7 @@ switch (process.env.NODE_ENV) {
 	case 'jia': // 贾环境
 		proxyObj = {
 			'/Riskmanage': {
-				target: 'http://zhangzj.vip:8000', // 生产环境
+				target: 'http://192.168.50.188:8080', // 生产环境
 				changeOrigin: true, // 是否跨域
 				pathRewrite: {
 					'^/Riskmanage': '/Riskmanage'
