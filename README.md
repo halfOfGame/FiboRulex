@@ -7,12 +7,13 @@
  FiboRule - 实时智能决策引擎
 
 ​	一款将公司的商业规则转化成商业决策，通过将公司的行业决策经验进行知识化，来辅助公司做各种商业决策的决策引擎。
+
 ## 代码结构
-ddp---java后端代码
-h5-auth-manager --- 权限前端代码
-h5-datax-manager --- 指标中心代码
-h5-enginex-manager -- 规则引擎代码
-sql --- sql初始化脚本
+ddp---java后端代码  
+h5-auth-manager --- 权限前端代码  
+h5-datax-manager --- 指标中心代码  
+h5-enginex-manager -- 规则引擎代码  
+sql --- sql初始化脚本  
 
 ## 开源交流
  加官方微信号，进开源交流群。
