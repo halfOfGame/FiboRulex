@@ -1,10 +1,10 @@
-# FIBO Rule
+# FiboRule
  斐波那契
- FIBO Rule - 实时AI智能决策引擎、规则引擎、风控引擎、数据流引擎。 
+ FiboRule - 实时AI智能决策引擎、规则引擎、风控引擎、数据流引擎。 
  通过可视化界面进行规则配置，无需繁琐开发，节约人力，提升效率，实时监控，减少错误率，随时调整； 支持规则集(复杂、脚本)、评分卡、决策树，名单库管理、机器学习模型、三方数据接入、定制化开发等；
 ## 概述
 
- FIBO Rule - 实时智能决策引擎
+ FiboRule - 实时智能决策引擎
 
 ​	一款将公司的商业规则转化成商业决策，通过将公司的行业决策经验进行知识化，来辅助公司做各种商业决策的决策引擎。
 
@@ -21,9 +21,9 @@
   ![|](https://www.fibo.cn/standard/image/whatsApp.jpg)
   
                                   
-## FIBO Rule整体功能架构介绍
+## FiboRule整体功能架构介绍
 
-FIBO Rule整体功能架构如下图所示
+FiboRule整体功能架构如下图所示
 
 ![整体架构](https://www.fibo.cn/standard/image/arch.jpg)
 
@@ -105,7 +105,7 @@ SQL指标是通过编写SQL获取指标数据，在需要该指标数据，会�
 
 ## 核心概念和基本组成关系介绍
 
-FIBO Rule决策引擎系统核心概念有：指标、规则、决策节点、决策流、决策引擎。它们的组成关系如下： 
+FiboRule决策引擎系统核心概念有：指标、规则、决策节点、决策流、决策引擎。它们的组成关系如下： 
 
                        
   ![|](https://www.fibo.cn/standard/image/relation.png)
