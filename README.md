@@ -142,6 +142,12 @@ FiboRule决策引擎系统核心概念有：指标、规则、决策节点、决
 
 https://www.fibo.cn/docs/
 
+系统初始化账号：
+
+sadmin / engine888!
+
+admin / engine888!
+
 ### 7 demo演示
 
 http://ex.fibo.cn 申请账号请加群
