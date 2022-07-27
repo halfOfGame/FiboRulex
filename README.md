@@ -152,6 +152,7 @@ admin / engine888!
 
 http://ex.fibo.cn 申请账号请加群
 
-
-
+### 8 功能规划
+【腾讯文档】FiboRule开源规划
+https://docs.qq.com/sheet/DSnpRV1JWdkNvaG9u
 
