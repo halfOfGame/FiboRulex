@@ -9,14 +9,17 @@ import com.fibo.ddp.common.dao.datax.datamanage.FieldMapper;
 import com.fibo.ddp.common.dao.strategyx.guiderule.RuleVersionMapper;
 import com.fibo.ddp.common.model.authx.system.SysUser;
 import com.fibo.ddp.common.model.common.requestParam.StatusParam;
+import com.fibo.ddp.common.model.strategyx.guiderule.RuleBlock;
 import com.fibo.ddp.common.model.strategyx.guiderule.RuleConditionInfo;
 import com.fibo.ddp.common.model.strategyx.guiderule.RuleVersion;
+import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleBlockVo;
 import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleConditionVo;
 import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleVersionVo;
 import com.fibo.ddp.common.model.strategyx.strategyout.StrategyOutput;
 import com.fibo.ddp.common.service.common.SessionManager;
 import com.fibo.ddp.common.service.redis.RedisManager;
 import com.fibo.ddp.common.service.redis.RedisUtils;
+import com.fibo.ddp.common.service.strategyx.guiderule.RuleBlockService;
 import com.fibo.ddp.common.service.strategyx.guiderule.RuleConditionService;
 import com.fibo.ddp.common.service.strategyx.guiderule.RuleVersionService;
 import com.fibo.ddp.common.service.strategyx.strategyout.StrategyOutputService;
@@ -42,6 +45,8 @@ public class RuleVersionServiceImpl extends ServiceImpl<RuleVersionMapper, RuleV
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private RuleVersionMapper versionMapper;
+    @Autowired
+    private RuleBlockService ruleBlockService;
     @Autowired
     private RuleConditionService conditionService;
     @Autowired
@@ -88,13 +93,23 @@ public class RuleVersionServiceImpl extends ServiceImpl<RuleVersionMapper, RuleV
             return result;
         }
         BeanUtils.copyProperties(ruleVersion, result);
-        //查询ruleCondition组装成树形结构
-        RuleConditionVo ruleConditionVo = conditionService.queryByVersionId(id);
-        List<StrategyOutput> strategyOutputList = outputService.queryByTactics(new StrategyOutput(id, StrategyType.COMPLEX_RULE, StrategyType.OutType.SUCCESS_OUT));
-        List<StrategyOutput>  failOutputList = outputService.queryByTactics(new StrategyOutput(id, StrategyType.COMPLEX_RULE, StrategyType.OutType.FAIL_OUT));
-        result.setRuleConditionVo(ruleConditionVo);
-        result.setStrategyOutputList(strategyOutputList);
-        result.setFailOutputList(failOutputList);
+
+        List<RuleBlock> ruleBlockList = ruleBlockService.listObjectsByVersionId(id);
+        List<RuleBlockVo> ruleBlockVoList = new ArrayList<>();
+        for(RuleBlock ruleBlock : ruleBlockList){
+            RuleBlockVo ruleBlockVo = new RuleBlockVo();
+            BeanUtils.copyProperties(ruleBlock, ruleBlockVo);
+            //查询ruleCondition组装成树形结构
+            RuleConditionVo ruleConditionVo = conditionService.queryByBlockId(ruleBlock.getId());
+            List<StrategyOutput> strategyOutputList = outputService.queryByTactics(new StrategyOutput(ruleBlock.getId(), StrategyType.COMPLEX_RULE, StrategyType.OutType.SUCCESS_OUT));
+            List<StrategyOutput>  failOutputList = outputService.queryByTactics(new StrategyOutput(ruleBlock.getId(), StrategyType.COMPLEX_RULE, StrategyType.OutType.FAIL_OUT));
+            ruleBlockVo.setRuleConditionVo(ruleConditionVo);
+            ruleBlockVo.setStrategyOutputList(strategyOutputList);
+            ruleBlockVo.setFailOutputList(failOutputList);
+            ruleBlockVoList.add(ruleBlockVo);
+        }
+        result.setRuleBlockVoList(ruleBlockVoList);
+
         return result;
     }
 
@@ -132,31 +147,33 @@ public class RuleVersionServiceImpl extends ServiceImpl<RuleVersionMapper, RuleV
 
     @Override
     public List<String> queryFieldEnByVersionId(Long versionId) {
-        Set<String>  fieldEns= new HashSet<>();
-        Set<Long>  fieldIds= new HashSet<>();
-        RuleConditionVo ruleConditionVo = conditionService.queryByVersionId(versionId);
-        List<RuleConditionInfo> ruleConditionInfoList = conditionService.disassemble(ruleConditionVo, versionId, false);
-        for (RuleConditionInfo info : ruleConditionInfoList) {
-            if (info.getFieldEn()!=null&&info.getFieldType()!=1&&!info.getFieldEn().startsWith("%")){
-                if (info.getFieldEn().contains(".")){
-                    fieldEns.add(info.getFieldEn().split("\\.")[0]);
+        Set<String> fieldEns = new HashSet<>();
+        Set<Long> fieldIds = new HashSet<>();
+        List<RuleBlock> ruleBlockList = ruleBlockService.listObjectsByVersionId(versionId);
+        for (RuleBlock ruleBlock : ruleBlockList) {
+            RuleConditionVo ruleConditionVo = conditionService.queryByBlockId(ruleBlock.getId());
+            List<RuleConditionInfo> ruleConditionInfoList = conditionService.disassemble(ruleConditionVo, ruleBlock.getRuleId(), false);
+            for (RuleConditionInfo info : ruleConditionInfoList) {
+                if (info.getFieldEn() != null && info.getFieldType() != 1 && !info.getFieldEn().startsWith("%")) {
+                    if (info.getFieldEn().contains(".")) {
+                        fieldEns.add(info.getFieldEn().split("\\.")[0]);
+                    } else {
+                        fieldEns.add(info.getFieldEn());
+                    }
+                } else if (info.getFieldId() != null) {
+                    fieldIds.add(info.getFieldId());
                 }
-                else {
-                    fieldEns.add(info.getFieldEn());
-                }
-            }else if(info.getFieldId()!=null){
-                fieldIds.add(info.getFieldId());
-            }
-            if (info.getVariableType()!=null){
-                if (info.getVariableType()==2&&info.getFieldValue()!=null&&!info.getFieldValue().contains("%")){
-                    fieldEns.add(info.getFieldValue());
-                }else if (info.getVariableType()==3){
-                    fieldEns.addAll(CustomValueUtils.getFieldEnSet(info.getFieldValue()));
+                if (info.getVariableType() != null) {
+                    if (info.getVariableType() == 2 && info.getFieldValue() != null && !info.getFieldValue().contains("%")) {
+                        fieldEns.add(info.getFieldValue());
+                    } else if (info.getVariableType() == 3) {
+                        fieldEns.addAll(CustomValueUtils.getFieldEnSet(info.getFieldValue()));
+                    }
                 }
             }
         }
         for (Long fieldId : fieldIds) {
-            String fieldName= fieldMapper.findFieldNameById(fieldId);
+            String fieldName = fieldMapper.findFieldNameById(fieldId);
             fieldEns.add(fieldName);
         }
         return new ArrayList<>(fieldEns);
@@ -201,21 +218,33 @@ public class RuleVersionServiceImpl extends ServiceImpl<RuleVersionMapper, RuleV
         }
         return false;
     }
+
     @Transactional
     public boolean addVersionDetail(RuleVersionVo version){
-        RuleConditionVo ruleConditionVo = version.getRuleConditionVo();
-        ruleConditionVo.setVersionId(version.getId());
-        //添加条件信息
-        conditionService.insertRuleCondition(ruleConditionVo,version.getRuleId());
-        //添加输出字段
-        List<StrategyOutput> strategyOutputList = version.getStrategyOutputList();
-        if (strategyOutputList !=null&& strategyOutputList.size()>0){
-            outputService.insertTacticsOutput(version.getId(), strategyOutputList);
+        List<RuleBlockVo> ruleBlockVoList = version.getRuleBlockVoList();
+        for (RuleBlockVo ruleBlockVo : ruleBlockVoList){
+            RuleBlock ruleBlock = new RuleBlock();
+            BeanUtils.copyProperties(ruleBlockVo, ruleBlock);
+            ruleBlock.setRuleId(version.getRuleId());
+            ruleBlock.setVersionId(version.getId());
+            ruleBlockService.save(ruleBlock);
+
+            RuleConditionVo ruleConditionVo = ruleBlockVo.getRuleConditionVo();
+            ruleConditionVo.setVersionId(version.getId());
+            ruleConditionVo.setBlockId(ruleBlock.getId());
+            //添加条件信息
+            conditionService.insertRuleCondition(ruleConditionVo,version.getRuleId(), ruleBlock.getId());
+            //添加输出字段
+            List<StrategyOutput> strategyOutputList = ruleBlockVo.getStrategyOutputList();
+            if (strategyOutputList !=null&& strategyOutputList.size()>0){
+                outputService.insertTacticsOutput(ruleBlock.getId(), strategyOutputList);
+            }
+            List<StrategyOutput> failOutputList = ruleBlockVo.getFailOutputList();
+            if (failOutputList!=null&&failOutputList.size()>0){
+                outputService.insertTacticsOutput(ruleBlock.getId(),failOutputList );
+            }
         }
-        List<StrategyOutput> failOutputList = version.getFailOutputList();
-        if (failOutputList!=null&&failOutputList.size()>0){
-            outputService.insertTacticsOutput(version.getId(),failOutputList );
-        }
+
         return true;
     }
 
@@ -232,22 +261,45 @@ public class RuleVersionServiceImpl extends ServiceImpl<RuleVersionMapper, RuleV
     @Override
     @Transactional
     public boolean updateVersion(RuleVersionVo version) {
+        Long ruleId = version.getRuleId();
         Long versionId = version.getId();
         if (versionId==null){
             return false;
         }
         SysUser loginSysUser = SessionManager.getLoginAccount();
         version.setUpdateUserId(loginSysUser.getUserId());
-        //修改版本主表
+        // 1. 修改版本主表
         versionMapper.updateById(version);
-        //修改条件表
-        conditionService.updateRuleCondition(version.getRuleId(),version.getRuleConditionVo());
-        //修改策略输出
-        outputService.updateTacticsOutput(versionId,version.getStrategyOutputList(),version.getFailOutputList(), StrategyType.COMPLEX_RULE);
+
+        // 2. 删除原版本下所有子表数据
+        // 删除所有规则块
+        ruleBlockService.removeObjects(ruleId, versionId);
+        // 删除所有条件
+        conditionService.deleteRuleCondition(ruleId, versionId);
+        // 删除所有策略输出（需找出原来的所有块，然后逐一删除）
+        List<RuleBlock> oldRuleBlockList = ruleBlockService.listObjectsByVersionId(versionId);
+        for(RuleBlock ruleBlock : oldRuleBlockList){
+            StrategyOutput strategyOutput = new StrategyOutput(ruleBlock.getId(), StrategyType.COMPLEX_RULE);
+            outputService.deleteByTactics(strategyOutput);
+        }
+
+        // 3. 插入新版本下子表数据
+        List<RuleBlockVo> ruleBlockVoList = version.getRuleBlockVoList();
+        for(RuleBlockVo ruleBlockVo : ruleBlockVoList){
+            // 修改规则块配置表
+            ruleBlockVo.setRuleId(ruleId);
+            ruleBlockVo.setVersionId(versionId);
+            ruleBlockService.save(ruleBlockVo);
+            Long blockId = ruleBlockVo.getId();
+            //修改条件表
+            conditionService.updateRuleCondition(ruleId, blockId, ruleBlockVo.getRuleConditionVo());
+            //修改策略输出
+            outputService.updateTacticsOutput(blockId,ruleBlockVo.getStrategyOutputList(),ruleBlockVo.getFailOutputList(), StrategyType.COMPLEX_RULE);
+        }
+
         this.saveSnapshot(versionId);
         return true;
     }
-
 
     @Override
     @Transactional

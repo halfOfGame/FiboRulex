@@ -16,9 +16,9 @@ public interface RuleConditionService extends IService<RuleConditionInfo> {
      * @param ruleConditionVo 实例对象
      * @return 实例对象
      */
-    RuleConditionVo insertRuleCondition(RuleConditionVo ruleConditionVo, Long ruleId);
+    RuleConditionVo insertRuleCondition(RuleConditionVo ruleConditionVo, Long ruleId, Long blockId);
 
-    RuleConditionVo updateRuleCondition(Long ruleId, RuleConditionVo ruleConditionVo);
+    RuleConditionVo updateRuleCondition(Long ruleId, Long blockId, RuleConditionVo ruleConditionVo);
 
     boolean deleteRuleCondition(Long ruleId, Long versionId);
 
@@ -28,7 +28,7 @@ public interface RuleConditionService extends IService<RuleConditionInfo> {
     List<RuleConditionInfo> disassemble(RuleConditionVo vo, Long ruleId, boolean needTempId);
 
     // runner
-    RuleConditionVo queryByVersionId(Long versionId);
+    RuleConditionVo queryByBlockId(Long blockId);
 
     List<String> queryFieldEnByVersionIds(List<Long> versionIds);
 }

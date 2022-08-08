@@ -68,22 +68,15 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
 //    }
 
     @Override
-    public RuleConditionVo queryByVersionId(Long versionId) {
-        if (versionId == null) {
+    public RuleConditionVo queryByBlockId(Long blockId) {
+        if (blockId == null) {
             return null;
         }
         //构造查询条件，查询条件列表
         RuleConditionVo result = null;
-
-        List<RuleConditionInfo> ruleConditionInfoList = null;
-        if(Constants.switchFlag.ON.equals(cacheSwitch)){
-            String key = RedisUtils.getForeignKey(TableEnum.T_RULE_CONDITION, versionId);
-            ruleConditionInfoList = redisManager.getByForeignKey(key, RuleConditionInfo.class);
-        } else {
-            LambdaQueryWrapper<RuleConditionInfo> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(RuleConditionInfo::getVersionId, versionId);
-            ruleConditionInfoList = ruleConditionInfoMapper.selectList(queryWrapper);
-        }
+        LambdaQueryWrapper<RuleConditionInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(RuleConditionInfo::getBlockId, blockId);
+        List<RuleConditionInfo> ruleConditionInfoList = this.list(queryWrapper);
 
         //组装为需要的树形结构
         if (ruleConditionInfoList != null) {
@@ -100,7 +93,7 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
      */
     @Override
     @Transactional
-    public RuleConditionVo insertRuleCondition(RuleConditionVo ruleConditionVo, Long ruleId) {
+    public RuleConditionVo insertRuleCondition(RuleConditionVo ruleConditionVo, Long ruleId, Long blockId) {
         if (ruleConditionVo == null || ruleId == null) {
             return null;
         }
@@ -113,6 +106,7 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
         List<RuleConditionInfo> list = this.disassemble(ruleConditionVo, ruleId, true);
         for (RuleConditionInfo info : list) {
             info.setVersionId(versionId);
+            info.setBlockId(blockId);
         }
         //找出唯一根节点
         RuleConditionInfo root = null;
@@ -138,19 +132,13 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
      */
     @Override
     @Transactional
-    public RuleConditionVo updateRuleCondition(Long ruleId, RuleConditionVo ruleConditionVo) {
+    public RuleConditionVo updateRuleCondition(Long ruleId, Long blockId, RuleConditionVo ruleConditionVo) {
         if (ruleId == null) {
             return null;
         }
-        //删除一个规则下的所有条件
-        boolean delete = this.deleteRuleCondition(ruleId,ruleConditionVo.getVersionId());
-        RuleConditionVo ruleCondition = null;
-        if (!delete) {
-            ruleCondition = this.queryByVersionId(ruleConditionVo.getVersionId());
-        }
         //插入条件树
-        if ((delete || ruleCondition == null) && ruleConditionVo != null) {
-            RuleConditionVo insertResult = this.insertRuleCondition(ruleConditionVo, ruleId);
+        if (ruleConditionVo != null) {
+            RuleConditionVo insertResult = this.insertRuleCondition(ruleConditionVo, ruleId, blockId);
             return insertResult;
         }
         return null;

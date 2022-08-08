@@ -49,6 +49,8 @@ public class RuleConditionInfo
 
     private Long versionId;//规则版本的id
 
+    private Long blockId;//规则块的id
+
     private Long parentId;//父节点的id
 
     private Integer conditionType;//规则节点的类型：1-关系节点，2-表达式节点

@@ -47,7 +47,6 @@ public class RuleInfoController {
         return ruleResponseEntityDto;
     }
 
-
     /**
      * @api {POST} /v3/rule/getRuleList 3.20. V3规则 列表 list
      * @apiGroup knowledge

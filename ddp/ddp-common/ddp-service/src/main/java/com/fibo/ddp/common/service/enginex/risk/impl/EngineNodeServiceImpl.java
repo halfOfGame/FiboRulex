@@ -598,7 +598,6 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
                     case 3:
                         scriptRuleVersionIds.add(ruleVersionId);
                         break;
-
                 }
             }
             List<RuleSetNodeResultParam> ruleSetNodeResultParams = new ArrayList<>();
@@ -610,9 +609,9 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
                     for (RuleInfo rule : ruleList) {
                         ruleMap.put(rule.getId(),rule);
                         if (rule.getDifficulty()==null||rule.getDifficulty()==1){
-                            String resultEn = rule.getResultFieldEn();
-                            String scoreEn = rule.getScoreFieldEn();
-                            ruleSetNodeResultParams.add(new RuleSetNodeResultParam(rule.getId(),1,null,resultEn,scoreEn,rule.getCode(),rule.getName()));
+//                            String resultEn = rule.getResultFieldEn();
+//                            String scoreEn = rule.getScoreFieldEn();
+//                            ruleSetNodeResultParams.add(new RuleSetNodeResultParam(rule.getId(),1,null,resultEn,scoreEn,rule.getCode(),rule.getName()));
                         }
                     }
                 }
@@ -622,10 +621,10 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
                 List<RuleVersion> ruleVersionList = ruleVersionService.listByIds(complexRuleVersionIds);
                 if (CollectionUtils.isNotEmpty(ruleVersionList)){
                     for (RuleVersion ruleVersion : ruleVersionList) {
-                        String resultEn = ruleVersion.getResultFieldEn();
-                        String scoreEn = ruleVersion.getScoreFieldEn();
-                        RuleInfo rule = ruleMap.get(ruleVersion.getRuleId());
-                        ruleSetNodeResultParams.add(new RuleSetNodeResultParam(ruleVersion.getRuleId(),2,ruleVersion.getId(),resultEn,scoreEn,rule.getCode(),rule.getName()));
+//                        String resultEn = ruleVersion.getResultFieldEn();
+//                        String scoreEn = ruleVersion.getScoreFieldEn();
+//                        RuleInfo rule = ruleMap.get(ruleVersion.getRuleId());
+//                        ruleSetNodeResultParams.add(new RuleSetNodeResultParam(ruleVersion.getRuleId(),2,ruleVersion.getId(),resultEn,scoreEn,rule.getCode(),rule.getName()));
                     }
                 }
             }

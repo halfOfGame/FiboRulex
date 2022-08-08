@@ -12,9 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RuleVersionVo extends RuleVersion {
-    private RuleConditionVo ruleConditionVo;//规则对应的结点树
+//    private RuleConditionVo ruleConditionVo;//规则对应的结点树
+//
+//    private List<StrategyOutput> strategyOutputList;//输出字段
+//
+//    private List<StrategyOutput> failOutputList;//失败输出字段
 
-    private List<StrategyOutput> strategyOutputList;//输出字段
-
-    private List<StrategyOutput> failOutputList;//失败输出字段
+    private List<RuleBlockVo> ruleBlockVoList;
 }
