@@ -75,16 +75,17 @@
 	<div>
 		<div class="rule_home">
 			<div class="rule_fa">
-				<el-button icon="el-icon-plus" circle @click="outAdd(0)"></el-button>
-				<el-button icon="el-icon-close" circle @click="outDelect(index)"  v-if="!unone" disabled style="margin-right: 10px"></el-button>
+				<el-button icon="el-icon-plus" circle @click="outAdd(0)" :size="size"></el-button>
+				<el-button icon="el-icon-close" circle @click="outDelect(index)" :size="size"  v-if="!unone" disabled style="margin-right: 10px"></el-button>
 			</div>
 			<slot></slot>
 		</div>
 
-		<div v-for="(value,index) in outcontent" class="rule_home" style="display: flex;position: relative;">
+		<div v-for="(value,index) in outcontent" class="rule_home" style="display: flex;position: relative;" :style="{backgroundColor:value.red?'#f56c6c':''}">
+		<!-- {{value}} -->
 			<div class="rule_fa">
-				<el-button icon="el-icon-plus" circle @click="outAdd(index+1)"></el-button>
-				<el-button icon="el-icon-close" circle @click="outDelect(index)"  style="margin-right: 10px"></el-button>
+				<el-button icon="el-icon-plus" circle @click="outAdd(index+1)" :size="size"></el-button>
+				<el-button icon="el-icon-close" circle @click="outDelect(index)" :size="size"  style="margin-right: 10px"></el-button>
 			</div>
 			<div v-if="ruleOut" class="ruleOut">
 				<span :style="{backgroundColor:value.outCondition?'#afd7ff':'#e8e8e8',border:value.outCondition?'1px solid #409EFF':'1px solid #adadad',color:value.outCondition?'#409EFF':'#adadad',fontSize:'12px',padding:'2px'}"
@@ -92,11 +93,11 @@
 			</div>
 
 			<div style="display: flex;align-items: center;">
-				<el-select :value="getCn(value.fieldId)" placeholder="请选择" style="width: 200px;margin-right: 10px;" @focus="outClick(index)">
+				<el-select :value="getCn(value.fieldId)" :size="size" placeholder="请选择" style="width: 200px;margin-right: 10px;" @focus="outClick(index)">
 				</el-select>
 				<p style="margin-right: 10px;">=</p>
 
-				<varialeSelect v-model="value.fieldValue" :valueType="mixinGetvalueType(value.fieldId)" :variableType.sync="value.variableType" width="255px" height="40px" size="—"></varialeSelect>
+				<varialeSelect  v-model="value.fieldValue" :size="size" :valueType="mixinGetvalueType(value.fieldId)" :variableType.sync="value.variableType" width="255px"></varialeSelect>
 
 			</div>
 		</div>
@@ -201,6 +202,10 @@
 				default: () => {
 					return null
 				}
+			},
+			size:{
+				type: String,
+				default: ''
 			}
 		},
 		// watch: {
@@ -320,6 +325,7 @@
 				if (this.radio == '') {
 					this.$message.error('请选择一个字段，或者选择取消')
 				} else {
+					// console.log(this.tempcur)
 					if (this.tempcur.split('###')[1] === "Data") {
 						this.Data.forEach((value, index) => {
 							if (index === parseInt(this.tempcur.split('###')[0])) {
@@ -330,10 +336,11 @@
 							}
 						})
 					} else if (this.tempcur.split('###')[1] === "out") {
-						console.log(this.outcontent)
+						// console.log(this.outcontent)
 						this.outcontent.forEach((value, index) => {
 							if (index === parseInt(this.tempcur.split('###')[0])) {
 								value.fieldId = this.radio
+								value.fieldEn = this.mixinGetvalueEn(value.fieldId)
 								// value.fieldEn = this.mixinGetvalueEn(this.radio)
 								this.$set(value,'fieldEn',this.mixinGetvalueEn(this.radio))
 								value.fieldValue = ''

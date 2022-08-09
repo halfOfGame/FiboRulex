@@ -89,7 +89,8 @@
 		 style="text-align: center;font-size: 100px;color: #d0d0d0;margin-top: 50px;user-select: none;">
 			请选择引擎信息
 		</p>
-		<el-row :gutter="20" style="margin-top: 20px;">
+		<template v-if="versionId">
+ 		<el-row :gutter="20" style="margin-top: 20px;" >
 			<el-col :span="24">
 				<el-card shadow="hover" v-if="engineSummary">
 					<div class="tendencyAna_summaryHome">
@@ -238,12 +239,12 @@
 		</el-row>
 		<el-row :gutter="20" style="margin-top: 20px;">
 			<el-col :span="12">
-				<el-card shadow="hover" v-if="option1.series[0].data.length">
+				<el-card shadow="hover">
 					<charts sid="chart1" :option="option1" :height="chart1Size[0]" :width="chart1Size[1]"></charts>
 				</el-card>
 			</el-col>
 			<el-col :span="12">
-				<el-card shadow="hover" style="position: relative;" v-if="option1.series[0].data.length">
+				<el-card shadow="hover" style="position: relative;" >
 					<el-table :data="option1TableData" style="width: 100%;height: 300px;" :default-sort="{prop:'resultCount',order:'descending'}">
 						<el-table-column prop="result" label="调用时间" width="180">
 						</el-table-column>
@@ -255,7 +256,7 @@
 		</el-row>
 		<el-row :gutter="20" style="margin-top: 20px;">
 			<el-col :span="12">
-				<el-card shadow="hover" v-if="option2PutList.length">
+				<el-card shadow="hover" >
 					<el-select v-model="option2Put" size="mini" multiple collapse-tags value-key="id" :loading="option2PutList.length==0"
 					 style="margin-left: 20px;position: absolute;" filterable placeholder="请选择决策结果" :key="num">
 						<el-option v-for="item in option2PutList" :key="item[0].id" :label="item[0].result" :value="item">
@@ -265,7 +266,7 @@
 				</el-card>
 			</el-col>
 			<el-col :span="12">
-				<el-card shadow="hover" style="position: relative;" v-if="option2PutList.length">
+				<el-card shadow="hover" style="position: relative;" >
 					<el-table :data="option2TableData" style="width: 100%;height: 300px;" :default-sort="{prop:'resultCount',order:'descending'}">
 						<el-table-column prop="result" label="结果" width="180">
 						</el-table-column>
@@ -277,7 +278,7 @@
 		</el-row>
 		<el-row :gutter="20" style="margin-top: 20px;">
 			<el-col :span="12">
-				<el-card shadow="hover" style="position: relative;" v-if="option3PutList.length">
+				<el-card shadow="hover" style="position: relative;" >
 					<el-select v-model="option3Put" size="mini" multiple collapse-tags value-key="id" :loading="option3PutList.length==0"
 					 style="margin-left: 20px;position: absolute;" filterable placeholder="请选择规则及版本" :key="num">
 						<el-option v-for="item in option3PutList" :key="item[0].id" :label="item[0].ruleName+':'+item[0].ruleVersionCode"
@@ -288,7 +289,7 @@
 				</el-card>
 			</el-col>
 			<el-col :span="12">
-				<el-card shadow="hover" v-if="option3PutList.length">
+				<el-card shadow="hover">
 					<el-table :data="option3TableData" style="width: 100%;height: 300px;" :default-sort="{prop:'resultCount',order:'descending'}">
 						<el-table-column prop="result" label="命中" width="180">
 						</el-table-column>
@@ -300,7 +301,7 @@
 		</el-row>
 		<el-row :gutter="20" style="margin-top: 20px;">
 			<el-col :span="12">
-				<el-card shadow="hover" style="position: relative;" v-if="option4PutList.length">
+				<el-card shadow="hover" style="position: relative;" >
 					<el-select v-model="option4Put" size="mini" multiple collapse-tags value-key="id" :loading="option4PutList.length==0"
 					 style="margin-left: 20px;position: absolute;" filterable placeholder="请选择节点" :key="num">
 						<el-option v-for="item in option4PutList" :key="item[0].id" :label="item[0].nodeName" :value="item">
@@ -310,7 +311,7 @@
 				</el-card>
 			</el-col>
 			<el-col :span="12">
-				<el-card shadow="hover" v-if="option4PutList.length">
+				<el-card shadow="hover" >
 					<el-table :data="option4TableData" style="width: 100%;height: 300px;" :default-sort="{prop:'resultCount',order:'descending'}">
 						<el-table-column prop="result" label="命中" width="180">
 						</el-table-column>
@@ -322,7 +323,7 @@
 		</el-row>
 		<el-row :gutter="20" style="margin-top: 20px;">
 			<el-col :span="12">
-				<el-card shadow="hover" style="position: relative;" v-if="option5PutList.length">
+				<el-card shadow="hover" style="position: relative;" >
 					<el-select v-model="option5Put" size="mini" :loading="option5PutList.length==0" style="margin-left: 20px;position: absolute;z-index: 5;"
 					 filterable value-key="[0][0].id" placeholder="请选择评分卡节点" :key="num">
 						<el-option v-for="item in option5PutList" :key="item[0][0].id" :label="item[0][0].scorecardName" :value="item">
@@ -332,7 +333,7 @@
 				</el-card>
 			</el-col>
 			<el-col :span="12">
-				<el-card shadow="hover" style="position: relative;" v-if="option5PutList.length">
+				<el-card shadow="hover" style="position: relative;" >
 					<el-table :data="option5TableData" style="width: 100%;height: 300px;" :default-sort="{prop:'resultCount',order:'descending'}">
 						<el-table-column prop="result" label="命中" width="180">
 						</el-table-column>
@@ -344,7 +345,7 @@
 		</el-row>
 		<el-row :gutter="20" style="margin-top: 20px;">
 			<el-col :span="12">
-				<el-card shadow="hover" style="position: relative;" v-if="option6PutList.length">
+				<el-card shadow="hover" style="position: relative;" >
 					<el-select v-model="option6Put" size="mini" :loading="option6PutList.length==0" style="margin-left: 20px;position: absolute;z-index: 5;"
 					 filterable value-key="[0][0].id" placeholder="请选择入参" :key="num">
 						<el-option v-for="item in option6PutList" :key="item[0][0].id" :label="item[0][0].decisonTablesName" :value="item">
@@ -354,7 +355,7 @@
 				</el-card>
 			</el-col>
 			<el-col :span="12">
-				<el-card shadow="hover" style="position: relative;" v-if="option6PutList.length">
+				<el-card shadow="hover" style="position: relative;" >
 
 					<el-table :data="option6TableData" style="width: 100%;height: 300px;" :default-sort="{prop:'resultCount',order:'descending'}">
 						<el-table-column prop="result" label="命中" width="180">
@@ -366,6 +367,7 @@
 				</el-card>
 			</el-col>
 		</el-row>
+		</template>
 	</div>
 </template>
 

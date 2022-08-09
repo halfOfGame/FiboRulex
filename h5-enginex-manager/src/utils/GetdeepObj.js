@@ -1,4 +1,4 @@
-export const GetdeepObj = (obj, length = true ,first=false) => {
+export const GetdeepObj = (obj, length = true ,first=false,my = false) => {
 	if (typeof obj == 'object' && !Array.isArray(obj)) {
 		let arr = []
 		for (let key in obj) {
@@ -20,7 +20,15 @@ export const GetdeepObj = (obj, length = true ,first=false) => {
 						obj2.children.push({
 							value: '[]',
 							label: '第一项',
-							children: GetdeepObj(obj[key][0], length,first)
+							children: GetdeepObj(obj[key][0], length,first,my)
+						})
+					} 
+					if (my) { 
+						console.log(1)
+						obj2.children.push({
+							value: 'array',
+							label: '本身',
+							valueType: 7,
 						})
 					} 
 					arr.push(obj2)
@@ -28,7 +36,7 @@ export const GetdeepObj = (obj, length = true ,first=false) => {
 					arr.push({
 						value: key,
 						label: key,
-						children: GetdeepObj(obj[key], length,first)
+						children: GetdeepObj(obj[key], length,first,my)
 					})
 				} else {
 					arr.push({
@@ -54,7 +62,14 @@ export const GetdeepObj = (obj, length = true ,first=false) => {
 			obj.push({
 				value: '[0]',
 				label: '第一项',
-				children: GetdeepObj(obj[0], length,first)
+				children: GetdeepObj(obj[0], length,first,my)
+			})
+		} 
+		if (my) { 
+			obj.push({
+				value: 'array',
+				label: '本身',
+				valueType: 7,
 			})
 		} 
 

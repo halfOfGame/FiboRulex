@@ -80,6 +80,7 @@ export default {
 				},
 				mixinGetValueTypeByJSONEn(e){
 					if(!e||e.length==0) return
+					if(typeof e == 'string') e = e.split('.')
 					if(!Array.isArray(e)) e=e.split('.')
 					let obj =this.FieldUserObj
 					e.forEach((value,index)=>{
