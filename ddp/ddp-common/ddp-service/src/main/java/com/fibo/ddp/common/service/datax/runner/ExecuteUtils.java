@@ -145,7 +145,8 @@ public class ExecuteUtils {
                     result = !map.containsKey(paramOne);
                 }
                 break;
-                //数组之间的比较
+                //数组之间的比较,
+            // 包含任意一个
             case "array contains":
                 JSONArray oneArray  = JSON.parseArray(paramOne.toString());
                 JSONArray twoArray;
@@ -157,8 +158,23 @@ public class ExecuteUtils {
                 List<String> oneList = oneArray.toJavaList(String.class);
                 List<String> twoList = twoArray.toJavaList(String.class);
                 //包含任意一个，则返回true
-                result = oneList.stream().anyMatch(item-> twoList.contains(item));
+                result = twoList.stream().anyMatch(item-> oneList.contains(item));
                 break;
+                //包含所有
+            case "array all contains":
+                JSONArray oneAllArray  = JSON.parseArray(paramOne.toString());
+                JSONArray twoAllArray;
+                if(paramTwo!=null){
+                    twoAllArray  = (JSONArray) JSONArray.toJSON(paramTwo.toString().split(","));
+                }else{
+                    return false;
+                }
+                List<String> oneAllList = oneAllArray.toJavaList(String.class);
+                List<String> twoAllList = twoAllArray.toJavaList(String.class);
+                //包含所有，则返回true
+                result = twoAllList.stream().allMatch(item-> oneAllList.contains(item));
+                break;
+                //不包含所有
             case "array not contains":
                 JSONArray oneArrayN  = JSON.parseArray(paramOne.toString());
                 JSONArray twoArrayN;
@@ -170,7 +186,7 @@ public class ExecuteUtils {
                 List<String> oneListN = oneArrayN.toJavaList(String.class);
                 List<String> twoListN = twoArrayN.toJavaList(String.class);
                 //全不包含，则返回true
-                result = oneListN.stream().allMatch(item-> !twoListN.contains(item));
+                result = twoListN.stream().allMatch(item-> !oneListN.contains(item));
                 break;
         }
         return result;
@@ -252,6 +268,8 @@ public class ExecuteUtils {
                 if (i == array.length - 2) {
                     if ("length()".equals(array[array.length - 1])) {
                         return JSON.toJavaObject(JSON.parseArray(JSON.toJSONString(o)), ArrayList.class).size();
+                    }else if("array()".equals(array[array.length -1])){
+                        return JSON.parseArray(JSON.toJSONString(o));
                     }
                 }
                 //未找到最后一个数组元素则将其识别为map
