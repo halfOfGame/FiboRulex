@@ -24,9 +24,8 @@ export const GetdeepObj = (obj, length = true ,first=false,my = false) => {
 						})
 					} 
 					if (my) { 
-						console.log(1)
 						obj2.children.push({
-							value: 'array',
+							value: 'array()',
 							label: '本身',
 							valueType: 7,
 						})
