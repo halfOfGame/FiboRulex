@@ -41,7 +41,7 @@
 		<div :class="smallHeader ? 'MR_header MR_headerSmall' : 'MR_header'">
 			<div>
 				<div>
-					<el-button type="primary" icon="el-icon-arrow-left" circle @click="mixinClose"></el-button>
+					<el-button type="primary" icon="el-icon-arrow-left" size="small"  circle @click="mixinClose"></el-button>
 				</div>
 				<div>
 					<span v-if="id === 0">新增规则 :</span>
@@ -49,28 +49,28 @@
 				</div>
 			</div>
 			<div>
-				<el-button :icon="smallHeader ? 'el-icon-bottom' : 'el-icon-top'" circle @click="openHeader">
+				<el-button :icon="smallHeader ? 'el-icon-bottom' : 'el-icon-top'" size="small"  circle @click="openHeader">
 				</el-button>
-				<el-button type="success" icon="el-icon-check" circle @click="submit" :disabled="addVersionStatus">
+				<el-button type="success" icon="el-icon-check" size="small"  circle @click="submit" :disabled="addVersionStatus">
 				</el-button>
 			</div>
 		</div>
 		<div :class="smallHeader ? 'MR_input MR_inputSmall' : 'MR_input'">
 			<div>
 				<p>规则代码: </p>
-				<el-input placeholder="请输入规则代码" maxlength="30" v-model="code" clearable :disabled="addVersionStatus">
+				<el-input placeholder="请输入规则代码" maxlength="30" size="small" v-model="code" clearable :disabled="addVersionStatus">
 				</el-input>
 			</div>
 			<div>
 				<p> 规则名称: </p>
-				<el-input placeholder="请输入规则名称" maxlength="20" v-model="name" clearable :disabled="addVersionStatus">
+				<el-input placeholder="请输入规则名称" maxlength="20" size="small"  v-model="name" clearable :disabled="addVersionStatus">
 				</el-input>
 			</div>
 		</div>
 		<div :class="smallHeader ? 'MR_scope MR_scopeSmall' : 'MR_scope'">
 			<div>
 				<p>规则描述: </p>
-				<el-input placeholder="请输入规则描述" maxlength="300" v-model="description" clearable
+				<el-input placeholder="请输入规则描述" maxlength="300"  size="small" v-model="description" clearable
 					:disabled="addVersionStatus"></el-input>
 			</div>
 		</div>
