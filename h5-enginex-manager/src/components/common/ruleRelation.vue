@@ -14,8 +14,9 @@
 				<el-option label="为空" value="is empty" v-show="[6].indexOf(valueType)!=-1"></el-option>
 				<el-option label="不为空" value="not empty" v-show="[6].indexOf(valueType)!=-1"></el-option>
 				<el-option label="正则匹配" value="regex" v-show="[2].indexOf(valueType)!=-1"></el-option>
-				<el-option label="匹配" value="array contains" v-show="[7].indexOf(valueType)!=-1"></el-option>
-				<el-option label="不匹配" value="array not contains" v-show="[7].indexOf(valueType)!=-1"></el-option>
+				<el-option label="包含任意一个" value="array contains" v-show="[7].indexOf(valueType)!=-1"></el-option>
+				<el-option label="包含所有" value="array all contains" v-show="[7].indexOf(valueType)!=-1"></el-option>
+				<el-option label="不包含" value="array not contains" v-show="[7].indexOf(valueType)!=-1"></el-option>
 			</el-select>
 
 			<el-input :value="value2" @input="$emit('update:value2',$event)" maxlength="30" :size="size"
