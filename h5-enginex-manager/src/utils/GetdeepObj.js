@@ -70,6 +70,11 @@ export const GetdeepObj = (obj, length = true ,first=false,my = false) => {
 				label: '本身',
 				valueType: 7,
 			})
+
+
+
+
+			
 		} 
 
 		return obj
