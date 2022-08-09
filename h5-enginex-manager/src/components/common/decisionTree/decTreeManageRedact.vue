@@ -39,7 +39,7 @@
 		<div :class="smallHeader?'MR_header MR_headerSmall':'MR_header'">
 			<div>
 				<div>
-					<el-button type="primary" icon="el-icon-arrow-left" circle @click="mixinClose"></el-button>
+					<el-button type="primary" icon="el-icon-arrow-left" size="small"  circle @click="mixinClose"></el-button>
 				</div>
 				<div>
 					<span v-if="id===0">新增决策树 :</span>
@@ -47,19 +47,19 @@
 				</div>
 			</div>
 			<div>
-				<el-button :icon="smallHeader?'el-icon-bottom':'el-icon-top'" circle @click="openHeader">
+				<el-button :icon="smallHeader?'el-icon-bottom':'el-icon-top'" size="small"  circle @click="openHeader">
 				</el-button>
-				<el-button type="success" icon="el-icon-check" circle @click="submit" :disabled="addVersionStatus"></el-button>
+				<el-button type="success" icon="el-icon-check" size="small"  circle @click="submit" :disabled="addVersionStatus"></el-button>
 			</div>
 		</div>
 		<div :class="smallHeader?'MR_input MR_inputSmall':'MR_input'">
 			<div>
 				<p>决策树代码: </p>
-				<el-input placeholder="请输入决策树代码" maxlength="30" v-model="code" clearable :disabled="addVersionStatus"></el-input>
+				<el-input placeholder="请输入决策树代码"  size="small" maxlength="30" v-model="code" clearable :disabled="addVersionStatus"></el-input>
 			</div>
 			<div>
 				<p>决策树名称:</p>
-				<el-input placeholder="请输入决策树名称" maxlength="20" v-model="name" clearable :disabled="addVersionStatus"></el-input>
+				<el-input placeholder="请输入决策树名称"  size="small" maxlength="20" v-model="name" clearable :disabled="addVersionStatus"></el-input>
 			</div>
 			<div>
 
@@ -68,7 +68,7 @@
 		<div :class="smallHeader?'MR_scope MR_scopeSmall':'MR_scope'">
 			<div>
 				<p>决策树描述: </p>
-				<el-input placeholder="请输入决策描述" maxlength="300" v-model="description" clearable :disabled="addVersionStatus"></el-input>
+				<el-input placeholder="请输入决策描述"  size="small" maxlength="300" v-model="description" clearable :disabled="addVersionStatus"></el-input>
 			</div>
 		</div>
 
