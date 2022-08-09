@@ -17,7 +17,7 @@ import store from './store'
 
 import './styles/index.scss'; // global css
 import myMixin from '@/utils/mixin.js';
-
+import myCascader from './components/common/Cascader'
 // import 'codemirror/lib/codemirror.css'
 // import VueCodemirror from 'vue-codemirror'
 
@@ -34,6 +34,9 @@ const i18n = new VueI18n({
     locale: 'zh',
     messages
 });
+
+
+Vue.component("myCascader",myCascader)
 
 
 Date.prototype.format = function(fmt) {

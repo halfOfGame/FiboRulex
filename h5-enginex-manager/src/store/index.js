@@ -212,7 +212,7 @@ export default new Vuex.Store({
 						value: value.fieldEn,
 						valueType: value.valueType,
 						jsonValue: value.jsonValue,
-						children: GetdeepObj(JSON.parse(value.jsonValue))
+						children: GetdeepObj(JSON.parse(value.jsonValue),true,true,true)
 					}
 				} else {
 					return {

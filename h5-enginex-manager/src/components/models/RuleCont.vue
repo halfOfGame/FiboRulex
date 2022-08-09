@@ -15,6 +15,7 @@
 		/* background-color: #C7C6C8; */
 		margin: 12px 0px 0 0;
 		height: 0;
+		
 
 	}
 
@@ -42,6 +43,7 @@
 
 <template>
 	<div class="rule" :style="{marginLeft:ZIndex==1?'20px':'0px'}" v-if="data">
+	
 		<div :style="{position: 'absolute',top:'0px', left: '-20px',marginTop: top===0?'0':'8px'}" class="RuleIcon">
 			<el-dropdown trigger="click" @command="handleCommand">
 				<span class="el-dropdown-link">
@@ -91,35 +93,42 @@
 		</div>
 		<div>
 			<div
-				:style="{border: '1px dashed '+ color[ZIndex%5],borderRadius: '5px',paddingRight: '5px',paddingBottom: '5px',position:'relative',minWidth:'30px',minHeight:'40px'}">
-				<div v-if="data.conditionType==3" style="display: flex;margin-top: 6px;">
+				:style="{border: '1px dashed '+ color[ZIndex%5],borderRadius: '5px',paddingRight: '5px',paddingBottom: '5px',position:'relative',minWidth:'30px',minHeight:'40px',backgroundColor:data.red&&(data.conditionType==1||data.conditionType==4||data.conditionType==5)?'#f56c6c':''}">
+				<!-- {{data}} -->
+				<div v-if="data.conditionType==3" style="display: flex;margin-top: 6px;" :style="{backgroundColor:data.red1?'#f56c6c':''}">
+				
 					<div class="Rule_cont" :style="{marginTop:'12px'}"></div>
-					
-					<el-cascader v-model="data.fieldEn" filterable size="mini" :options="fielduserArr" :key="keyValue+(data.random?data.random:0)" @visible-change="randomAdd(data,$event)"
-						:props="{ expandTrigger: 'hover' }" @change="EnChange"></el-cascader>
+					<myCascader  v-model="data.fieldEn" size="mini" :options="fielduserArr" isString clearable @change="EnChange"></myCascader>	
+					<!-- <el-cascader v-model="data.fieldEn" filterable size="mini" :options="fielduserArr" :key="keyValue+(data.random?data.random:0)" @visible-change="randomAdd(data,$event)"
+						:props="{ expandTrigger: 'hover' }" @change="EnChange"></el-cascader> -->
 						
 					<!-- for 的输入 -->
 				</div>
 				<div
-					:style="{border:data.conditionType==3?'1px dotted #000':'',margin:data.conditionType==3?'5px 10px ':'',padding:data.conditionType==3?'8px':'',paddingLeft:'0px'}">
+					:style="{backgroundColor:data.red&&data.conditionType==3?'#f56c6c':'',border:data.conditionType==3?'1px dotted #000':'',margin:data.conditionType==3?'5px 10px ':'',padding:data.conditionType==3?'8px':'',paddingLeft:'0px'}">
+					
 					{{typeof sdataJson!= 'object'&&typeof sdataJson!= 'array'&&data.conditionType==3?'此处不支持继续遍历请删除此节点':''}}
+					
 					<div v-for="(item,index) in data.children" style="display: flex;margin-top: 7px;">
 						<div class="Rule_cont"
 							:style="{marginTop:item.conditionType===0?'12px':(index===0?'11px':'20px')}">
 						</div>
+						
 						<!--  conditionType==2  规则部分 -->
 						<div v-if="item.conditionType==2" style="display: flex;">
+						
 							<!-- {{fieldType}} -->
 							<div v-if="fieldType!='for'" style="display: flex;">
 								<!-- 普通规则部分 -->
-
+								
 								<!-- 不为输出节点 则拉选 fielduser-->
 								
-								<div v-if="data.conditionType!=4&&out!='out'" style="display: flex;">
+								<div v-if="data.conditionType!=4&&out!='out'" style="display: flex;" :style="{backgroundColor:item.red?'#f56c6c':''}">
 									
-									<el-cascader v-model="item.fieldEn" filterable size="mini" :options="fieldUserObj" clearable @change="ruleCascaderChange(item)"
+									<myCascader  v-model="item.fieldEn" size="mini" :options="fieldUserObj" isString clearable @change="ruleCascaderChange(item)"></myCascader>	
+									<!-- <el-cascader v-model="item.fieldEn" filterable size="mini" :options="fieldUserObj" clearable @change="ruleCascaderChange(item)"
 										:key="keyValue+(item.random?item.random:0)" :props="{ expandTrigger: 'hover' }" @visible-change="randomAdd(item,$event)">
-									</el-cascader>
+									</el-cascader> -->
 									
 									<!-- <bigElCascader v-model="item.fieldEn" filterable size="mini" :options="fieldUserObj"
 										clearable @change="ruleCascaderChange(item)" :Mykey="keyValue"
@@ -131,7 +140,8 @@
 
 									<!-- 加入 变量选择 -->
 								</div>
-								<div v-else style="display: flex;">
+								<div v-else style="display: flex;" :style="{backgroundColor:item.red?'#f56c6c':''}">
+								打点1
 									<el-select v-model="item.fieldEn" size="mini" filterable
 										@change="selectChange(item)">
 										<el-option v-for="cont in suseingfield" :key="cont.id" :label="cont.fieldCn"
@@ -156,14 +166,17 @@
 								</el-select> -->
 
 							</div>
-							<div v-else style="display: flex;">
+							<div v-else style="display: flex;" :style="{backgroundColor:item.red?'#f56c6c':''}">
 								<!-- {{sEn}} -->
 								<!-- for规则部分 -->
 
 								<!-- {{sEn}} -->
-								<el-cascader size="mini" filterable v-model="item.fieldEn" :options="getUserObj" @visible-change="randomAdd(item,$event)"
+								
+								<myCascader  v-model="item.fieldEn" size="mini" :options="getUserObj" isString clearable @change="forChange(item)"></myCascader>	
+
+								<!-- <el-cascader size="mini" filterable v-model="item.fieldEn" :options="getUserObj" @visible-change="randomAdd(item,$event)"
 									:key="keyValue+(item.random?item.random:0)" :props="{ expandTrigger: 'hover' }" @change="forChange(item)">
-								</el-cascader>
+								</el-cascader> -->
 								
 								<ruleRelation v-model="item.operator" :value2.sync="item.fieldValue"
 									:variableType.sync="item.variableType" :valueType="getvalueTypebyEn(item.fieldEn)"
@@ -194,14 +207,14 @@
 					</div>
 
 				</div>
-				<div v-if="data.conditionType==3" style="margin-left: 25px;margin-top: 10px;">
+				<div v-if="data.conditionType==3" style="margin-left: 25px;margin-top: 10px;" :style="{backgroundColor:data.red2?'#f56c6c':''}">
 					<!-- for 的输出 -->
-
+					<!-- 打点 - for输出 -->
 					<rule :suseingfield="useingfield" :out="'out'" :data="data.loopResultCondition" :ZIndex="ZIndex+1"
 						@delectLogical="delectLogical"></rule>
 				</div>
 			</div>
-			<div v-if="data.conditionType==5" class="RuleCont_for_out">
+			<div v-if="data.conditionType==5" class="RuleCont_for_out" :style="{backgroundColor:data.red1?'#f56c6c':''}">
 				<span style="font-size: 12px;margin-left: 5px;">命中条件：</span>
 				[
 				<el-input size="mini" v-model="data.condGroupResultCondition.children[0].fieldValue"
@@ -213,8 +226,12 @@
 
 			</div>
 			<div v-if="data.loopGroupActions.length>0" class="RuleCont_for_out">
+			<!-- 打点 - for计算 -->
 				<div v-for="(item,index) in data.loopGroupActions"
-					style="display: flex; align-items: center;margin-bottom: 5px;margin-left: 5px;">
+					style="display: flex; align-items: center;margin-bottom: 5px;margin-left: 5px;"
+					:style="{backgroundColor:item.red?'#f56c6c':''}"
+					>
+
 					<el-select v-model="item.actionKey" style="width: 150px;" size="mini" filterable>
 						<el-option v-for="cont in fielduser" :key="cont.id" :label="cont.fieldCn" :value="cont.fieldEn"
 							v-if="item.actionType!=6||cont.valueType==6">
@@ -230,9 +247,10 @@
 					<el-input size="mini" style="width: 120px;" v-model="item.actionValue"
 						v-if="[2,4,6,7].indexOf(item.actionType)!=-1"></el-input>
 
-					<el-cascader size="mini" style="width: 120px;" filterable v-model="item.actionValue"
+					<myCascader  v-model="item.actionValue"  v-if="item.actionType==3" style="width: 120px;" size="mini" :options="getUserObj" isString clearable @change="forChange(item)"></myCascader>
+					<!-- <el-cascader size="mini" style="width: 120px;" filterable v-model="item.actionValue"
 						:options="getUserObj" :key="keyValue+(item.random?item.random:0)" v-if="item.actionType==3" @visible-change="randomAdd(item,$event)"
-						:props="{ expandTrigger: 'hover' }"></el-cascader>
+						:props="{ expandTrigger: 'hover' }"></el-cascader> -->
 					
 					<i class="el-icon-circle-plus-outline" style="color: #66B1FF;margin-left: 3px;"
 						@click="addLoopOut(index)"></i>
@@ -288,8 +306,8 @@
 		},
 		mounted() {
 			if (this.data) {
-				// console.log(this.data.fieldEn)
-				if (Array.isArray(this.data.fieldEn)) {
+				// console.log(this.data)
+				if (this.data.fieldEn) {
 					if (this.data.fieldEn.length > 0) {
 						this.EnChange(this.data.fieldEn, false)
 					}
@@ -369,12 +387,12 @@
 				let obj = {}
 				if (this.fieldType == "for") {
 					obj = this.sdataJson
-				} else if (Array.isArray(this.data.fieldEn)) {
-					// console.log(1, this.data.fieldEn)
-					obj = JSON.parse(this.mixinGetFieldByEn(this.data.fieldEn[0]).jsonValue)
+				} else if (this.data.fieldEn) {
+					console.log(1, this.data.fieldEn)
+					obj = JSON.parse(this.mixinGetFieldByEn(this.data.fieldEn.split('.')[0]).jsonValue)
 				}
-				if (Array.isArray(this.data.fieldEn)) {
-					this.data.fieldEn.forEach((value, index) => {
+				if (this.data.fieldEn) {
+					this.data.fieldEn.split('.').forEach((value, index) => {
 						if (index != 0) {
 							obj = obj[value]
 						}
@@ -492,6 +510,7 @@
 				item.operator = ""
 			},
 			getvalueTypebyEn(e) { //通过En 获取 valueType
+				e && (e = e.split('.'))
 				if (!Array.isArray(e)) {
 					return
 				}
@@ -527,14 +546,14 @@
 			},
 			EnChange(e, clear = true) {
 
-				this.En = e.join('.')
+				this.En = e
 				if (!clear) return
 				this.deepClearEn(this.data)
 			},
 			deepClearEn(obj) { // 递归清除用到父级的 En
 				obj.children.forEach(value => {
-					if (Array.isArray(value.fieldEn)) {
-						if (value.fieldEn[0][0] == "%") {
+					if (value.fieldEn) {
+						if (value.fieldEn[0] == "%") {
 							value.fieldEn = ""
 						}
 					}
@@ -700,7 +719,7 @@
 					this.data.children.push({
 						"logical": 'for',
 						"fieldId": "",
-						"fieldEn":[],
+						"fieldEn":"",
 						"operator": "",
 						"fieldValue": "",
 						"conditionType": 3,

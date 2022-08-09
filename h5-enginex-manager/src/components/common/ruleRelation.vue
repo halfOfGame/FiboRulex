@@ -3,17 +3,19 @@
 		<div style="display: flex;align-items: center;">
 			<el-select v-model="data" :size="size" :filterable="type==2?'filterable':false" placeholder="请选择"
 				ref="select" style="width: 100px;margin-left: 10px;" @change="change" @blur="$emit('blur')">
-				<el-option label="大于" value=">" v-show="[2,3,5,6].indexOf(valueType)==-1"></el-option>
-				<el-option label="大于等于" value=">=" v-show="[2,3,5,6].indexOf(valueType)==-1"></el-option>
-				<el-option label="等于" value="==" v-show="[5].indexOf(valueType)==-1"></el-option>
-				<el-option label="小于" value="<" v-show="[2,3,5,6].indexOf(valueType)==-1"></el-option>
-				<el-option label="小于等于" value="<=" v-show="[2,3,5,6].indexOf(valueType)==-1"></el-option>
-				<el-option label="不等于" value="!=" v-show="[5].indexOf(valueType)==-1"></el-option>
+				<el-option label="大于" value=">" v-show="[2,3,5,6,7].indexOf(valueType)==-1"></el-option>
+				<el-option label="大于等于" value=">=" v-show="[2,3,5,6,7].indexOf(valueType)==-1"></el-option>
+				<el-option label="等于" value="==" v-show="[5,7].indexOf(valueType)==-1"></el-option>
+				<el-option label="小于" value="<" v-show="[2,3,5,6,7].indexOf(valueType)==-1"></el-option>
+				<el-option label="小于等于" value="<=" v-show="[2,3,5,6,7].indexOf(valueType)==-1"></el-option>
+				<el-option label="不等于" value="!=" v-show="[5,7].indexOf(valueType)==-1"></el-option>
 				<el-option label="包含" value="contains" v-show="[2,5,6].indexOf(valueType)!=-1"></el-option>
 				<el-option label="不包含" value="not contains" v-show="[2,5,6].indexOf(valueType)!=-1"></el-option>
 				<el-option label="为空" value="is empty" v-show="[6].indexOf(valueType)!=-1"></el-option>
 				<el-option label="不为空" value="not empty" v-show="[6].indexOf(valueType)!=-1"></el-option>
 				<el-option label="正则匹配" value="regex" v-show="[2].indexOf(valueType)!=-1"></el-option>
+				<el-option label="匹配" value="array contains" v-show="[7].indexOf(valueType)!=-1"></el-option>
+				<el-option label="不匹配" value="array not contains" v-show="[7].indexOf(valueType)!=-1"></el-option>
 			</el-select>
 
 			<el-input :value="value2" @input="$emit('update:value2',$event)" maxlength="30" :size="size"

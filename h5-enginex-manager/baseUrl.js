@@ -76,7 +76,7 @@ switch (process.env.NODE_ENV) {
 	case 'wang': // 汪环境
 		proxyObj = {
 			'/Riskmanage': {
-				target: 'http://192.168.50.228:8080', // 生产环境
+				target: 'http://192.168.50.223:8080', // 生产环境
 				changeOrigin: true, // 是否跨域
 				pathRewrite: {
 					'^/Riskmanage': '/Riskmanage'
