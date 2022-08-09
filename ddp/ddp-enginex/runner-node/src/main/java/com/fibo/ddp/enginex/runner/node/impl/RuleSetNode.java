@@ -370,7 +370,7 @@ public class RuleSetNode implements EngineRunnerNode {
 //            }
             input.put(resultFieldEn, "命中");
             //处理此规则需要输出的内容
-            fieldList.addAll(ruleService.setComplexRuleOutput(ruleVersion.getId(), temp, input, StrategyType.OutType.SUCCESS_OUT));
+            fieldList.addAll(ruleService.setComplexRuleOutput(hitRuleBlock.getId(), temp, input, StrategyType.OutType.SUCCESS_OUT));
             ruleMap.put("fieldList", fieldList);
             hitFlag = true;
         } else {
@@ -378,7 +378,7 @@ public class RuleSetNode implements EngineRunnerNode {
             ruleMap.put("ruleScore", 0);
             input.put(scoreFieldEn, 0);
             fieldList.add(resultJson);
-            fieldList.addAll(ruleService.setComplexRuleOutput(ruleVersion.getId(), temp, input, StrategyType.OutType.FAIL_OUT));
+            fieldList.addAll(ruleService.setComplexRuleOutput(hitRuleBlock.getId(), temp, input, StrategyType.OutType.FAIL_OUT));
             ruleMap.put("fieldList", fieldList);
         }
         ruleResultList.add(ruleMap);
