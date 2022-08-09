@@ -1777,3 +1777,54 @@ insert into `t_role_resource_rel` (`role_id`, `resource_id`) values('70','18');
 /*Data for the table `t_dictionary` */
 insert into `t_dictionary` (`id`, `dict_key`, `dict_value`, `create_time`, `update_time`) values('1','holdSystemList','EngineX,DataX,Auth','2021-12-15 16:48:38','2021-12-16 14:08:47');
 insert into `t_dictionary` (`id`, `dict_key`, `dict_value`, `create_time`, `update_time`) values('3','useCache','off','2021-12-15 18:17:28','2021-12-16 15:59:33');
+
+
+
+
+-- 规则块配置表
+CREATE TABLE `t_rule_block` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '主键：规则块id',
+  `rule_id` INT(11) NOT NULL COMMENT '规则id',
+  `version_id` INT(11) NOT NULL DEFAULT '0' COMMENT '规则版本的id',
+  `result_field_en` VARCHAR(255) DEFAULT NULL COMMENT '存放执行结果的变量',
+  `score` INT(11) NOT NULL COMMENT '规则分数',
+  `score_field_en` VARCHAR(255) DEFAULT NULL COMMENT '存放得分的变量',
+  `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='规则块配置表';
+
+
+ALTER TABLE t_rule_condition
+  ADD COLUMN `block_id` INT (11) NOT NULL COMMENT '规则块的id' AFTER version_id;
+
+
+-- 删除规则表历史遗留字段
+ALTER TABLE t_rule
+  DROP COLUMN engine_id,
+  DROP COLUMN is_non,
+  DROP COLUMN content,
+  DROP COLUMN rule_type,
+  DROP COLUMN rule_audit,
+  DROP COLUMN score,
+  DROP COLUMN score_field_en,
+  DROP COLUMN last_logical,
+  DROP COLUMN result_field_en;
+
+
+-- 刷新数据
+INSERT INTO `t_rule_block`(rule_id, version_id, result_field_en, score, score_field_en) 
+  SELECT rule_id, id, result_field_en, score, score_field_en FROM `t_rule_version`;
+
+
+UPDATE
+  `t_rule_condition` t1
+  INNER JOIN `t_rule_block` t2
+    ON t1.`rule_id` = t2.`rule_id`
+    AND t1.`version_id` = t2.`version_id` SET t1.`block_id` = t2.`id`;
+	
+	
+ALTER TABLE `t_rule_version`
+  DROP COLUMN result_field_en,
+  DROP COLUMN score,
+  DROP COLUMN score_field_en;
