@@ -1,5 +1,6 @@
 package com.fibo.ddp.common.service.datax.runner;
 
+import cn.hutool.core.util.ArrayUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -144,6 +145,33 @@ public class ExecuteUtils {
                     result = !map.containsKey(paramOne);
                 }
                 break;
+                //数组之间的比较
+            case "array contains":
+                JSONArray oneArray  = JSON.parseArray(paramOne.toString());
+                JSONArray twoArray;
+                if(paramTwo!=null){
+                    twoArray  = (JSONArray) JSONArray.toJSON(paramTwo.toString().split(","));
+                }else{
+                    return false;
+                }
+                List<String> oneList = oneArray.toJavaList(String.class);
+                List<String> twoList = twoArray.toJavaList(String.class);
+                //包含任意一个，则返回true
+                result = oneList.stream().anyMatch(item-> twoList.contains(item));
+                break;
+            case "array not contains":
+                JSONArray oneArrayN  = JSON.parseArray(paramOne.toString());
+                JSONArray twoArrayN;
+                if(paramTwo!=null){
+                    twoArrayN  = (JSONArray) JSONArray.toJSON(paramTwo.toString().split(","));
+                }else{
+                    return false;
+                }
+                List<String> oneListN = oneArrayN.toJavaList(String.class);
+                List<String> twoListN = twoArrayN.toJavaList(String.class);
+                //全不包含，则返回true
+                result = oneListN.stream().allMatch(item-> !twoListN.contains(item));
+                break;
         }
         return result;
     }
@@ -223,7 +251,7 @@ public class ExecuteUtils {
                 //如果是数组取length
                 if (i == array.length - 2) {
                     if ("length()".equals(array[array.length - 1])) {
-                        return JSON.toJavaObject(JSON.parseObject(JSON.toJSONString(o)), ArrayList.class).size();
+                        return JSON.toJavaObject(JSON.parseArray(JSON.toJSONString(o)), ArrayList.class).size();
                     }
                 }
                 //未找到最后一个数组元素则将其识别为map

@@ -63,8 +63,8 @@ public class RuleConditionInfo
     @TableField(exist = false)
     private String TempParentId;//插入时临时父id
 
-    @TableField(exist = false)
-    private Integer valueType;//字段值类型
+//    @TableField(exist = false)
+//    private Integer valueType;//字段值类型
 
     @TableField(exist = false)
     private List<RuleLoopGroupAction> loopGroupActions = new ArrayList<>();//循环组对应的条件
