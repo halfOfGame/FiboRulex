@@ -107,11 +107,6 @@ public class StrategyOutputServiceImpl extends ServiceImpl<StrategyOutputMapper,
     @Transactional
     @Override
     public boolean updateTacticsOutput(Long tacticsId, List<StrategyOutput> successList, List<StrategyOutput> failList, String tacticsType) {
-        StrategyOutput strategyOutput = new StrategyOutput(tacticsId, tacticsType);
-        boolean delete = this.deleteByTactics(strategyOutput);
-        if (!delete && this.queryByTactics(strategyOutput).size() != 0) {
-            return false;
-        }
         if (successList != null && !successList.isEmpty()) {
             this.insertTacticsOutput(tacticsId, successList, StrategyType.OutType.SUCCESS_OUT);
         }

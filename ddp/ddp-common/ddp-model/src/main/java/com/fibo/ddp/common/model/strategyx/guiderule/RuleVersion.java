@@ -38,18 +38,6 @@ public class RuleVersion implements Serializable {
      */
     private Integer status;
     /**
-     * 规则结果en(命中情况)
-     */
-    private String resultFieldEn;
-    /**
-     * 规则得分
-     */
-    private Integer score;
-    /**
-     * 规则得分的en
-     */
-    private String scoreFieldEn;
-    /**
      * 组织id
      */
     private Long organId;

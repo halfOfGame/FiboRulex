@@ -43,35 +43,18 @@ public class RuleInfo implements Serializable {
 
     private Long organId;//组织id
 
-    private Integer engineId;
-
     private Integer status;//状态    0 :停用 ，1 : 启用，-1：删除
 
     private Integer type;//规则类型  0 : 系统的规则  1：组织的规则 2： 引擎的规则
-
-    private Integer isNon;//逻辑关系“非”，0：否 ，1：是
-
-    private String content;//规则具体内容
 
     private Date created;
 
     private Date updated;
 
-    private Integer ruleType;//0硬性拒绝规则1加减分规则
-
-    private Integer ruleAudit;
-
-    private Integer score;//得分
-
-    private String lastLogical;//逻辑关系符
-
     private Integer difficulty;//规则难度：1-简单规则，2复杂规则
 
     private String scriptType;//脚本类型python，js，groovy
 
-    private String resultFieldEn;//存放是否命中的字段
-
-    private String scoreFieldEn;//存放得分的字段en
     @TableField(exist = false)
     private String authorName;//创建人名称，需要去其他表查询
     @TableField(exist = false)

@@ -119,7 +119,6 @@ public class RuleServiceImpl extends ServiceImpl<RuleInfoMapper, RuleInfo> imple
         return pageInfo;
     }
 
-
     @Override
     @Transactional
     public RuleVo insertRuleInfo(RuleVo vo) {
@@ -268,21 +267,6 @@ public class RuleServiceImpl extends ServiceImpl<RuleInfoMapper, RuleInfo> imple
         //加入状态信息
         vo.setType(RuleConst.TYPE_ORGAN);
         vo.setStatus(RuleConst.STATUS_ENABLED);
-        //加入规则类型
-        if (vo == null || vo.getRuleAudit() == null) {
-            throw new ApiException(ErrorCodeEnum.PARAMS_EXCEPTION.getCode(), ErrorCodeEnum.PARAMS_EXCEPTION.getMessage());
-        }
-        switch (vo.getRuleAudit()) {
-            case RuleConst.RULE_AUDIT_TERMINATION:
-                vo.setRuleType(RuleConst.RULE_TYPE_TERMINATION);
-                break;
-            case RuleConst.RULE_AUDIT_SCORING:
-                vo.setRuleType(RuleConst.RULE_TYPE_SCORING);
-                break;
-            default:
-                vo.setRuleType(RuleConst.RULE_TYPE_TERMINATION);
-        }
-
         return vo;
     }
 

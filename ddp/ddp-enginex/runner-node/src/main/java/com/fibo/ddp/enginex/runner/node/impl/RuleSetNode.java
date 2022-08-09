@@ -8,6 +8,7 @@ import com.fibo.ddp.common.model.enginex.risk.EngineNode;
 import com.fibo.ddp.common.model.enginex.runner.ExpressionParam;
 import com.fibo.ddp.common.model.strategyx.guiderule.RuleInfo;
 import com.fibo.ddp.common.model.strategyx.guiderule.RuleLoopGroupAction;
+import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleBlockVo;
 import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleConditionVo;
 import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleVersionVo;
 import com.fibo.ddp.common.model.strategyx.scriptrule.RuleScriptVersion;
@@ -195,7 +196,7 @@ public class RuleSetNode implements EngineRunnerNode {
     private void recordStrategySnopshot(List<RuleInfo> ruleInfoList, Map<String, Object> outMap) {
         JSONArray jsonObject = new JSONArray();
         ruleInfoList.stream().forEach(ruleInfo -> {
-            logger.info("===========================监控添加策略信息快照情况==============版本id:{}=====:{}",ruleInfo.getVersion().getId(),ruleInfo.getVersion().getSnapshot());
+            logger.info("===========================监控添加策略信息快照情况==============版本id:{}=====:{}", ruleInfo.getVersion().getId(), ruleInfo.getVersion().getSnapshot());
             if (ruleInfo.getVersion().getSnapshot() != null) {
                 jsonObject.add(ruleInfo.getVersion().getSnapshot());
 
@@ -203,7 +204,7 @@ public class RuleSetNode implements EngineRunnerNode {
         });
         JSONObject jsonObject1 = new JSONObject();
         jsonObject1.put("snopshot", jsonObject);
-        logger.info("===========================监控添加策略信息快照情况:{}",jsonObject1);
+        logger.info("===========================监控添加策略信息快照情况:{}", jsonObject1);
         outMap.put("strategySnopshot", jsonObject1);
     }
 
@@ -320,7 +321,7 @@ public class RuleSetNode implements EngineRunnerNode {
         //取出本规则的条件列表
         Map<String, Object> ruleMap = new HashMap<>();
         ruleMap.put("ruleId", rule.getId());
-        ruleMap.put("ruleVersionId",ruleVersion.getId());
+        ruleMap.put("ruleVersionId", ruleVersion.getId());
         ruleMap.put("ruleCode", rule.getCode());
         ruleMap.put("ruleName", rule.getName());
         ruleMap.put("versionCode", ruleVersion.getVersionCode());
@@ -328,18 +329,29 @@ public class RuleSetNode implements EngineRunnerNode {
         ruleMap.put("desc", rule.getDescription());
         ruleMap.put("ruleResult", "未命中");
 
-        //获取规则需要执行的condition逻辑。
-        RuleConditionVo ruleCondition = ruleVersion.getRuleConditionVo();
-        //传入输入参数、中间变量、输出参数和需要执行的condition逻辑获取执行结果
+        // 循环执行规则块，按顺序命中第一个块就结束
+        boolean result = false;
         Map<String, Object> temp = JSON.parseObject(JSON.toJSONString(input), Map.class);
-        boolean result = this.executeRuleCondition(temp, output, ruleCondition);
-        String resultFieldEn = ruleVersion.getResultFieldEn();
-        if (resultFieldEn == null || "".equals(resultFieldEn)) {
-            resultFieldEn = "rule_2_"+rule.getId()+"_"+ruleVersion.getId()+"_hitResult";
+        List<RuleBlockVo> ruleBlockVoList = ruleVersion.getRuleBlockVoList();
+        RuleBlockVo hitRuleBlock = ruleBlockVoList.get(0); // 规则的输出项默认用第一个块的配置
+        for (RuleBlockVo ruleBlockVo : ruleBlockVoList) {
+            //获取规则需要执行的condition逻辑。
+            RuleConditionVo ruleCondition = ruleBlockVo.getRuleConditionVo();
+            //传入输入参数、中间变量、输出参数和需要执行的condition逻辑获取执行结果
+            result = this.executeRuleCondition(temp, output, ruleCondition);
+            if (result) {
+                hitRuleBlock = ruleBlockVo;
+                break;
+            }
         }
-        String scoreFieldEn = ruleVersion.getScoreFieldEn();
-        if (StringUtils.isBlank(scoreFieldEn)){
-            scoreFieldEn = "rule_2_"+rule.getId()+"_"+ruleVersion.getId()+"_score";
+
+        String resultFieldEn = hitRuleBlock.getResultFieldEn();
+        if (resultFieldEn == null || "".equals(resultFieldEn)) {
+            resultFieldEn = "rule_" + rule.getId() + "_" + ruleVersion.getId() + "_" + hitRuleBlock.getId() + "_hitResult";
+        }
+        String scoreFieldEn = hitRuleBlock.getScoreFieldEn();
+        if (StringUtils.isBlank(scoreFieldEn)) {
+            scoreFieldEn = "rule_" + rule.getId() + "_" + ruleVersion.getId() + "_" + hitRuleBlock.getId() + "_score";
         }
         input.put(resultFieldEn, "未命中");
         //根据执行的最终结果处理此规则输出内容
@@ -347,14 +359,14 @@ public class RuleSetNode implements EngineRunnerNode {
         JSONObject resultJson = new JSONObject();
         if (result) {
             ruleMap.put("ruleResult", "命中");
-            ruleMap.put("ruleScore", rule.getScore());
+            ruleMap.put("ruleScore", hitRuleBlock.getScore());
             JSONObject scoreJson = new JSONObject();
             resultJson.put(resultFieldEn, "命中");
             fieldList.add(resultJson);
 //            if (StringUtils.isNotBlank(ruleVersion.getScoreFieldEn())) {
-                scoreJson.put(scoreFieldEn, ruleVersion.getScore());
-                fieldList.add(scoreJson);
-                input.put(scoreFieldEn, ruleVersion.getScore());
+            scoreJson.put(scoreFieldEn, hitRuleBlock.getScore());
+            fieldList.add(scoreJson);
+            input.put(scoreFieldEn, hitRuleBlock.getScore());
 //            }
             input.put(resultFieldEn, "命中");
             //处理此规则需要输出的内容
@@ -364,7 +376,7 @@ public class RuleSetNode implements EngineRunnerNode {
         } else {
             resultJson.put(resultFieldEn, "未命中");
             ruleMap.put("ruleScore", 0);
-            input.put(scoreFieldEn,0);
+            input.put(scoreFieldEn, 0);
             fieldList.add(resultJson);
             fieldList.addAll(ruleService.setComplexRuleOutput(ruleVersion.getId(), temp, input, StrategyType.OutType.FAIL_OUT));
             ruleMap.put("fieldList", fieldList);
@@ -546,7 +558,7 @@ public class RuleSetNode implements EngineRunnerNode {
     }
 
 
-    private void initLoopGroupAction(RuleLoopGroupAction loopGroupAction, Map<String, Object> input){
+    private void initLoopGroupAction(RuleLoopGroupAction loopGroupAction, Map<String, Object> input) {
         Integer actionType = loopGroupAction.getActionType();
         String actionKey = loopGroupAction.getActionKey();
         String actionValue = loopGroupAction.getActionValue();
@@ -564,7 +576,7 @@ public class RuleSetNode implements EngineRunnerNode {
                 input.put(actionKey, "");
                 break;
             case RuleConst.LOOP_GROUP_ACTION_TYPE_OUT_VARIABLE:
-                input.put(actionKey,new HashSet<>());
+                input.put(actionKey, new HashSet<>());
                 break;
         }
     }
@@ -597,15 +609,15 @@ public class RuleSetNode implements EngineRunnerNode {
                     }
                 }
 
-                int totalSize = selectedHitRules.size(); // 规则命名个数
-                double totalScore = selectedHitRules.stream().mapToDouble(RuleInfo::getScore).sum(); // 规则总得分
+                int totalSize = selectedHitRules.size(); // 规则命中个数
+//                double totalScore = selectedHitRules.stream().mapToDouble(RuleInfo::getScore).sum(); // 规则总得分
                 String sizeKey = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_terminal_size";
                 String scoreKey = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_terminal_score";
                 Map<String, Object> variablesMap = new HashMap<>();
                 variablesMap.put(sizeKey, totalSize);
-                variablesMap.put(scoreKey, totalScore);
+//                variablesMap.put(scoreKey, totalScore);
 
-                ExecuteUtils.terminalCondition(engineNode,inputParam,outMap,variablesMap);
+                ExecuteUtils.terminalCondition(engineNode, inputParam, outMap, variablesMap);
             }
         }
     }
@@ -635,17 +647,13 @@ public class RuleSetNode implements EngineRunnerNode {
                         case 2:
                             RuleVersionVo ruleVersionVo = versionService.queryById(versionId);
                             ruleInfo.setVersion(ruleVersionVo);
-                            ruleInfo.setScore(ruleVersionVo.getScore());
                             break;
                         case 3:
                             RuleScriptVersion ruleScriptVersion = ruleScriptVersionService.queryById(versionId);
                             ruleInfo.setScriptVersion(ruleScriptVersion);
                             ruleInfo.setVersion(JSON.parseObject(JSON.toJSONString(ruleScriptVersion), RuleVersionVo.class));
-                            ruleInfo.setScore(0);
                             break;
                     }
-                } else {
-                    ruleInfo.setScore(0);
                 }
             }
         }
@@ -665,7 +673,7 @@ public class RuleSetNode implements EngineRunnerNode {
     private boolean executeScriptRule(Map<String, Object> inputParam, Map<String, Object> outMap, RuleInfo rule, CopyOnWriteArrayList<Map> ruleResultList) {
         boolean hitFlag = false;
         RuleScriptVersion scriptVersion = rule.getScriptVersion();
-        if (RuleConst.ScriptType.GROOVY.equals(rule.getScriptType())&&RuleConst.ScriptType.GROOVY.equals( scriptVersion.getScriptType())) {
+        if (RuleConst.ScriptType.GROOVY.equals(rule.getScriptType()) && RuleConst.ScriptType.GROOVY.equals(scriptVersion.getScriptType())) {
             //groovy脚本执行
             //取出需要执行的版本
             if (scriptVersion == null || StringUtils.isBlank(scriptVersion.getScriptContent())) {
@@ -676,7 +684,7 @@ public class RuleSetNode implements EngineRunnerNode {
             //取出本规则集的规则列表
             Map<String, Object> ruleMap = new HashMap<>();
             ruleMap.put("ruleId", rule.getId());
-            ruleMap.put("ruleVersionId",scriptVersion.getId());
+            ruleMap.put("ruleVersionId", scriptVersion.getId());
             ruleMap.put("ruleCode", rule.getCode());
             ruleMap.put("ruleName", rule.getName());
             ruleMap.put("versionCode", scriptVersion.getVersionCode());
@@ -686,10 +694,10 @@ public class RuleSetNode implements EngineRunnerNode {
 
 
             String resultFieldEn = "hitResult";
-            String resultEn = "rule_"+rule.getDifficulty()+"_"+rule.getId()+"_"+scriptVersion.getId()+"_hitResult";
-            String scoreEn = "rule_"+rule.getDifficulty()+"_"+rule.getId()+"_"+scriptVersion.getId()+"_score";
+            String resultEn = "rule_" + rule.getDifficulty() + "_" + rule.getId() + "_" + scriptVersion.getId() + "_hitResult";
+            String scoreEn = "rule_" + rule.getDifficulty() + "_" + rule.getId() + "_" + scriptVersion.getId() + "_score";
             inputParam.put(resultEn, "未命中");
-            inputParam.put(scoreEn,0);
+            inputParam.put(scoreEn, 0);
             //根据执行的最终结果处理此规则输出内容
             List fieldList = new ArrayList<>();
             JSONObject resultJson = new JSONObject();
@@ -709,7 +717,7 @@ public class RuleSetNode implements EngineRunnerNode {
                         fieldList = fieldListJson.toJavaList(Object.class);
                         List list = new ArrayList();
                         for (Object o : fieldList) {
-                            if (o!=null&& o instanceof Map){
+                            if (o != null && o instanceof Map) {
                                 Map map = ExecuteUtils.handleGroovyResult((Map) o);
                                 list.add(map);
                             }
@@ -728,14 +736,14 @@ public class RuleSetNode implements EngineRunnerNode {
                     }
                     if ("命中".equals(result)) {
                         hitFlag = true;
-                        inputParam.put(resultEn,"命中");
-                        inputParam.put(scoreEn,ruleScore);
+                        inputParam.put(resultEn, "命中");
+                        inputParam.put(scoreEn, ruleScore);
                     }
                     //更新入参
-                    if (updateInputMap!=null&&!updateInputMap.isEmpty()){
-                        Set<Map.Entry<String, Object>> entries =  ExecuteUtils.handleGroovyResult(updateInputMap).entrySet();
+                    if (updateInputMap != null && !updateInputMap.isEmpty()) {
+                        Set<Map.Entry<String, Object>> entries = ExecuteUtils.handleGroovyResult(updateInputMap).entrySet();
                         for (Map.Entry<String, Object> entry : entries) {
-                            inputParam.put(entry.getKey(),entry.getValue());
+                            inputParam.put(entry.getKey(), entry.getValue());
                         }
                     }
                 }
