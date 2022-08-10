@@ -324,6 +324,7 @@
 							type: 'success'
 						});
 						this.getlist()
+						this.selection = []
 						this.$store.dispatch('reGetfielduser')
 					}
 				})
