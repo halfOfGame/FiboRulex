@@ -15,18 +15,7 @@ h5-datax-manager --- 指标中心前端代码
 h5-enginex-manager -- 规则引擎前端代码  
 sql --- sql初始化脚本  
 
-## 开源交流
- 加官方微信号，进开源交流群。
-                             
-                             
-   ![|](https://www.fibo.cn/standard/image/git_weixin.jpg)
-   
- 扫描二维码，添加WhatsApp。
- 
- 
-  ![|](https://www.fibo.cn/standard/image/whatsApp.jpg)
-  
-                                  
+                                 
 ## FiboRule整体功能架构介绍
 
 FiboRule整体功能架构如下图所示
@@ -162,7 +151,7 @@ https://www.bilibili.com/video/BV12N4y1L7Kt
 
 ### 10 客户列表
 
-至今，FiboRule已接入多家公司的线上产品线，接入场景如银行信用卡，保险理赔业务和政府大数据部门等，截止最新统计时间为止，FiboRule已接入的公司包括不限于：
+至今，多家公司的线上产品线已接入FiboRule，接入场景如银行信用卡，保险理赔业务和政府大数据部门等，截止最新统计时间为止，FiboRule已接入的公司包括不限于：
 
 ![客户列表](https://www.fibo.cn/standard/image/customer.jpg)
 
@@ -170,3 +159,12 @@ https://www.bilibili.com/video/BV12N4y1L7Kt
 
 欢迎大家的关注和使用，FiboRule也将拥抱变化，持续发展。
 
+### 11 开源交流
+
+加官方微信号，进开源交流群
+                                                     
+![|](https://www.fibo.cn/standard/image/git_weixin.jpg)
+   
+扫描二维码，添加WhatsApp
+ 
+![|](https://www.fibo.cn/standard/image/whatsApp.jpg)
