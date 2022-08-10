@@ -24,5 +24,7 @@ public interface StrategyOutputService extends IService<StrategyOutput> {
 
     List<JSONObject> setOutput(StrategyOutput entity, Map<String,Object> input);
 
+    List<JSONObject> setOutput(StrategyOutput entity, Map<String,Object> input, Map<String,Object> temp);
+
     boolean judgeOutCondition(String condition,Map<String,Object> input);
 }

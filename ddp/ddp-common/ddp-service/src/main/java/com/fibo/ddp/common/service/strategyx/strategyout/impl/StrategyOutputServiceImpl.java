@@ -130,6 +130,11 @@ public class StrategyOutputServiceImpl extends ServiceImpl<StrategyOutputMapper,
     //设置输出，传入map向map中放入输出并且返回输出列表
     @Override
     public List<JSONObject> setOutput(StrategyOutput entity, Map<String, Object> input) {
+        return setOutput(entity, input, null);
+    }
+
+    @Override
+    public List<JSONObject> setOutput(StrategyOutput entity, Map<String, Object> input, Map<String,Object> temp) {
         List<StrategyOutput> strategyOutputList = this.queryByTactics(entity);
         List<JSONObject> jsonList = new ArrayList<>();
         if (strategyOutputList != null && strategyOutputList.size() > 0) {
@@ -160,6 +165,9 @@ public class StrategyOutputServiceImpl extends ServiceImpl<StrategyOutputMapper,
                     Field field = fieldService.queryById(strategyOutput.getFieldId());
                     if(!field.getIsLocalVariable()){
                         input.put(fieldEn, value);
+                    }
+                    if(temp != null){
+                        temp.put(fieldEn, value);
                     }
                     jsonList.add(json);
                 }
