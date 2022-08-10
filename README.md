@@ -151,7 +151,7 @@ https://www.bilibili.com/video/BV12N4y1L7Kt
 
 ### 10 客户列表
 
-至今，多家公司的线上产品线已接入FiboRule，接入场景如银行信用卡，保险理赔业务和政府大数据部门等，截止最新统计时间为止，FiboRule已接入的公司包括不限于：
+至今，多家公司的线上产品已接入FiboRule，接入场景如银行信用卡，保险理赔业务和政府大数据部门等，截止最新统计时间为止，FiboRule已接入的公司包括不限于：
 
 ![客户列表](https://www.fibo.cn/standard/image/customer.jpg)
 
@@ -167,4 +167,4 @@ https://www.bilibili.com/video/BV12N4y1L7Kt
    
 扫描二维码，添加WhatsApp
  
-![|](https://www.fibo.cn/standard/image/whatsApp.jpg)
+![|](https://www.fibo.cn/standard/image/git_whatsApp.jpg)
