@@ -149,11 +149,11 @@ https://docs.qq.com/sheet/DSnpRV1JWdkNvaG9u
 ### 9 视频demo
 https://www.bilibili.com/video/BV12N4y1L7Kt
 
-### 10 客户列表
+### 10 使用者列表
 
 至今，多家公司的线上产品已接入FiboRule，接入场景如银行信用卡，保险理赔业务和政府大数据部门等，截止最新统计时间为止，FiboRule已接入的公司包括不限于：
 
-![客户列表](https://www.fibo.cn/standard/image/customer.jpg)
+![客户列表](https://www.fibo.cn/standard/image/git_customer.jpg)
 
 > 更多接入的公司，欢迎在 [登记地址](https://github.com/FiboAI/FiboRule/issues/19 ) 登记，登记仅仅为了产品推广。
 
