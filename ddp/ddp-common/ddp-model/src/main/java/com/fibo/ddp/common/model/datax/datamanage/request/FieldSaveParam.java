@@ -40,6 +40,7 @@ public class FieldSaveParam implements Serializable {
     private String dictVariable;
     private Integer sourceType;
     private Long mqSourceId;
+    private Boolean isLocalVariable;
 
 //
 //    public Field toField() {

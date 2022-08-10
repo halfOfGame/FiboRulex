@@ -219,4 +219,9 @@ public class Field extends BasePage implements Serializable {
      * 消息队列源id
      */
     private Long mqSourceId;
+
+    /**
+     * 是否局部变量
+     */
+    private Boolean isLocalVariable;
 }
