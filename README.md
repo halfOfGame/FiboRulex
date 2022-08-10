@@ -157,7 +157,6 @@ https://www.bilibili.com/video/BV12N4y1L7Kt
 
 > 更多接入的公司，欢迎在 [登记地址](https://github.com/FiboAI/FiboRule/issues/19 ) 登记，登记仅仅为了产品推广。
 
-欢迎大家的关注和使用，FiboRule也将拥抱变化，持续发展。
 
 ### 11 开源交流
 
@@ -168,3 +167,5 @@ https://www.bilibili.com/video/BV12N4y1L7Kt
 扫描二维码，添加WhatsApp
  
 ![|](https://www.fibo.cn/standard/image/git_whatsApp1.jpg)
+
+欢迎大家的关注和使用，FiboRule也将拥抱变化，持续发展。
