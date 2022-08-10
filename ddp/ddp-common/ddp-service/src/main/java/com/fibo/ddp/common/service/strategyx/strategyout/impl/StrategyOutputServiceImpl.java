@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fibo.ddp.common.dao.canal.TableEnum;
 import com.fibo.ddp.common.dao.strategyx.strategyout.StrategyOutputMapper;
+import com.fibo.ddp.common.model.datax.datamanage.Field;
 import com.fibo.ddp.common.model.enginex.runner.ExpressionParam;
 import com.fibo.ddp.common.model.strategyx.strategyout.OutCondition;
 import com.fibo.ddp.common.model.strategyx.strategyout.StrategyOutput;
+import com.fibo.ddp.common.service.datax.datamanage.FieldService;
 import com.fibo.ddp.common.service.datax.runner.ExecuteUtils;
 import com.fibo.ddp.common.service.redis.RedisManager;
 import com.fibo.ddp.common.service.redis.RedisUtils;
@@ -34,6 +36,9 @@ public class StrategyOutputServiceImpl extends ServiceImpl<StrategyOutputMapper,
 
     @Value("${switch.use.cache}")
     private String cacheSwitch;
+
+    @Autowired
+    private FieldService fieldService;
 
     @Transactional
     @Override
@@ -152,7 +157,10 @@ public class StrategyOutputServiceImpl extends ServiceImpl<StrategyOutputMapper,
                         value = value.toString().substring(1,value.toString().length()-1);
                     }
                     json.put(fieldEn, value);
-                    input.put(fieldEn, value);
+                    Field field = fieldService.queryById(strategyOutput.getFieldId());
+                    if(!field.getIsLocalVariable()){
+                        input.put(fieldEn, value);
+                    }
                     jsonList.add(json);
                 }
             }
