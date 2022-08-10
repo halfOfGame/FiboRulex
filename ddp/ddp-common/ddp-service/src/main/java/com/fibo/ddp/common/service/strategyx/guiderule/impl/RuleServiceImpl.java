@@ -272,10 +272,7 @@ public class RuleServiceImpl extends ServiceImpl<RuleInfoMapper, RuleInfo> imple
 
     @Override
     public List<JSONObject> setComplexRuleOutput(Long versionId, Map<String,Object> temp, Map<String, Object> input, String outType) {
-        List<JSONObject> jsonObjectList = outputService.setOutput(new StrategyOutput(versionId, StrategyType.COMPLEX_RULE,outType), temp);
-//        for (JSONObject jsonObject : jsonObjectList) {
-//            input.putAll(jsonObject);
-//        }
+        List<JSONObject> jsonObjectList = outputService.setOutput(new StrategyOutput(versionId, StrategyType.COMPLEX_RULE,outType), input, temp);
         return jsonObjectList;
     }
 

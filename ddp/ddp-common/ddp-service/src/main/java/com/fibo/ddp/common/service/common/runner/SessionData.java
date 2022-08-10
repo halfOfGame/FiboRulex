@@ -12,4 +12,5 @@ public class SessionData {
     private Long organId; // 组织id
     private Long engineId; // 引擎id
     private Integer reqType;//请求类型
+    private Integer ruleHitRspConfig; // 规则命中返回配置，默认1（0：未命中不返回，1：未命中返回）
 }
