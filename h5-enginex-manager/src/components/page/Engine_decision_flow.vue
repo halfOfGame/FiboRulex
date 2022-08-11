@@ -661,7 +661,7 @@
 						text: '|'
 					},
 					{
-						text: '测试JSON',
+						text: '查看调用参数',
 						url: 'el-icon-set-up'
 					}, 
 					{
@@ -1430,8 +1430,8 @@
 
 				} else if (item.text == "批量测试") {
 					this.tests()
-				}else if (item.text == "测试JSON") {
-					this.tests()
+				}else if (item.text == "查看调用参数") {
+					this.lookTestParams()
 				}  else if (item.text == "批量删除") {
 					this.batchDelect()
 				}
@@ -1465,7 +1465,10 @@
 				})
 			},
 			tests() { //打卡批量测试
-				// this.upShow = true
+				this.upShow = true
+				
+			},
+			lookTestParams(){
 				this.$refs.batchTest.JsonFieldOpen()
 			},
 			async getversions(param) {
