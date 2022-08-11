@@ -165,7 +165,7 @@
 
 					<div class="codemirrirPs">
 						<span>
-							{{ sqlplaceholder[SQLType] && sqlplaceholder[SQLType].placeholder }} 按Ctrl唤醒提示
+							{{ sqlplaceholder[SQLType] && sqlplaceholder[SQLType].placeholder }} 按Ctrl唤醒提示 sql语句支持mybatis语法格式
 
 
 						</span>
@@ -192,7 +192,7 @@
 				</el-input> -->
 				<div class="codemirrirPs">
 					<span>
-						请输入 JSON 按住Ctrl键再按删除可以删掉固定语法
+						请输入 JSON 
 					</span>
 					<codemirror v-model="jsonValue" MYname="json" mime="text/javascript" :autocomplete="false">
 					</codemirror>
@@ -223,7 +223,7 @@
 
 					<div class="codemirrirPs">
 						<span>
-							sql 按Ctrl唤醒提示
+							按Ctrl唤醒提示 
 
 						</span>
 						<codemirror v-model="SQLItem" :MYname="'text/x-sql2'" :mime="'text/x-sql'"></codemirror>
@@ -826,7 +826,6 @@ export default {
 		dbclick(e) {
 			let T = ""
 			T = this.formula.split("")
-
 			T.splice(this.tempIndex, this.text.length + 1, '@' + e + '@')
 			this.formula = T.join("")
 			this.isshow = false

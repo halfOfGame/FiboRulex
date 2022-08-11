@@ -515,7 +515,7 @@
 			<img>
 		</div>
 		<!-- 测试执行 -->
-		<batchTest v-if="upShow" :upShow="upShow" :engid="engid" :versionId="currversions" @upshowf="upShow=false"></batchTest>
+		<batchTest v-show="upShow" :upShow="upShow" :engid="engid" :versionId="currversions" @upshowf="upShow=false" ref="batchTest"></batchTest>
 		<!-- <batchTest :upShow="upShow" @upshowf="upShow=false" :versionId="DeployIngId"></batchTest>-->
 		<flowHint :open.sync="openHint"></flowHint>
 
@@ -650,13 +650,21 @@
 						text: '部署/取消部署',
 						url: 'el-icon-sort'
 					},
+					// {
+					// 	text: '|'
+					// },
+					// {
+					// 	text: '批量测试',
+					// 	url: 'el-icon-set-up'
+					// }, 
 					{
 						text: '|'
 					},
 					{
-						text: '批量测试',
+						text: '测试JSON',
 						url: 'el-icon-set-up'
-					}, {
+					}, 
+					{
 						text: '|'
 					},
 					{
@@ -1422,7 +1430,9 @@
 
 				} else if (item.text == "批量测试") {
 					this.tests()
-				} else if (item.text == "批量删除") {
+				}else if (item.text == "测试JSON") {
+					this.tests()
+				}  else if (item.text == "批量删除") {
 					this.batchDelect()
 				}
 			},
@@ -1455,7 +1465,8 @@
 				})
 			},
 			tests() { //打卡批量测试
-				this.upShow = true
+				// this.upShow = true
+				this.$refs.batchTest.JsonFieldOpen()
 			},
 			async getversions(param) {
 				const data = await getversion(param);
