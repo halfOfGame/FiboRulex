@@ -2,7 +2,8 @@
 SQLyog  v12.2.6 (64 bit)
 MySQL - 5.7.24-log : Database - riskmanage
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -1828,3 +1829,7 @@ ALTER TABLE `t_rule_version`
   DROP COLUMN result_field_en,
   DROP COLUMN score,
   DROP COLUMN score_field_en;
+  
+ ALTER TABLE `t_field`
+  ADD COLUMN `is_local_variable` TINYINT (1) DEFAULT '0' COMMENT '是否局部变量';
+  
