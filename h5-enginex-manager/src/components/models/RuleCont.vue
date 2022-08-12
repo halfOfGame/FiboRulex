@@ -141,7 +141,7 @@
 									<!-- 加入 变量选择 -->
 								</div>
 								<div v-else style="display: flex;" :style="{backgroundColor:item.red?'#f56c6c':''}">
-								打点1
+						
 									<el-select v-model="item.fieldEn" size="mini" filterable
 										@change="selectChange(item)">
 										<el-option v-for="cont in suseingfield" :key="cont.id" :label="cont.fieldCn"
