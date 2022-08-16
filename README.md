@@ -145,10 +145,10 @@ http://ex.fibo.cn 申请账号请加群
 【腾讯文档】FiboRule开源规划
 https://docs.qq.com/sheet/DSnpRV1JWdkNvaG9u
 
+![|](https://www.fibo.cn/standard/image/guihua.jpg)
+
 ### 9 视频demo
 https://www.bilibili.com/video/BV12N4y1L7Kt
-
-![|](https://www.fibo.cn/standard/image/guihua.jpg)
 
 ### 10 使用者列表
 
