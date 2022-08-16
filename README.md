@@ -148,6 +148,8 @@ https://docs.qq.com/sheet/DSnpRV1JWdkNvaG9u
 ### 9 视频demo
 https://www.bilibili.com/video/BV12N4y1L7Kt
 
+![|](https://www.fibo.cn/standard/image/guihua.jpg)
+
 ### 10 使用者列表
 
 至今，多家公司的线上产品已接入FiboRule，接入场景如银行信用卡，保险理赔业务和政府大数据部门等。
