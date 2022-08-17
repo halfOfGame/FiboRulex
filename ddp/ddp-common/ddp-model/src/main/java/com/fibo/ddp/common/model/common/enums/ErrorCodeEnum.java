@@ -67,9 +67,17 @@ public enum ErrorCodeEnum {
     GET_REDIS_SOURCE_ERROR(ErrorCodeEnum.ERROR_CODE + 401, "获取Redis数据源失败"),
     GET_DATABASE_FIELD_ERROR(ErrorCodeEnum.ERROR_CODE + 402, "获取数据库指标失败"),
     RUNNER_CUSTOM_ERROR(ErrorCodeEnum.ERROR_CODE + 403, "执行自定义失败"),
-    GET_INTERFACE_FIELD_ERROR(ErrorCodeEnum.ERROR_CODE + 410, "获取接口指标错误")
-    ;
+    GET_INTERFACE_FIELD_ERROR(ErrorCodeEnum.ERROR_CODE + 410, "获取接口指标错误"),
 
+
+    // job
+    GET_JOB_ERROR(ErrorCodeEnum.ERROR_CODE + 801, "获取定时任务CronTrigger出现异常"),
+    CREATE_JOB_ERROR(ErrorCodeEnum.ERROR_CODE + 802, "创建定时任务失败"),
+    MODIFY_JOB_ERROR(ErrorCodeEnum.ERROR_CODE + 803, "更新定时任务失败"),
+    RUN_JOB_ERROR(ErrorCodeEnum.ERROR_CODE + 804, "立即执行定时任务失败"),
+    PAUSE_JOB_ERROR(ErrorCodeEnum.ERROR_CODE + 805, "暂停定时任务失败"),
+    RESUME_JOB_ERROR(ErrorCodeEnum.ERROR_CODE + 806, "恢复定时任务失败"),
+    DELETE_JOB_ERROR(ErrorCodeEnum.ERROR_CODE + 807, "删除定时任务失败");
     /**
      * 默认ERROR_CODE.<br>
      * 按公司要求8位长度，前两位产品。

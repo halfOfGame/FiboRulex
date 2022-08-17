@@ -6,6 +6,7 @@ import com.fibo.ddp.common.dao.analyse.AnalyseDecisionResultMapper;
 import com.fibo.ddp.common.model.analyse.AnalyseDecisionResult;
 import com.fibo.ddp.common.model.analyse.vo.AnalyseRequestParam;
 import com.fibo.ddp.common.service.analyse.AnalyseDecisionResultService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,13 +35,9 @@ public class AnalyseDecisionResultServiceImpl extends ServiceImpl<AnalyseDecisio
         List<AnalyseDecisionResult> analyseDecisionResults = mapper.selectList(wrapper);
         Map<String,List<AnalyseDecisionResult>> map = new HashMap<>();
         for (AnalyseDecisionResult item : analyseDecisionResults) {
-            List<AnalyseDecisionResult> list = null;
+            List<AnalyseDecisionResult> list;
             String key = item.getResult();
-            if (map.containsKey(key)){
-                list = map.get(key);
-            }else {
-                list= new ArrayList<>();
-            }
+            list = map.getOrDefault(key,new ArrayList<>());
             list.add(item);
             map.put(key,list);
         }

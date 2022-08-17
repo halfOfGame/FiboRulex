@@ -2,6 +2,7 @@ package com.fibo.ddp.common.service.enginex.risk.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fibo.ddp.common.dao.authx.system.SysMenuMapper;
 import com.fibo.ddp.common.dao.authx.system.SysRoleMapper;
 import com.fibo.ddp.common.dao.authx.system.SysUserMapper;
@@ -66,7 +67,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
-public class EngineServiceImpl implements EngineService {
+public class EngineServiceImpl extends ServiceImpl<EngineMapper,Engine> implements EngineService {
     private static final Logger logger = LoggerFactory.getLogger(EngineServiceImpl.class);
 
     @Autowired
@@ -200,6 +201,11 @@ public class EngineServiceImpl implements EngineService {
     public List<Engine> getEngineList(long organId, String searchString,
                                       List<Integer> list) {
         return engineMapper.getEngineList(organId, searchString, list);
+    }
+
+    @Override
+    public List<Engine> getEngineListNotVersion(long organId, String searchString, List<Integer> list) {
+        return engineMapper.getEngineListNotVersion(organId,searchString,list);
     }
 
     @Override

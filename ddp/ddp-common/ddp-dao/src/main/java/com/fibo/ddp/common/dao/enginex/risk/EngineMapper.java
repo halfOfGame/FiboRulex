@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface EngineMapper extends BaseMapper<Engine> {
-	
+
 	List<Engine>  getEngineByList(Engine engineVo);
 
 	Engine getEngineById(Engine engineVo);
 
 	int updateEngine(Engine engineVo);
-	
+
 	/**
 	 * 创建引擎并返回ID
 	 * @param engine
@@ -57,4 +57,11 @@ public interface EngineMapper extends BaseMapper<Engine> {
 	 * @return
 	 */
 	List<Map<String,Object>> getIndexEngineUseRatio(Map<String, Object> paramMap);
+
+	/**
+	 * 查询引擎列表
+	 */
+	List<Engine> getEngineListNotVersion(@Param("organId") long organId,
+										 @Param("searchString") String searchString,
+										 @Param("list") List<Integer> list);
 }

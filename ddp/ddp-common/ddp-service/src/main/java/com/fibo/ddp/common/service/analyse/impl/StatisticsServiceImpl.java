@@ -13,12 +13,14 @@ import com.fibo.ddp.common.model.enginex.risk.Engine;
 import com.fibo.ddp.common.model.enginex.risk.EngineVersion;
 import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorEngine;
 import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorNode;
+import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorStrategy;
 import com.fibo.ddp.common.service.analyse.AnalyseEngineCallService;
 import com.fibo.ddp.common.service.analyse.AnalyseEngineNodeService;
 import com.fibo.ddp.common.service.analyse.AnalyseEngineSummaryService;
 import com.fibo.ddp.common.service.analyse.StatisticsService;
 import com.fibo.ddp.common.utils.constant.AnalyseConst;
 import com.spring4all.spring.boot.starter.hbase.api.HbaseTemplate;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -31,12 +33,15 @@ import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,15 +57,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private EngineMapper engineMapper;
     @Autowired
-    private AnalyseEngineCallMapper analyseEngineCallMapper;
-    @Autowired
-    private AnalyseEngineCallService analyseEngineCallService;
-    @Autowired
     private AnalyseEngineSummaryService analyseEngineSummaryService;
-    @Autowired
-    private AnalyseEngineNodeService analyseEngineNodeService;
-    @Autowired
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Autowired
     private TMonitorEngineMapper monitorEngineMapper;
     @Autowired
@@ -98,28 +95,38 @@ public class StatisticsServiceImpl implements StatisticsService {
             if(engine1==null){
                 continue;
             }
-            if(i%20==0){
-                try {
-                    TimeUnit.SECONDS.sleep(Long.valueOf("5"));//等待时
-                } catch (InterruptedException e) {
-                    logger.info("==============================睡眠100s");
-                }
-            }
+//            if(i%20==0){
+//                try {
+//                    TimeUnit.SECONDS.sleep(Long.valueOf("5"));//等待时
+//                } catch (InterruptedException e) {
+//                    logger.info("==============================睡眠100s");
+//                }
+//            }
             //引擎调用
             Long countNum = rowCount(BASE_INFO,ENGINE_VERSION_ID,MONITOR_DECISION_FLOW,versionId+"","");
-            buildModels(engine1,versionId,engineCalls,countNum, AnalyseConst.ENGINE_CALL);
+            if(countNum>0){
+                buildModels(engine1,versionId,engineCalls,countNum, AnalyseConst.ENGINE_CALL);
+            }
             //节点命中
             Long countNumNode = rowCount(BASE_INFO,ENGINE_VERSION_ID,MONITOR_NODE,versionId+"","");
-            buildModels(engine1,versionId,engineCalls,countNumNode,AnalyseConst.NODE_HIT);
+            if(countNum>0){
+                buildModels(engine1,versionId,engineCalls,countNumNode,AnalyseConst.NODE_HIT);
+            }
             //评分卡命中
             Long scoredNodeNum = rowCount(BASE_INFO,ENGINE_VERSION_ID,MONITOR_NODE,versionId+"",AnalyseConst.SCORECARD);
-            buildModels(engine1,versionId,engineCalls,scoredNodeNum,AnalyseConst.SCORECARD);
+            if(scoredNodeNum>0){
+                buildModels(engine1,versionId,engineCalls,scoredNodeNum,AnalyseConst.SCORECARD);
+            }
             //决策表命中
             Long decisionTableNum = rowCount(BASE_INFO,ENGINE_VERSION_ID,MONITOR_NODE,versionId+"",AnalyseConst.DECISION_TABLES);
-            buildModels(engine1,versionId,engineCalls,decisionTableNum,AnalyseConst.DECISION_TABLES);
+            if(decisionTableNum>0){
+                buildModels(engine1,versionId,engineCalls,decisionTableNum,AnalyseConst.DECISION_TABLES);
+            }
             //规则集合下的规则？命中
             Long ruleNum = rowCount(BASE_INFO,ENGINE_VERSION_ID,MONITOR_NODE,versionId+"",AnalyseConst.RULE_HIT);
-            buildModels(engine1,versionId,engineCalls,ruleNum,AnalyseConst.RULE_HIT);
+            if(ruleNum>0){
+                buildModels(engine1,versionId,engineCalls,ruleNum,AnalyseConst.RULE_HIT);
+            }
             System.out.println("===========================decisionCallCount:版本号 "+versionId+" 计数 "+countNum);
         }
         insertIntoDB(engineCalls);
@@ -241,42 +248,62 @@ public class StatisticsServiceImpl implements StatisticsService {
             if(engine1==null){
                 continue;
             }
-            if(i%20==0){
-                try {
-                    TimeUnit.SECONDS.sleep(Long.valueOf("5"));//等待时
-                } catch (InterruptedException e) {
-                    logger.info("==============================睡眠100s");
-                }
-            }
+//            if(i%20==0){
+//                try {
+//                    TimeUnit.SECONDS.sleep(Long.valueOf("5"));//等待时
+//                } catch (InterruptedException e) {
+//                    logger.info("==============================睡眠100s");
+//                }
+//            }
             //引擎调用（查询Mysql 表 t_monitor_engine 统计该版本id 对应的监控记录条数）
+            String nowDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             QueryWrapper<TMonitorEngine> monitorEngineQueryWrapper = new QueryWrapper<>();
             monitorEngineQueryWrapper.eq("engine_version_id",versionId);
+            monitorEngineQueryWrapper.eq("date(create_time)", nowDate);
             Integer countNum = monitorEngineMapper.selectCount(monitorEngineQueryWrapper);
-            buildModels(engine1,versionId,engineCalls,Long.valueOf(countNum),AnalyseConst.ENGINE_CALL);
+            if(countNum>0){
+                buildModels(engine1,versionId,engineCalls,Long.valueOf(countNum),AnalyseConst.ENGINE_CALL);
+            }else{
+                //引擎未被调用，直接下一个引擎
+                continue;
+            }
             //节点命中
             QueryWrapper<TMonitorNode> monitorNodeQueryWrapper = new QueryWrapper<>();
             monitorNodeQueryWrapper.eq("engine_version_id",versionId);
+            monitorNodeQueryWrapper.eq("date(create_time)", nowDate);
             Integer countNumNode = monitorNodeMapper.selectCount(monitorNodeQueryWrapper);
-            buildModels(engine1,versionId,engineCalls,Long.valueOf(countNumNode),AnalyseConst.NODE_HIT);
+            if(countNumNode>0){
+                buildModels(engine1,versionId,engineCalls,Long.valueOf(countNumNode),AnalyseConst.NODE_HIT);
+            }
             //评分卡命中
             QueryWrapper<TMonitorNode> monitorNodeQueryWrapper1 = new QueryWrapper<>();
             monitorNodeQueryWrapper1.eq("engine_version_id",versionId);
             monitorNodeQueryWrapper1.eq("node_type",4);
+            monitorNodeQueryWrapper1.eq("date(create_time)", nowDate);
             Integer scoredNodeNum = monitorNodeMapper.selectCount(monitorNodeQueryWrapper1);
-            buildModels(engine1,versionId,engineCalls,Long.valueOf(scoredNodeNum),AnalyseConst.SCORECARD);
+            if(scoredNodeNum>0){
+                buildModels(engine1,versionId,engineCalls,Long.valueOf(scoredNodeNum),AnalyseConst.SCORECARD);
+            }
             //决策表命中
             QueryWrapper<TMonitorNode> monitorNodeQueryWrapper2 = new QueryWrapper<>();
             monitorNodeQueryWrapper2.eq("engine_version_id",versionId);
             monitorNodeQueryWrapper2.eq("node_type",16);
+            monitorNodeQueryWrapper2.eq("date(create_time)", nowDate);
             Integer decisionTableNum = monitorNodeMapper.selectCount(monitorNodeQueryWrapper2);
-            buildModels(engine1,versionId,engineCalls,Long.valueOf(decisionTableNum),AnalyseConst.DECISION_TABLES);
-            //规则集合下的规则？命中
-            QueryWrapper<TMonitorNode> monitorNodeQueryWrapper3 = new QueryWrapper<>();
+            if(decisionTableNum>0){
+                buildModels(engine1,versionId,engineCalls,Long.valueOf(decisionTableNum),AnalyseConst.DECISION_TABLES);
+            }
+            //规则命中
+            QueryWrapper<TMonitorStrategy> monitorNodeQueryWrapper3 = new QueryWrapper<>();
             monitorNodeQueryWrapper3.eq("engine_version_id",versionId);
             monitorNodeQueryWrapper3.eq("node_type",2);
-            Integer ruleNum = monitorNodeMapper.selectCount(monitorNodeQueryWrapper3);
-            buildModels(engine1,versionId,engineCalls,Long.valueOf(ruleNum),AnalyseConst.RULE_HIT);
-            System.out.println("===========================decisionCallCount:版本号 "+versionId+" 计数 "+countNum);
+            monitorNodeQueryWrapper3.eq("result","1");
+            monitorNodeQueryWrapper3.eq("date(create_time)", nowDate);
+            Integer ruleNum = monitorStrategyMapper.selectCount(monitorNodeQueryWrapper3);
+            if(ruleNum>0){
+                buildModels(engine1,versionId,engineCalls,Long.valueOf(ruleNum),AnalyseConst.RULE_HIT);
+            }
+            logger.info("===========================decisionCallCount:版本号 "+versionId+" 计数 "+countNum);
         }
         insertIntoDB(engineCalls);
         logger.info("=======================================>需要插入：{}行",engineCalls.size());

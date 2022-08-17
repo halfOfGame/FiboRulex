@@ -153,7 +153,7 @@ public class DecisionTablesNode implements EngineRunnerNode {
         //监控中心==》策略层面快照信息记录
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("snapshot", strategySnapshot);
-        outMap.put("decisionTableStrategy", jsonObject);
+        outMap.put("decisionTableStrategy-"+engineNode.getNodeId(), jsonObject);
     }
 
     //执行整个决策表返回决策结果数据

@@ -10,6 +10,7 @@ import com.fibo.ddp.common.model.strategyx.guiderule.RuleInfo;
 import com.fibo.ddp.common.service.monitor.runner.mysql.node.MonitorMysqlService;
 import com.fibo.ddp.common.service.strategyx.guiderule.RuleService;
 import com.fibo.ddp.common.utils.constant.Constants;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class MonitorMysqlRuleSetNode implements MonitorMysqlService {
@@ -31,15 +33,16 @@ public class MonitorMysqlRuleSetNode implements MonitorMysqlService {
     @Override
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
         JSONObject nodeJson = JSONObject.parseObject(monitorNode.getSnapshot());
+        String strategySnopshotKeyId = "strategySnopshot-"+monitorNode.getNodeId();
         //根据快照中数据的个数进行确定存取条数。
         //规则
-        logger.info("MonitorMysqlRuleSetNode============================「监控中心-策略监控信息」参数:{},{}",monitorNode,JSONObject.toJSONString(outMap.get("strategySnopshot")));
-        if(!outMap.containsKey("strategySnopshot")){
+        logger.info("MonitorMysqlRuleSetNode============================「监控中心-策略监控信息」参数:{},{}",monitorNode,JSONObject.toJSONString(outMap.get(strategySnopshotKeyId)));
+        if(!outMap.containsKey(strategySnopshotKeyId)){
             logger.info("该规则没有对应的快照信息");
             return;
         }
-        JSONArray jsonArray = JSONArray.parseArray(JSONObject.parseObject(outMap.get("strategySnopshot")+"").get("snopshot")+"");
-        outMap.remove("strategySnopshot");
+        JSONArray jsonArray = JSONArray.parseArray(JSONObject.parseObject(outMap.get(strategySnopshotKeyId)+"").get("snopshot")+"");
+        outMap.remove(strategySnopshotKeyId);
         if(jsonArray == null){
             return;
         }
@@ -51,13 +54,26 @@ public class MonitorMysqlRuleSetNode implements MonitorMysqlService {
             if(jsonObject==null){
                 return;
             }
+            //策略版本
+//            monitorStrategy.setStrategyVersionId(jsonObject.getJSONArray("ruleBlockVoList").getJSONObject(0).getLong("versionId"));
+            monitorStrategy.setStrategyVersionCode(jsonObject.getString("versionCode"));
             //策略快照
             monitorStrategy.setSnapshot(jsonObject.toString());
             //全量入参
             monitorStrategy.setInput(monitorNode.getInput());
             //详细得分情况
             JSONObject scoreDetail = new JSONObject();
-            scoreDetail.put("ruleResultList", JSON.parseObject(monitorNode.getOutput()).get("ruleResultList"));
+            JSONArray ruleResultList = JSON.parseObject(monitorNode.getOutput()).getJSONArray("ruleResultList");
+            scoreDetail.put("ruleResultList", ruleResultList);
+            Long ruleId = jsonObject.getLong("ruleId");
+            Optional<Object> exits = ruleResultList.stream().filter(item -> ((JSONObject) item).getLong("ruleId").equals(ruleId)).findFirst();
+            String exitsStr = exits.get().toString();
+            JSONObject exitsJsonObject = JSON.parseObject(exitsStr);
+            if(StringUtils.equals(exitsJsonObject.getString("ruleResult"),"命中")){
+                monitorStrategy.setResult("1");
+            }else{
+                monitorStrategy.setResult("0");
+            }
             //策略ID 即 规则版本id
             String ruleVersionId = jsonObject.get("id")+"";
             //输出匹配过滤
@@ -79,7 +95,7 @@ public class MonitorMysqlRuleSetNode implements MonitorMysqlService {
             //引擎版本id
             monitorStrategy.setEngineVersionId(monitorNode.getEngineVersionId());
             monitorStrategy.setMonitorParentId(monitorNode.getId()+"");
-            monitorStrategy.setEngineId(monitorNode.getOrganId());
+            monitorStrategy.setEngineId(monitorNode.getEngineId());
             monitorStrategy.setOrganId(monitorNode.getOrganId());
             logger.info("MonitorMysqlRuleSetNode============================「监控中心-策略监控信息」baseInfo:{}",monitorStrategy);
             monitorStrategyMapper.insert(monitorStrategy);

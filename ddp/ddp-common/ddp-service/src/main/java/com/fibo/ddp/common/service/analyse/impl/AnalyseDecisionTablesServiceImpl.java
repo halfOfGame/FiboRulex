@@ -36,7 +36,7 @@ public class AnalyseDecisionTablesServiceImpl extends ServiceImpl<AnalyseDecisio
 
         for (AnalyseDecisionTables item : analyseDecisionTables) {
             List<AnalyseDecisionTables> list = null;
-            String versionKey =  String.valueOf(item.getDecisonTablesId())+"|"+String.valueOf(item.getDecisonTablesVersionId());
+            String versionKey =  String.valueOf(item.getDecisonTablesId())+"|"+String.valueOf(item.getDecisonTablesVersionCode());
             String resultKey = item.getResult();
             Map<String,List<AnalyseDecisionTables>> temp =null;
             if (map.containsKey(versionKey)){

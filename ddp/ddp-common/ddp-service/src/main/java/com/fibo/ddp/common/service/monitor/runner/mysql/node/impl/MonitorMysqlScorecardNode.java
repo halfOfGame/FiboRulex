@@ -7,6 +7,7 @@ import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorNode;
 import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorStrategy;
 import com.fibo.ddp.common.model.strategyx.scorecard.vo.ScorecardVersionVo;
 import com.fibo.ddp.common.service.monitor.runner.mysql.node.MonitorMysqlService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,12 @@ public class MonitorMysqlScorecardNode implements MonitorMysqlService {
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
         logger.info("MonitorMysqlScorecardNode============================「监控中心-策略监控信息」参数:{}",monitorNode);
         //策略快照 根绝评分卡id，去查对应的字段。
-        if(!outMap.containsKey("scorecardStrategy")){
+        String strategySnopshotKeyId = "scorecardStrategy-"+monitorNode.getNodeId();
+        if(!outMap.containsKey(strategySnopshotKeyId)){
             return;
         }
-        ScorecardVersionVo scorecardVo = JSONObject.parseObject(JSONObject.toJSONString(JSONObject.parseObject(outMap.get("scorecardStrategy")+"")),ScorecardVersionVo.class);
-        outMap.remove("scorecardStrategy");
+        ScorecardVersionVo scorecardVo = JSONObject.parseObject(JSONObject.toJSONString(JSONObject.parseObject(outMap.get(strategySnopshotKeyId)+"")),ScorecardVersionVo.class);
+        outMap.remove(strategySnopshotKeyId);
         if(scorecardVo==null){
             return;
         }
@@ -39,16 +41,27 @@ public class MonitorMysqlScorecardNode implements MonitorMysqlService {
         //全量入参
         monitorStrategy.setInput(monitorNode.getInput());
         //详细得分情况
-        JSONObject scoreDetail = new JSONObject();
-        scoreDetail.put("scoreDetail", JSON.parseObject(monitorNode.getOutput()).get("scoreDetail"));
-        monitorStrategy.setOutput(scoreDetail.toString());
+//        JSONObject scoreDetail = new JSONObject();
+//        scoreDetail.put("scoreDetail", JSON.parseObject(monitorNode.getOutput()).get("scoreDetail"));
+        monitorStrategy.setOutput(monitorNode.getOutput());
         logger.info("MonitorMysqlScorecardNode============================「监控中心-策略监控信息」monitorInfo:{}",monitorNode);
         //策略ID 即 评分卡版本Id
         monitorStrategy.setStrategyId(scorecardVo.getId());
-        //策略名称
-        monitorStrategy.setStrategyName(scorecardVo.getDescription()+"");
+
         //策略类型
         monitorStrategy.setStrategyType(monitorNode.getNodeType());
+        //分值
+        JSONObject outputMap = new JSONObject();
+        if(StringUtils.isNotBlank(monitorNode.getOutput())){
+           outputMap = JSON.parseObject(monitorNode.getOutput());
+        }
+        if(outputMap.containsKey("score")){
+            monitorStrategy.setResult(outputMap.getString("score"));
+        }
+        if(outputMap.containsKey("cardName")){
+            //策略名称
+            monitorStrategy.setStrategyName(outputMap.getString("cardName"));
+        }
         //业务id
         monitorStrategy.setBusinessId(monitorNode.getBusinessId());
         //节点id
@@ -60,6 +73,8 @@ public class MonitorMysqlScorecardNode implements MonitorMysqlService {
         logger.info("MonitorMysqlScorecardNode============================「监控中心-策略监控信息」baseInfo:{}",monitorNode);
         //快照
         monitorStrategy.setSnapshot(JSON.toJSONString(scorecardVo));
+        //版本
+        monitorStrategy.setStrategyVersionCode(scorecardVo.getVersionCode());
         //组织id
         monitorStrategy.setOrganId(monitorNode.getOrganId());
         //时间

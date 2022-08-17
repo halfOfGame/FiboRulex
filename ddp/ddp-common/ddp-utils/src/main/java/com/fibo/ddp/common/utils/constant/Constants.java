@@ -38,4 +38,26 @@ public class Constants {
         int cacheSecond = 120;
         String cachePrefix = "runner:cache:";
     }
+
+    //定时任务状态
+    public enum jobScheduleStatus{
+        /**
+         * 正常
+         */
+        NORMAL(0),
+        /**
+         * 暂停
+         */
+        PAUSE(1);
+
+        private int value;
+
+        jobScheduleStatus(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 }

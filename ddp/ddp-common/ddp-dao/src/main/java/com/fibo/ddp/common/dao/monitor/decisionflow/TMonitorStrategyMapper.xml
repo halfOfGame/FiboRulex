@@ -9,12 +9,12 @@
 	organ_id,
 	strategy_id,
 	strategy_name,
-	result,
+	result,strategy_version_code,
 	count(1) as total
 	from
 	t_monitor_strategy t
-	where datediff(now(),t.create_time)=0
-	and t.strategy_type = '2'
+	where datediff(now(),t.create_time)=1
+	and t.strategy_type = '2' and result = '1'
     GROUP BY
 	DATE_FORMAT(t.create_time,"%Y-%m-%d"),
  	engine_id,
@@ -32,11 +32,11 @@
 	organ_id,
 	strategy_id,
 	strategy_name,
-	result,
+	result,strategy_version_code,
 	count(1) as total
 	from
 	t_monitor_strategy t
-	where datediff(now(),t.create_time)=0
+	where datediff(now(),t.create_time)=1
 	and t.strategy_type = '4'
     GROUP BY
 	DATE_FORMAT(t.create_time,"%Y-%m-%d"),
@@ -55,11 +55,11 @@
 	organ_id,
 	strategy_id,
 	strategy_name,
-	result,
+	result,strategy_version_code,
 	count(1) as total
 	from
 	t_monitor_strategy t
-	where datediff(now(),t.create_time)=0
+	where datediff(now(),t.create_time)=1
 	and t.strategy_type = '16'
     GROUP BY
 	DATE_FORMAT(t.create_time,"%Y-%m-%d"),
