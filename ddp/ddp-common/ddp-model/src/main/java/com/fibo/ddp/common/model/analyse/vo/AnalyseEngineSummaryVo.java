@@ -20,14 +20,18 @@ public class AnalyseEngineSummaryVo {
     public AnalyseEngineSummaryVo( long todayData, long lastData,long yesterdayData) {
         this.yesterdayData = yesterdayData;
         this.todayData = todayData;
-        if (lastData!=0L){
+//        if (lastData!=0L){
             DecimalFormat df = new DecimalFormat("0.00");
-            this.growthRate = Float.valueOf(df.format((float)todayData/lastData));
+            if(lastData == 0){
+                this.growthRate = 1f;
+            }else{
+                this.growthRate = Float.valueOf(df.format((float)todayData/lastData));
+            }
             this.predictData = new Float(yesterdayData*growthRate).longValue();
-        }else {
-            this.growthRate = Float.valueOf(0);
-            this.predictData = 0L;
-        }
-
+//        }
+//        else {
+//            this.growthRate = Float.valueOf(0);
+//            this.predictData = 0L;
+//        }
     }
 }

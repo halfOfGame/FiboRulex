@@ -2,6 +2,7 @@ package com.fibo.ddp.enginex.riskengine.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fibo.ddp.common.model.authx.system.SysUser;
 import com.fibo.ddp.common.model.common.ResponseEntityBuilder;
 import com.fibo.ddp.common.model.common.ResponseEntityDto;
@@ -21,6 +22,7 @@ import com.fibo.ddp.common.utils.util.CollectionUtil;
 import com.fibo.ddp.common.utils.util.DataHelp;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,17 +71,17 @@ public class EngineController {
         Long organId = sysUser.getOrganId();
         PageHelper.startPage(pageNo, pageSize);
         //查询对应的引擎
-        List<Engine> enginelist = engineService.getEngineList(organId, searchString, list);
+        List<Engine> enginelist = engineService.getEngineListNotVersion(organId, searchString, list);
         // 引擎列表添加运行状态字段
-        for (Engine engine : enginelist) {
-            for (EngineVersion engineVersion : engine.getEngineVersionList()) {
-                if (engineVersion.getBootState() == 1) {
-                    engine.setRunState(engineVersion.getBootState());
-                    break;
-                }
-            }
-            engine.setEngineVersionList(null);
-        }
+//        for (Engine engine : enginelist) {
+//            for (EngineVersion engineVersion : engine.getEngineVersionList()) {
+//                if (engineVersion.getBootState() == 1) {
+//                    engine.setRunState(engineVersion.getBootState());
+//                    break;
+//                }
+//            }
+//            engine.setEngineVersionList(null);
+//        }
         PageInfo<Engine> pageInfo = new PageInfo<>(enginelist);
         Map<String, Object> hashMap = new HashMap<>();
         hashMap.put("pager", pageInfo);

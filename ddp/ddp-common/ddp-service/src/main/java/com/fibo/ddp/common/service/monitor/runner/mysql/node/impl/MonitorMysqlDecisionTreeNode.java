@@ -22,13 +22,14 @@ public class MonitorMysqlDecisionTreeNode implements MonitorMysqlService {
     @Override
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
         //根据快照中数据的个数进行确定存取条数。目前决策表只能选择一个，此处数组是预留防止以后多个的情况
+        String decisionTreeStrategyIdKey = "decisionTreeStrategy-"+monitorNode.getNodeId();
         //决策表
-        logger.info("MonitorMysqlDecisionTreeNode============================「监控中心-策略监控信息」参数:{},{}",monitorNode, JSONObject.toJSONString(outMap.get("strategySnopshot")));
-        if(!outMap.containsKey("decisionTreeStrategy")){
+        logger.info("MonitorMysqlDecisionTreeNode============================「监控中心-策略监控信息」参数:{},{}",monitorNode, JSONObject.toJSONString(outMap.get(decisionTreeStrategyIdKey)));
+        if(!outMap.containsKey(decisionTreeStrategyIdKey)){
             return;
         }
-        JSONArray jsonArray = JSONArray.parseArray(JSONObject.parseObject(outMap.get("decisionTreeStrategy")+"").get("snapshot")+"");
-        outMap.remove("decisionTreeStrategy");
+        JSONArray jsonArray = JSONArray.parseArray(JSONObject.parseObject(outMap.get(decisionTreeStrategyIdKey)+"").get("snapshot")+"");
+        outMap.remove(decisionTreeStrategyIdKey);
         for (Object object:jsonArray) {
             if(object==null){
                 continue;
@@ -50,6 +51,8 @@ public class MonitorMysqlDecisionTreeNode implements MonitorMysqlService {
             monitorStrategy1.setStrategyName(JSONObject.parseObject(monitorNode.getSnapshot()).getString("name"));
             //策略类型
             monitorStrategy1.setStrategyType(monitorNode.getNodeType());
+            //策略版本
+            monitorStrategy1.setStrategyVersionCode(jsonObject.getString("versionCode"));
             //业务id
             monitorStrategy1.setBusinessId(monitorNode.getBusinessId());
             //节点id

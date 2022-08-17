@@ -132,7 +132,7 @@ public class RuleSetNode implements EngineRunnerNode {
             JSONArray jsonArray = nodeJson.getJSONObject("mutexGroup").getJSONArray("rules");
             List<RuleInfo> ruleInfoList = getRuleFromJsonArray(jsonArray);
             //监控中心--循环获取策略层面的快照信息
-            recordStrategySnopshot(ruleInfoList, outMap);
+            recordStrategySnopshot(ruleInfoList, outMap,engineNode.getNodeId());
             ruleHitList = serialRule(inputParam, outMap, ruleInfoList, ruleResultList);
         }
         // 执行组(并行)
@@ -140,7 +140,7 @@ public class RuleSetNode implements EngineRunnerNode {
             JSONArray jsonArray = nodeJson.getJSONObject("executeGroup").getJSONArray("rules");
             List<RuleInfo> ruleInfoList = getRuleFromJsonArray(jsonArray);
             //监控中心--循环获取策略层面的快照信息
-            recordStrategySnopshot(ruleInfoList, outMap);
+            recordStrategySnopshot(ruleInfoList, outMap,engineNode.getNodeId());
             ruleHitList = parallelRule(inputParam, outMap, ruleInfoList, ruleResultList);
         }
 
@@ -195,7 +195,7 @@ public class RuleSetNode implements EngineRunnerNode {
      * @param ruleInfoList
      * @param outMap
      */
-    private void recordStrategySnopshot(List<RuleInfo> ruleInfoList, Map<String, Object> outMap) {
+    private void recordStrategySnopshot(List<RuleInfo> ruleInfoList, Map<String, Object> outMap,Long nodeId) {
         JSONArray jsonObject = new JSONArray();
         ruleInfoList.stream().forEach(ruleInfo -> {
             logger.info("===========================监控添加策略信息快照情况==============版本id:{}=====:{}", ruleInfo.getVersion().getId(), ruleInfo.getVersion().getSnapshot());
@@ -207,7 +207,7 @@ public class RuleSetNode implements EngineRunnerNode {
         JSONObject jsonObject1 = new JSONObject();
         jsonObject1.put("snopshot", jsonObject);
         logger.info("===========================监控添加策略信息快照情况:{}", jsonObject1);
-        outMap.put("strategySnopshot", jsonObject1);
+        outMap.put("strategySnopshot-"+nodeId, jsonObject1);
     }
 
     /**

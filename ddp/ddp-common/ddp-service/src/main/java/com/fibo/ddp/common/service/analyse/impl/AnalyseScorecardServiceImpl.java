@@ -9,10 +9,7 @@ import com.fibo.ddp.common.service.analyse.AnalyseScorecardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * (AnalyseScorecard)表服务实现类
@@ -37,19 +34,11 @@ public class AnalyseScorecardServiceImpl extends ServiceImpl<AnalyseScorecardMap
 
         for (AnalyseScorecard item : AnalyseScorecard) {
             List<AnalyseScorecard> list = null;
-            String versionKey = String.valueOf(item.getScorecardId())+"|"+String.valueOf(item.getScorecardVersionId());
+            String versionKey = String.valueOf(item.getScorecardId())+"|"+String.valueOf(item.getScorecardVersionCode());
             String resultKey = item.getResult();
             Map<String,List<AnalyseScorecard>> temp =null;
-            if (map.containsKey(versionKey)){
-                temp = map.get(versionKey);
-            }else {
-                temp = new HashMap<>();
-            }
-            if (temp.containsKey(resultKey)){
-                list = temp.get(resultKey);
-            }else {
-                list = new ArrayList<>();
-            }
+            temp = map.getOrDefault(versionKey,new HashMap<>());
+            list = temp.getOrDefault(resultKey,new ArrayList<>());
             list.add(item);
             temp.put(resultKey,list);
             map.put(versionKey,temp);

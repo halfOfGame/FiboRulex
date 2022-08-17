@@ -92,7 +92,7 @@ public class ScorecardNode implements EngineRunnerNode {
             if (versionVo != null) {
                 //监控中心 == 策略层面快照信息
                 if (versionVo != null && versionVo.getSnapshot() != null) {
-                    outMap.put("scorecardStrategy", versionVo.getSnapshot());
+                    outMap.put("scorecardStrategy-"+engineNode.getNodeId(), versionVo.getSnapshot());
                 }
                 scorecardDimensions = versionVo.getScorecardDimension();
                 for (ScorecardDimensionVo scorecardDimensionVo : scorecardDimensions) {

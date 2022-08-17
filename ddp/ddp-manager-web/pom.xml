@@ -108,6 +108,12 @@
             <artifactId>ddp-analysis</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!--定时任务-->
+        <dependency>
+            <groupId>com.fibo.ddp</groupId>
+            <artifactId>ddp-job</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

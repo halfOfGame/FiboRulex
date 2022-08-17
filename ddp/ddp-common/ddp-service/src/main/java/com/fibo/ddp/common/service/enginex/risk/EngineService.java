@@ -1,5 +1,6 @@
 package com.fibo.ddp.common.service.enginex.risk;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.fibo.ddp.common.model.datax.datamanage.Field;
 import com.fibo.ddp.common.model.enginex.risk.Engine;
 import com.fibo.ddp.common.model.enginex.risk.EngineVersion;
@@ -12,12 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
-public interface EngineService {
+public interface EngineService extends IService<Engine> {
 
 	List<Engine> getEngineByList(Engine engineVo);
 
 	Engine getEngineById(Engine engineVo) ;
-	
+
 	int updateEngine(Engine engineVo);
 
 	boolean saveEngine(Engine engine);
@@ -28,6 +29,12 @@ public interface EngineService {
 	public List<Engine> getEngineList(@Param("organId") long organId,
                                       @Param("searchString") String searchString,
                                       @Param("list") List<Integer> list);
+
+
+	/**
+	 * 查询引擎列表
+	 */
+	List<Engine> getEngineListNotVersion(long organId,String searchString,List<Integer> list);
 
 	/**
 	 * 页面填写

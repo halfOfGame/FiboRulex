@@ -16,17 +16,15 @@
         <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
         <result column="latest_user" jdbcType="INTEGER" property="latestUser"/>
         <result column="latest_time" jdbcType="VARCHAR" property="latestTime"/>
-
         <result column="engine_name" jdbcType="VARCHAR" property="engineName"/>
         <result column="description" jdbcType="VARCHAR" property="engineDesc"/>
-
         <collection property="engineNodeList" ofType="engineNode" column="version_id"
                     select="com.fibo.ddp.common.dao.enginex.risk.EngineNodeMapper.getEngineNodeListByEngineVersionId">
         </collection>
     </resultMap>
 
     <sql id="Base_Column_List">
-    version_id, engine_id, version, boot_state, status, layout, user_id, create_time, 
+    version_id, engine_id, version, boot_state, status, layout, user_id, create_time,
     latest_user, latest_time, sub_version
   </sql>
 
@@ -64,13 +62,13 @@
   </delete>
 
   <insert id="insertOne" parameterType="com.fibo.ddp.common.model.enginex.risk.EngineVersion">
-    insert into t_engine_version (version_id, engine_id, version, 
-      sub_version, boot_state, status, layout, user_id, 
+    insert into t_engine_version (version_id, engine_id, version,
+      sub_version, boot_state, status, layout, user_id,
       create_time, latest_user, latest_time
       )
     values (#{versionId,jdbcType=INTEGER}, #{engineId,jdbcType=INTEGER}, #{version,jdbcType=INTEGER},
       #{subVersion,jdbcType=INTEGER},#{bootState,jdbcType=BIT}, #{status,jdbcType=BIT}, #{layout,jdbcType=BIT},
-      #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR}, #{latestUser,jdbcType=INTEGER}, 
+      #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR}, #{latestUser,jdbcType=INTEGER},
       #{latestTime,jdbcType=VARCHAR}
       )
   </insert>
@@ -241,19 +239,20 @@
   <select id="countDecisionResult" resultType="com.fibo.ddp.common.model.enginex.risk.EngineResultSetDTO">
        select
 	      DATE_FORMAT(t.create_datetime,"%Y-%m-%d") as callDate,
-          engine_id,
-          engine_code,
-          engine_version,
-          engine_name,
-          result,
+          t.engine_id,
+          t.engine_code,
+          me.engine_version_id engineVersion,
+          t.engine_name,
+          t.result,
           e.organ_id,
           count(1) as total
           from
           t_resultset t
+          left join t_monitor_engine me on me.monitor_parent_id = t.id
           left join
            t_engine e
            on t.engine_id = e.id
-           where datediff(now(),t.create_datetime)=0
+           where datediff(now(),t.create_datetime)=1
           GROUP BY
 		  DATE_FORMAT(t.create_datetime,"%Y-%m-%d"),
           engine_id,
