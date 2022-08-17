@@ -43,7 +43,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -304,12 +307,7 @@ public class ScorecardVersionServiceImpl extends ServiceImpl<ScorecardVersionMap
         }
         scorecardDetailVo.setChildren(children);
 
-        Long userId = SessionManager.getLoginAccount().getUserId();
-        HashMap<String, Object> param = new HashMap<>();
-        param.put("userId", scorecardDetail.getFieldId());
-        param.put("userId", userId);
-        param.put("engineId", null);
-        Field field = fieldService.findByFieldId(param);
+        Field field = fieldService.queryById(Long.valueOf(scorecardDetail.getFieldId().toString()));
         if (field != null) {
             scorecardDetailVo.setFieldName(field.getFieldCn());
         }
