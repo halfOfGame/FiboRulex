@@ -306,19 +306,21 @@
 				}, {
 					value: 'Redis',
 					label: 'Redis'
-				}, {
-					value: 'Hive',
-					label: 'Hive'
-				}, {
-					value: 'Spark',
-					label: 'Spark'
-				}, {
-					value: 'Oracle',
-					label: 'Oracle'
-				}, {
-					value: 'Sqlserver',
-					label: 'Sqlserver'
-				}],
+				}, 
+				// {
+				// 	value: 'Hive',
+				// 	label: 'Hive'
+				// }, {
+				// 	value: 'Spark',
+				// 	label: 'Spark'
+				// }, {
+				// 	value: 'Oracle',
+				// 	label: 'Oracle'
+				// }, {
+				// 	value: 'Sqlserver',
+				// 	label: 'Sqlserver'
+				// }
+				],
 				sourceType: 'MySQL'
 			}
 		},

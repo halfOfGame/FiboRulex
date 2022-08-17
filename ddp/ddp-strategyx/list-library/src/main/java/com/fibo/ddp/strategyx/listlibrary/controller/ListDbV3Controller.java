@@ -31,6 +31,7 @@ import java.util.Map;
 
 /**
  * @apiDefine listDb 4.黑白名单库管理
+ * 此版本有名单库版本功能，未对接
  */
 @RestController("listDbController")
 @RequestMapping("v3/listDb")

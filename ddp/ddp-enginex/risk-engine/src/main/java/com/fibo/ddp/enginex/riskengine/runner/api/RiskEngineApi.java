@@ -42,6 +42,7 @@ public class RiskEngineApi {
         sessionData.setOrganId(bizData.getOrganId());
         sessionData.setEngineId(bizData.getEngineId());
         sessionData.setReqType(1);
+        sessionData.setRuleHitRspConfig(bizData.getRuleHitRspConfig());
         RunnerSessionManager.setSession(sessionData);
 
         if(bizData.getFields() != null){

@@ -1668,6 +1668,7 @@ CREATE TABLE `t_user_role_rel` (
 
 /*Data for the table `t_organization` */
 insert into `t_organization` (`organ_id`, `name`, `code`, `email`, `telephone`, `status`, `author`, `birth`, `token`) values('1','risk','0001','123.com ','1234567489','1','超级管理员','2017-06-29 15:32:42','6a6ea35e-aabe-4e64-bd98-dae304b10a21');
+insert into `t_organization` (`organ_id`, `name`, `code`, `email`, `telephone`, `status`, `author`, `birth`, `token`) values('46','管理员','007',NULL,NULL,'1','超级管理员','2017-06-29 15:40:46','4f15125c-93c0-43fb-9ed2-e0b92763fa3d');
 
 
 /*Data for the table `t_user` */
@@ -2065,3 +2066,8 @@ CREATE TABLE `schedule_job_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务日志';
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+ ALTER TABLE `t_field`
+  ADD COLUMN `is_local_variable` TINYINT (1) DEFAULT '0' COMMENT '是否局部变量';
+

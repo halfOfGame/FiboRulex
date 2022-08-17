@@ -15,18 +15,7 @@ h5-datax-manager --- 指标中心前端代码
 h5-enginex-manager -- 规则引擎前端代码  
 sql --- sql初始化脚本  
 
-## 开源交流
- 加官方微信号，进开源交流群。
-                             
-                             
-   ![|](https://www.fibo.cn/standard/image/git_weixin.jpg)
-   
- 扫描二维码，添加WhatsApp。
- 
- 
-  ![|](https://www.fibo.cn/standard/image/whatsApp.jpg)
-  
-                                  
+                                 
 ## FiboRule整体功能架构介绍
 
 FiboRule整体功能架构如下图所示
@@ -156,7 +145,28 @@ http://ex.fibo.cn 申请账号请加群
 【腾讯文档】FiboRule开源规划
 https://docs.qq.com/sheet/DSnpRV1JWdkNvaG9u
 
- ![|](./image/22791658996413_.pic.jpg)
-### 9 视频demo
-https://www.bilibili.com/video/BV12N4y1L7Kt
+![|](https://www.fibo.cn/standard/image/guihua.jpg)
 
+### 9 视频demo
+[https://www.bilibili.com/video/BV12N4y1L7Kt](https://www.bilibili.com/video/BV1cY4y1w7zS?spm_id_from=333.999.0.0&vd_source=5e68d021d7fcaf38cfc6f09de33bc12f)
+
+### 10 使用者列表
+
+至今，多家公司的线上产品已接入FiboRule，接入场景如银行信用卡，保险理赔业务和政府大数据部门等。
+
+<!-- ![使用者列表](https://www.fibo.cn/standard/image/git_customer.jpg) -->
+
+> 更多接入的公司，欢迎在 [登记地址](https://github.com/FiboAI/FiboRule/issues/19 ) 登记，登记仅仅为了产品推广。
+
+
+### 11 开源交流
+
+加官方微信号，进开源交流群
+                                                     
+![|](https://www.fibo.cn/standard/image/git_weixin1.jpg)
+   
+扫描二维码，添加WhatsApp
+ 
+![|](https://www.fibo.cn/standard/image/git_whatsApp1.jpg)
+
+欢迎大家的关注和使用，FiboRule也将拥抱变化，持续发展。

@@ -12,6 +12,8 @@ import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleBlockVo;
 import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleConditionVo;
 import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleVersionVo;
 import com.fibo.ddp.common.model.strategyx.scriptrule.RuleScriptVersion;
+import com.fibo.ddp.common.service.common.runner.RunnerSessionManager;
+import com.fibo.ddp.common.service.common.runner.SessionData;
 import com.fibo.ddp.common.service.datax.datamanage.FieldService;
 import com.fibo.ddp.common.service.datax.runner.CommonService;
 import com.fibo.ddp.common.service.datax.runner.ExecuteUtils;
@@ -346,12 +348,16 @@ public class RuleSetNode implements EngineRunnerNode {
         }
 
         String resultFieldEn = hitRuleBlock.getResultFieldEn();
+        String outputFieldEn = hitRuleBlock.getResultFieldEn();
         if (resultFieldEn == null || "".equals(resultFieldEn)) {
             resultFieldEn = "rule_" + rule.getId() + "_" + ruleVersion.getId() + "_" + hitRuleBlock.getId() + "_hitResult";
+            outputFieldEn = "ruleResult";
         }
         String scoreFieldEn = hitRuleBlock.getScoreFieldEn();
+        String outputScoreEn = hitRuleBlock.getScoreFieldEn();
         if (StringUtils.isBlank(scoreFieldEn)) {
             scoreFieldEn = "rule_" + rule.getId() + "_" + ruleVersion.getId() + "_" + hitRuleBlock.getId() + "_score";
+            outputScoreEn = "ruleScore";
         }
         input.put(resultFieldEn, "未命中");
         //根据执行的最终结果处理此规则输出内容
@@ -361,27 +367,30 @@ public class RuleSetNode implements EngineRunnerNode {
             ruleMap.put("ruleResult", "命中");
             ruleMap.put("ruleScore", hitRuleBlock.getScore());
             JSONObject scoreJson = new JSONObject();
-            resultJson.put(resultFieldEn, "命中");
+            resultJson.put(outputFieldEn, "命中");
             fieldList.add(resultJson);
-//            if (StringUtils.isNotBlank(ruleVersion.getScoreFieldEn())) {
-            scoreJson.put(scoreFieldEn, hitRuleBlock.getScore());
+            scoreJson.put(outputScoreEn, hitRuleBlock.getScore());
             fieldList.add(scoreJson);
             input.put(scoreFieldEn, hitRuleBlock.getScore());
-//            }
             input.put(resultFieldEn, "命中");
             //处理此规则需要输出的内容
             fieldList.addAll(ruleService.setComplexRuleOutput(hitRuleBlock.getId(), temp, input, StrategyType.OutType.SUCCESS_OUT));
             ruleMap.put("fieldList", fieldList);
             hitFlag = true;
+            ruleResultList.add(ruleMap);
         } else {
-            resultJson.put(resultFieldEn, "未命中");
+            resultJson.put(outputFieldEn, "未命中");
             ruleMap.put("ruleScore", 0);
             input.put(scoreFieldEn, 0);
             fieldList.add(resultJson);
             fieldList.addAll(ruleService.setComplexRuleOutput(hitRuleBlock.getId(), temp, input, StrategyType.OutType.FAIL_OUT));
             ruleMap.put("fieldList", fieldList);
+            SessionData sessionData = RunnerSessionManager.getSession();
+            if(sessionData.getRuleHitRspConfig() == null || sessionData.getRuleHitRspConfig() == 1){
+                ruleResultList.add(ruleMap);
+            }
         }
-        ruleResultList.add(ruleMap);
+
         return hitFlag;
     }
 
