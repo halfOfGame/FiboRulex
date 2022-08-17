@@ -148,7 +148,7 @@ https://docs.qq.com/sheet/DSnpRV1JWdkNvaG9u
 ![|](https://www.fibo.cn/standard/image/guihua.jpg)
 
 ### 9 视频demo
-https://www.bilibili.com/video/BV12N4y1L7Kt
+[https://www.bilibili.com/video/BV12N4y1L7Kt](https://www.bilibili.com/video/BV1cY4y1w7zS?spm_id_from=333.999.0.0&vd_source=5e68d021d7fcaf38cfc6f09de33bc12f)
 
 ### 10 使用者列表
 
