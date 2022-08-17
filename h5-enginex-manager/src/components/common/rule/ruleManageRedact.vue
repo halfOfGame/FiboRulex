@@ -86,76 +86,8 @@
 
 
 		<div class="rule_com">
-			<el-button icon="el-icon-plus" type="success" size="mini" circle @click="addRuleBlock()"></el-button>
-			<template v-for="(item, index) in ruleBlockVoList ">
-
-				<div style="border: 1px solid  #9cb1c7 ;padding: 10px;margin: 10px;position: relative;">
-					<div style="position: absolute;top:10px;right: 10px;z-index: 2;">
-						<el-button icon="el-icon-top" :disabled="!index" type="info" size="mini" circle
-							@click="goTop(index)"></el-button>
-						<el-button icon="el-icon-bottom" type="info" :disabled="index == ruleBlockVoList.length - 1"
-							size="mini" circle @click="goBootom(index)">
-						</el-button>
-						<el-button icon="el-icon-close" type="danger" :disabled="!index" size="mini" circle
-							@click="deleteRuleBlock(index)"></el-button>
-					</div>
-					<rule :data="item.ruleConditionVo" :ZIndex="1"></rule>
-
-					<div class="rule_outcontent_box">
-						<p>命中输出：</p>
-						<div class="rule_home" style="margin-top: 10px;">
-							<div class="rule_fa">
-								<el-button icon="el-icon-plus" size="mini" circle @click="outAdd(0)" disabled>
-								</el-button>
-								<el-button icon="el-icon-close" size="mini" circle disabled='disabled'
-									style="margin-right: 10px">
-								</el-button>
-							</div>
-							<el-select v-model="item.resultFieldEn" size="mini" filterable placeholder="请选择"
-								style="width: 200px;" clearable>
-								<el-option v-for="item in FieldUser" :key="item.id" :label="item.fieldCn"
-									:value="item.fieldEn">
-								</el-option>
-							</el-select>
-							<p style="margin: 10px;">
-								=
-							</p>
-							<el-select filterable value="是否命中" size="mini" disabled style="width: 255px;">
-							</el-select>
-						</div>
-
-						<outcontent :outcontent="item.strategyOutputList" size='mini' :ruleOut="true"
-							type="complex_rule" :outType="outTypeSuccess">
-							<div style="display: flex;align-items: center;">
-								<el-select v-model="item.scoreFieldEn" size="mini" filterable placeholder="请选择"
-									style="width: 200px;" clearable>
-									<el-option v-for="item in FieldUser" :key="item.id" :label="item.fieldCn"
-										:value="item.fieldEn">
-									</el-option>
-								</el-select>
-								<p style="margin: 10px;">=</p>
-								<div>
-									<el-input v-model="item.score" size="mini" maxlength="30" style="width: 255px;">
-										<template slot="prepend">得分</template>
-									</el-input>
-								</div>
-							</div>
-						</outcontent>
-					</div>
-					<div class="rule_outcontent_box">
-						<p style="font-size: 12px;">未命中输出:</p>
-						<outcontent :outcontent="item.failOutputList" size='mini' :unone="true" :ruleOut="true"
-							type="complex_rule" :outType="outTypeFail">
-
-						</outcontent>
-						<div>
-						</div>
-					</div>
-
-
-				</div>
-
-			</template>
+			<ruleBlockVo :ruleBlockVoList="ruleBlockVoList"></ruleBlockVo>
+			
 		</div>
 	</div>
 </template>
@@ -166,7 +98,7 @@ import '@/assets/css/ManageRedact.css'
 import version from '@/components/common/Version.vue'
 import outcontent from '@/components/models/outcontent.vue'
 import rule from '@/components/models/RuleCont.vue'
-
+import ruleBlockVo from './ruleBlockVo.vue'
 class ruledata {
 	constructor() {
 		this.logical = "&&"
@@ -194,7 +126,8 @@ export default {
 	components: {
 		rule,
 		outcontent,
-		version
+		version,
+		ruleBlockVo
 	},
 	props: {
 		fieldTypeId: {
@@ -232,28 +165,15 @@ export default {
 			version: {},
 			addVersionStatus: false,
 			ruleVersionList: [],
-			// scoreFieldEn: '',
-			// resultFieldEn: '',
+		
 			loading: false,
 			valueScope: '',
 			priority: 0,
 			code: '',
 			name: '',
 			description: '',
-			// ruledata: null,
-			// outcontent: [],
-			// failOutputList: [],
-			// SpecialField: {
-			// 	score: '1',
-			// },
-			// tempisEmpty: false,
+			
 			parentId: '',
-			outTypeSuccess: {
-				outType: 'success'
-			},
-			outTypeFail: {
-				outType: 'fail'
-			},
 			ruleBlockVoList: []
 		}
 	},
@@ -290,22 +210,7 @@ export default {
 
 	},
 	methods: {
-		goTop(index) {
-			let obj = this.ruleBlockVoList[index]
-			this.ruleBlockVoList.splice(index, 1)
-			this.ruleBlockVoList.splice(index - 1, 0, obj)
-		},
-		goBootom(index) {
-			let obj = this.ruleBlockVoList[index]
-			this.ruleBlockVoList.splice(index, 1)
-			this.ruleBlockVoList.splice(index + 1, 0, obj)
-		},
-		deleteRuleBlock(index) {
-			this.ruleBlockVoList.splice(index, 1)
-		},
-		addRuleBlock() {
-			this.ruleBlockVoList.push(new ruleBlock())
-		},
+		
 		importNewVersion(e) {
 			this.addVersionLoading = true
 			console.log(e)
@@ -542,29 +447,11 @@ export default {
 		},
 		addVersionClose() {
 			this.addVersionStatus = false
-			// this.SpecialField.score = this.tempadd.score
-			// this.scoreFieldEn = this.tempadd.scoreFieldEn
-			// this.resultFieldEn = this.tempadd.resultFieldEn
-			// this.ruledata = this.tempadd.ruledata
-			// this.outcontent = this.tempadd.outcontent
-			// this.failOutputList = this.tempadd.failOutputList
+		
 			this.ruleBlockVoList = this.tempadd.ruleBlockVoList
 		},
 		reset() {
-			// this.ruledata = {
-			// 	"logical": "&&",
-			// 	"fieldId": null,
-			// 	"operator": null,
-			// 	"fieldValue": null,
-			// 	"conditionType": 1,
-			// 	"children": [],
-			// 	loopGroupActions: []
-			// }
-			// this.SpecialField.score = 1
-			// this.outcontent = []
-			// this.failOutputList = []
-			// this.scoreFieldEn = ""
-			// this.resultFieldEn = ""
+		
 			this.ruleBlockVoList = [new ruleBlock()]
 		},
 		delectVersion() {
@@ -595,14 +482,7 @@ export default {
 			// 	})
 			// }
 		},
-		outAdd(index) {
-			this.outcontent.splice(index, 0, {
-				"fieldId": "",
-				strategyType: 'base_rule',
-				"fieldValue": "",
-				variableType: 1
-			})
-		},
+		
 		submit() {
 
 
@@ -611,17 +491,7 @@ export default {
 				this.loading = false
 				return
 			}
-			// let tempRuleData = JSON.parse(JSON.stringify(this.ruledata))
-			// this.deepTypetransition(tempRuleData)
-
-
-
-			// this.outcontent.forEach(value => {
-			// 	value.fieldEn = this.mixinGetvalueEn(value.fieldId)
-			// })
-			// this.failOutputList.forEach(value => {
-			// 	value.fieldEn = this.mixinGetvalueEn(value.fieldId)
-			// })
+			
 
 			let obj = {
 				"code": this.code.trim(),
@@ -630,12 +500,7 @@ export default {
 				"description": String(this.description).trim(),
 				difficulty: 2,
 				ruleVersionList: [{
-					// score: this.SpecialField.score,
-					// scoreFieldEn: this.scoreFieldEn,
-					// resultFieldEn: this.resultFieldEn,
-					// ruleConditionVo: tempRuleData,
-					// strategyOutputList: this.outcontent,
-					// failOutputList: this.failOutputList
+					
 					ruleBlockVoList: this.ruleBlockVoList
 				}],
 			}

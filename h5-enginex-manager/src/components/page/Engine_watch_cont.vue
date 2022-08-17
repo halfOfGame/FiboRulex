@@ -107,6 +107,7 @@
 
 <template>
 	<div style="display: flex;overflow: hidden;" v-loading="loading">
+	
 		<div class="watchContLeft">
 			<div class="watchContSelect">
 				<el-select v-model="selectType" placeholder="请选择节点类型" clearable>
@@ -162,7 +163,7 @@
 
 								</div>
 
-
+								
 								<type2 :data="monitorInfo.snapshot" :readOnly="true" :rowkey="rowKey"
 									v-if="currNode.item.node.type==2"></type2>
 								<type3 :data="monitorInfo.snapshot" :readOnly="true" :rowkey="rowKey"
@@ -225,19 +226,6 @@
 							<p v-if="currNode.item.node.type==17">
 								结果：{{monitorInfo.result.result[0].result?monitorInfo.result.result[0].result:"无"}}</p>
 						</div>
-
-						<div>
-							<p class="type_title">
-								节点入参：
-							</p>
-							<pre style="overflow-x: auto;">{{JSON.stringify(monitorInfo.params,null,4)}}</pre>
-
-							<p class="type_title">
-								节点出参：
-							</p>
-							<pre style="overflow-x: auto;">{{JSON.stringify(monitorInfo.result,null,4)}}</pre>
-						</div>
-
 						<div v-if="StrategyList.length>0">
 							<p class="type_title">
 								策略详情：
@@ -263,6 +251,19 @@
 
 
 						</div>
+						<div>
+							<p class="type_title">
+								节点入参：
+							</p>
+							<pre style="overflow-x: auto;">{{JSON.stringify(monitorInfo.params,null,4)}}</pre>
+
+							<p class="type_title">
+								节点出参：
+							</p>
+							<pre style="overflow-x: auto;">{{JSON.stringify(monitorInfo.result,null,4)}}</pre>
+						</div>
+
+						
 
 
 					</div>
@@ -435,6 +436,7 @@
 					if (res.status == "1") {
 
 						if (res.data.length > 0) {
+							console.log(res)
 							this.currNode = Tempitem
 							this.rowKey = res.data[0].rowKey;
 							this.monitorInfo = res.data[0].monitorInfo
@@ -472,6 +474,14 @@
 						// Result: 'score',
 						Score: 'score',
 					},
+					// '5': {
+					// 	result: '',
+					// 	name: 'cardName',
+					// 	ruleId: 'cardId',
+					// 	VersionId: 'cardVersionId',
+					// 	// Result: 'score',
+					// 	Score: 'score',
+					// },
 					'16': {
 						result: 'result',
 						name: 'decisionTablesName',

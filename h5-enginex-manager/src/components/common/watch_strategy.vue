@@ -9,62 +9,10 @@
 			<!-- {{data}} -->
 			<div v-if="data.strategyType==2">
 				<div v-if="data.difficulty==2">
+				
+					<type2 :ruleBlockVoList="data.snapshot.ruleBlockVoList"></type2>
 
-					<type2 :ZIndex="1" :data="data.snapshot.ruleConditionVo"></type2>
-
-					<div class="rule_outcontent_box">
-						<p>命中输出：</p>
-						<div class="rule_home" style="margin-top: 10px;">
-							<div class="rule_fa">
-								<el-button icon="el-icon-plus" circle @click="outAdd(0)" disabled></el-button>
-								<el-button icon="el-icon-close" circle disabled='disabled' style="margin-right: 10px">
-								</el-button>
-							</div>
-							<el-select v-model="data.snapshot.resultFieldEn" filterable placeholder="请选择"
-								style="width: 200px;" clearable>
-								<el-option v-for="item in FieldUser" :key="item.id" :label="item.fieldCn"
-									:value="item.fieldEn">
-								</el-option>
-							</el-select>
-							<p style="margin: 10px;">
-								=
-							</p>
-							<el-select filterable value="是否命中" disabled style="width: 255px;">
-							</el-select>
-						</div>
-
-						<outcontent :outcontent="data.snapshot.strategyOutputList" :ruleOut="true" type="complex_rule"
-							:outType="{
-						outType: 'success'
-					}">
-							<div style="display: flex;align-items: center;">
-								<el-select v-model="data.snapshot.scoreFieldEn" filterable placeholder="请选择"
-									style="width: 200px;" clearable>
-									<el-option v-for="item in FieldUser" :key="item.id" :label="item.fieldCn"
-										:value="item.fieldEn">
-									</el-option>
-								</el-select>
-								<p style="margin: 10px;">=</p>
-								<div>
-									<el-input v-model="data.snapshot.score" maxlength="30" style="width: 255px;">
-										<template slot="prepend">得分</template>
-									</el-input>
-								</div>
-							</div>
-						</outcontent>
-					</div>
-					<br>
-					<div class="rule_outcontent_box">
-						<p>未命中输出:</p>
-						<outcontent :outcontent="data.snapshot.failOutputList" :unone="true" :ruleOut="true"
-							type="complex_rule" :outType="{
-						outType: 'fail'
-					}">
-
-						</outcontent>
-						<div>
-						</div>
-					</div>
+					
 				</div>
 				<div v-if="data.difficulty==3">
 					<el-input type="textarea" :rows="30" placeholder="请输入内容"
@@ -239,7 +187,7 @@
 	import topRecursion from '@/components/common/decision/topRecursion.vue'
 	import textInput from '@/components/common/textInput.vue'
 	import tree from '@/components/common/decisionTree/tree.vue'
-	import type2 from '@/components/models/RuleCont.vue'
+	import type2 from '@/components/common/rule/ruleBlockVo.vue'
 	import outcontent from '@/components/models/outcontent.vue'
 	export default {
 		components: {
@@ -273,9 +221,7 @@
 			if (!this.dataCont || !this.dataCont.strategyType) return
 			this.data = JSON.parse(JSON.stringify(this.dataCont))
 			this.data.snapshot = JSON.parse(this.data.snapshot)
-			if (this.dataCont.strategyType == 2) {
-				this.Type2redeepverify(this.data.snapshot.ruleConditionVo)
-			}
+			
 			if (this.dataCont.strategyType == 17) {
 				this.Type1617Enformat(this.data.snapshot.detailList, 'Array')
 			}
@@ -315,27 +261,7 @@
 			}
 		},
 		methods: {
-			Type2redeepverify(obj) {
-				if (obj.fieldEn) {
-					if ((obj.fieldEn.indexOf('.') != -1 && obj.fieldEn[0] == '%') || obj.conditionType == 3 || obj
-						.conditionType === 2) {
-						obj.fieldEn = obj.fieldEn.split('.')
-					}
-				}
-				if (obj.children.length > 0) {
-					obj.children.forEach(value => {
-						this.Type2redeepverify(value)
-					})
-				}
-				if (obj.loopGroupActions.length > 0) {
-					obj.loopGroupActions.forEach(value => {
-						if (value.actionValue.indexOf('.') != -1) {
-							value.actionValue = value.actionValue.split('.')
-						}
-					})
-
-				}
-			},
+			
 			Type1617Enformat(arr, str) {
 				arr.forEach(value => {
 					if (str == 'String') {

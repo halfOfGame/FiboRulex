@@ -97,7 +97,7 @@
 				</el-select>
 				<p style="margin-right: 10px;">=</p>
 
-				<varialeSelect  v-model="value.fieldValue" :size="size" :valueType="mixinGetvalueType(value.fieldId)" :variableType.sync="value.variableType" width="255px"></varialeSelect>
+				<varialeSelect  v-model="value.fieldValue" :size="size" :height="size=='mini'?'28px':''" :valueType="mixinGetvalueType(value.fieldId)" :variableType.sync="value.variableType" width="255px"></varialeSelect>
 
 			</div>
 		</div>
