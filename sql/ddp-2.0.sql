@@ -2044,6 +2044,9 @@ CREATE TABLE `schedule_job` (
                                 PRIMARY KEY (`job_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务';
 
+INSERT INTO `schedule_job` (`job_id`, `bean_name`, `params`, `cron_expression`, `status`, `remark`, `create_time`) VALUES (2, 'analyseStatisticsBean', NULL, '0 0/30 * * * ?', 0, '分析中心概况数据跑批(半小时)', '2022-08-15 10:09:16');
+INSERT INTO `schedule_job` (`job_id`, `bean_name`, `params`, `cron_expression`, `status`, `remark`, `create_time`) VALUES (3, 'analyseStatisticsChartDataBean', NULL, '0 0 02 * * ?', 0, '分析中心图表数据跑批(每天上午2点)', '2022-08-15 10:10:06');
+
 -- ----------------------------
 -- Table structure for schedule_job_log  定时任务LOG配置
 -- ----------------------------
