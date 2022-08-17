@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 @Service
 public class MonitorMysqlDecisionTablesNode implements MonitorMysqlService {
     private static final Logger logger = LoggerFactory.getLogger(MonitorMysqlDecisionTablesNode.class);
+
     @Autowired
     private TMonitorStrategyMapper monitorStrategyMapper;
-
     @Autowired
     private DecisionTablesService decisionTablesService;
 
@@ -54,8 +54,8 @@ public class MonitorMysqlDecisionTablesNode implements MonitorMysqlService {
             monitorStrategy1.setOutput(monitorNode.getOutput());
             logger.info("MonitorMysqlDecisionTablesNode============================「监控中心-策略监控信息」monitorInfo:{}", monitorStrategy1);
             //策略ID 即 决策表版本id
-            String ruleVersionId = jsonObject.get("id") + "";
-            String decisionTableId =   jsonObject.getString("decisionTablesId");
+            String ruleVersionId = jsonObject.getString("id");
+            String decisionTableId = jsonObject.getString("decisionTablesId");
             monitorStrategy1.setStrategyId(Long.valueOf(ruleVersionId));
             String result = getResult(monitorNode.getOutput(), decisionTableId);
             //决策表执行结果
@@ -87,12 +87,13 @@ public class MonitorMysqlDecisionTablesNode implements MonitorMysqlService {
 
     /**
      * 根据决策表id 查询决策表名称
+     *
      * @param decisionTablesId
      * @return
      */
     private String getStrategyName(String decisionTablesId) {
         DecisionTables decisionTables = decisionTablesService.getById(decisionTablesId);
-        return decisionTables==null?null:decisionTables.getName();
+        return decisionTables == null ? null : decisionTables.getName();
     }
 
 
@@ -111,7 +112,7 @@ public class MonitorMysqlDecisionTablesNode implements MonitorMysqlService {
             List<Object> one = allResults.stream().filter(
                     object -> ruleVersionId.equals(JSONObject.parseObject(JSON.toJSONString(object)).getString("decisionTablesId"))).collect(Collectors.toList());
 
-            if(one.size()==1){
+            if (one.size() == 1) {
                 Object strategyResultJson = one.get(0);
                 JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(strategyResultJson));
                 return jsonObject.getString("result");

@@ -12,8 +12,8 @@ import com.fibo.ddp.common.model.strategyx.listlibrary.ListDb;
 import com.fibo.ddp.common.model.strategyx.listlibrary.ListDbVersion;
 import com.fibo.ddp.common.model.strategyx.listlibrary.request.ListDbDataParam;
 import com.fibo.ddp.common.model.strategyx.strategyout.StrategyOutput;
-import com.fibo.ddp.common.service.common.runner.RunnerSessionManager;
 import com.fibo.ddp.common.service.common.SessionManager;
+import com.fibo.ddp.common.service.common.runner.RunnerSessionManager;
 import com.fibo.ddp.common.service.strategyx.listlibrary.ListDbService;
 import com.fibo.ddp.common.service.strategyx.listlibrary.ListDbVersionService;
 import com.fibo.ddp.common.service.strategyx.strategyout.StrategyOutputService;
@@ -143,6 +143,7 @@ public class ListDbServiceImp extends ServiceImpl<ListDbMapper, ListDb> implemen
 
 	@Override
 	public boolean updateListDb(Map<String, Object> paramMap) {
+		// todo 修改名单库字段需要修改表结构，给对应字段加上注释，或者执行器不校验注释
 		boolean b = listDbMapper.updateListDb(paramMap);
 		ListDb listDb = new ListDb();
 		try {

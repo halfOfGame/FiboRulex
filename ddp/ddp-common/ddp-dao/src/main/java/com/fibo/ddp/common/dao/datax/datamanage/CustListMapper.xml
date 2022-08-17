@@ -66,8 +66,9 @@
 	</select>
 	
 	<select id="revFindByQueryKey" parameterType="map"  resultType="java.lang.Integer">
-         select ${revQueryKey}
+         select count(1)
            from ${tableName}
+           where ${revQueryKey}
 	</select>
 	
 	<insert id="createCustList" useGeneratedKeys="true" keyProperty="id" parameterType="custList">

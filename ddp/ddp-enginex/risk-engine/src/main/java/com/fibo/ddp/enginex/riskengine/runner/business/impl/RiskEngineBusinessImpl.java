@@ -71,7 +71,7 @@ public class RiskEngineBusinessImpl implements RiskEngineBusiness {
     @Autowired
     private ChildEngineNode childEngineNode;
     @Autowired
-    private BlackOrWhiteNode blackOrWhiteNode;
+    private ListDbNode listDbNode;
     @Autowired
     private AggregationNode aggregationNode;
     @Autowired
@@ -382,11 +382,11 @@ public class RiskEngineBusinessImpl implements RiskEngineBusiness {
                 break;
             case 5:
                 //黑名单
-                blackOrWhiteNode.getNodeField(engineNode, inputParam);
+                listDbNode.getNodeField(engineNode, inputParam);
                 break;
             case 6:
                 //白名单
-                blackOrWhiteNode.getNodeField(engineNode, inputParam);
+                listDbNode.getNodeField(engineNode, inputParam);
                 break;
             case 9:
                 //决策选项
@@ -452,11 +452,11 @@ public class RiskEngineBusinessImpl implements RiskEngineBusiness {
                 break;
             case 5:
                 //黑名单
-                blackOrWhiteNode.runNode(engineNode, inputParam, outMap);
+                listDbNode.runNode(engineNode, inputParam, outMap);
                 break;
             case 6:
                 //白名单
-                blackOrWhiteNode.runNode(engineNode, inputParam, outMap);
+                listDbNode.runNode(engineNode, inputParam, outMap);
                 break;
             case 7:
                 //沙盒比例

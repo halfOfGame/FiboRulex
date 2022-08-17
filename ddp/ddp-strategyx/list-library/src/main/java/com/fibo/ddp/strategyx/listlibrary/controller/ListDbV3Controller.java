@@ -36,8 +36,10 @@ import java.util.Map;
 @RestController("listDbController")
 @RequestMapping("v3/listDb")
 public class ListDbV3Controller {
+
 	@Autowired
 	private ListDbV3Service listDbService;
+
 	/**
 	 * @api {POST} /v2/datamanage/listmanage/list 4.01. 获取黑、白名单列表
 	 * @apiGroup listDb
