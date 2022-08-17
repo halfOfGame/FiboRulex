@@ -2,88 +2,38 @@
 var proxyObj = {}
 // console.log(process.env.VUE_PROXY)
 switch (process.env.NODE_ENV) {
-	case 'development': // 开发环境代理地址
+	case 'development': // 个人服务器后端地址
 		proxyObj = {
 			'/Riskmanage': {
-				target: 'http://47.102.125.25:80', // 开发环境
+				target: 'http://localhost:8080', // 个人服务器后端地址 - Riskmanage
 				changeOrigin: true, // 是否跨域
 				pathRewrite: {
 					'^/Riskmanage': '/Riskmanage'
-				},
-
+				}
 			},
 			'/trading': {
-				target: 'http://47.242.85.45:80', // 开发环境
+				target: 'http://localhost:8080', // 开发环境 - trading
 				changeOrigin: true, // 是否跨域
 				pathRewrite: {
 					'^/trading': '/trading'
 				},
-
+	
 			},
 		}
 		break
-	case 'test': // 测试环境代理地址
-		proxyObj = {
-			'/Riskmanage': {
-				target: 'http://localhost:8080', // 测试环境
-				changeOrigin: true, // 是否跨域
-				pathRewrite: {
-					'^/Riskmanage': '/Riskmanage'
-				}
-			}
-		}
-		break
-	case 'release': // 军环境
-		proxyObj = {
-			'/Riskmanage': {
-				target: 'http://192.168.3.155:8080', // 谭环境
-				changeOrigin: true, // 是否跨域
-				pathRewrite: {
-					'^/Riskmanage': '/Riskmanage'
-				}
-			}
-		}
-		break
-	case 'niu': // 牛环境
-		proxyObj = {
-			'/Riskmanage': {
-				target: 'http://192.168.50.3:8080', // 生产环境
-				changeOrigin: true, // 是否跨域
-				pathRewrite: {
-					'^/Riskmanage': '/Riskmanage'
-				}
-			}
-		}
-		break
-	case 'jia': // 贾环境
-		proxyObj = {
-			'/Riskmanage': {
-				target: 'http://192.168.50.188:8080', // 生产环境
-				changeOrigin: true, // 是否跨域
-				pathRewrite: {
-					'^/Riskmanage': '/Riskmanage'
-				}
-			}
-			// '/list': {
-			// 	target: 'http://127.0.0.1:8888', // 生产环境
-			// 	changeOrigin: true, // 是否跨域
-			// 	pathRewrite: {
-			// 		'^/list': '/list'
-			// 	}
-			// },
-		}
-		break
-	case 'wang': // 汪环境
-		proxyObj = {
-			'/Riskmanage': {
-				target: 'http://192.168.50.228:8080', // 生产环境
-				changeOrigin: true, // 是否跨域
-				pathRewrite: {
-					'^/Riskmanage': '/Riskmanage'
-				}
-			}
-		}
-		break
+	
+}
+
+
+try{
+	// baseUrl2 中的内容为 斐波那契公司内部使用的服务器地址信息 如测试服务器 demo服务器
+	// 此部分信息为避免数据污染 不能对外公示
+	// 此处已经 try catch 没有此文件不影响系统运行
+	// 个人服务器请配置在上方 development 中
+ let a = require('./baseUrl2')
+ proxyObj = a()
+}catch(err){
+
 }
 
 module.exports = proxyObj

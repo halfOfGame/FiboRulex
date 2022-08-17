@@ -115,7 +115,7 @@ public class DecisionTreeNode implements EngineRunnerNode {
         //监控中心==》策略层面快照信息记录
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("snapshot",strategySnapshot);
-        outMap.put("decisionTreeStrategy",jsonObject);
+        outMap.put("decisionTreeStrategy-"+engineNode.getNodeId(),jsonObject);
     }
 
     private Object executeDecisionTree(DecisionTreeVersionVo version, Map<String, Object> inputParam) {

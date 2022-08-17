@@ -27,6 +27,12 @@ public class AnalyseController {
     @Resource
     @Qualifier("analyseChartStatisticServiceImpl")
     private StatisticsService statisticsService;
+
+    @Resource
+    @Qualifier("statisticsServiceImpl")
+    private StatisticsService statisticsServiceImpl;
+
+
     @Autowired
     private AnalyseEngineSummaryService analyseEngineSummaryService;
 
@@ -58,7 +64,10 @@ public class AnalyseController {
      */
     @PostMapping("/decision")
     public ResponseEntityDto decision(){
+        //图表数据统计
         statisticsService.statisticData();
+        //总数统计
+        statisticsServiceImpl.statisticData();
         return ResponseEntityBuilder.buildNormalResponse();
     }
 }

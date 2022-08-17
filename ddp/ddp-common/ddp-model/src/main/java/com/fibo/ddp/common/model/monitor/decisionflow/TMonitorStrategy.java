@@ -52,5 +52,7 @@ public class TMonitorStrategy implements Serializable {
 
     private LocalDateTime createTime;
 
+    private String strategyVersionCode;
+
 
 }

@@ -32,13 +32,14 @@ public class MonitorMysqlDecisionTablesNode implements MonitorMysqlService {
     @Override
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
         //根据快照中数据的个数进行确定存取条数。目前决策表只能选择一个，此处数组是预留防止以后多个的情况
+        String decisionTableStrategyId = "decisionTableStrategy-"+monitorNode.getNodeId();
         //决策表
-        logger.info("MonitorMysqlDecisionTablesNode============================「监控中心-策略监控信息」参数:{},{}", monitorNode, JSONObject.toJSONString(outMap.get("strategySnopshot")));
-        if (!outMap.containsKey("decisionTableStrategy")) {
+        logger.info("MonitorMysqlDecisionTablesNode============================「监控中心-策略监控信息」参数:{},{}", monitorNode, JSONObject.toJSONString(outMap.get(decisionTableStrategyId)));
+        if (!outMap.containsKey(decisionTableStrategyId)) {
             return;
         }
-        JSONArray jsonArray = JSONArray.parseArray(JSONObject.parseObject(outMap.get("decisionTableStrategy") + "").get("snapshot") + "");
-        outMap.remove("decisionTableStrategy");
+        JSONArray jsonArray = JSONArray.parseArray(JSONObject.parseObject(outMap.get(decisionTableStrategyId) + "").get("snapshot") + "");
+        outMap.remove(decisionTableStrategyId);
         for (Object object : jsonArray) {
             if (object == null) {
                 continue;
@@ -74,6 +75,9 @@ public class MonitorMysqlDecisionTablesNode implements MonitorMysqlService {
             monitorStrategy1.setNodeType(monitorNode.getNodeType());
             //引擎版本id
             monitorStrategy1.setEngineVersionId(monitorNode.getEngineVersionId());
+
+            //策略版本
+            monitorStrategy1.setStrategyVersionCode(jsonObject.getString("versionCode"));
             logger.info("MonitorMysqlDecisionTablesNode============================「监控中心-策略监控信息」baseInfo:{}", monitorStrategy1);
             //组织id
             monitorStrategy1.setOrganId(monitorNode.getOrganId());

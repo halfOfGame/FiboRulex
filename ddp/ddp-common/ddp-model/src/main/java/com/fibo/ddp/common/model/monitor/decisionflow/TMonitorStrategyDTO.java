@@ -28,4 +28,7 @@ public class TMonitorStrategyDTO {
     private String strategyName;
 
     private Long  total;
+
+
+    private String strategyVersionCode;
 }

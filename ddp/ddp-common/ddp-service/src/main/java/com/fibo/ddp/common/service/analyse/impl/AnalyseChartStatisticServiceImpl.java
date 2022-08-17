@@ -14,7 +14,10 @@ import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorEngine;
 import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorNodeDTO;
 import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorStrategyDTO;
 import com.fibo.ddp.common.service.analyse.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,20 +59,46 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
     @Autowired
     private AnalyseEngineNodeService analyseEngineNodeService;
 
+
     @Override
     public void statisticData() {
+        StopWatch stopWatch = new StopWatch();
         //图表数据统计
+        stopWatch.start();
         AnalyseChartEngineCallCount();
+        stopWatch.stop();
+        logger.info("analyseChartStatisticServiceImpl============================AnalyseChartEngineCallCount=============time:{}",stopWatch.getTime()/1000);
+        stopWatch.reset();
         //决策引擎执行结果 统计
+        stopWatch.start();
         AnalyseDecisionResultCount();
+        stopWatch.stop();
+        logger.info("analyseChartStatisticServiceImpl============================AnalyseDecisionResultCount=============time:{}",stopWatch.getTime()/1000);
+        stopWatch.reset();
         //决策引擎规则命中次数 统计
+        stopWatch.start();
         AnalyseRuleCount();
+        logger.info("analyseChartStatisticServiceImpl============================AnalyseRuleCount=============time:{}",stopWatch.getTime()/1000);
+        stopWatch.stop();
+        stopWatch.reset();
         //决策引擎规则评分卡命中次数 统计
+        stopWatch.start();
         AnalyseScorecardCount();
+        logger.info("analyseChartStatisticServiceImpl============================AnalyseScorecardCount=============time:{}",stopWatch.getTime()/1000);
+        stopWatch.stop();
+        stopWatch.reset();
         //决策引擎 决策表命中次数 统计
+        stopWatch.start();
         AnalyseDecisionTablesCount();
+        logger.info("analyseChartStatisticServiceImpl============================AnalyseDecisionTablesCount=============time:{}",stopWatch.getTime()/1000);
+        stopWatch.stop();
+        stopWatch.reset();
         //决策引擎 节点层面
+        stopWatch.start();
         AnalyseNodeCount();
+        logger.info("analyseChartStatisticServiceImpl============================AnalyseNodeCount=============time:{}",stopWatch.getTime()/1000);
+        stopWatch.stop();
+        stopWatch.reset();
     }
 
     /**
@@ -133,8 +162,7 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
         decisionTables.setOrganId(tMonitorStrategyDTO.getOrganId());
         decisionTables.setDecisonTablesId(tMonitorStrategyDTO.getStrategyId());
         decisionTables.setDecisonTablesName(tMonitorStrategyDTO.getStrategyName());
-        decisionTables.setDecisonTablesVersionCode(null);
-        decisionTables.setDecisonTablesVersionId(null);
+        decisionTables.setDecisonTablesVersionCode(tMonitorStrategyDTO.getStrategyVersionCode());
         decisionTables.setResultCount(tMonitorStrategyDTO.getTotal());
         //执行结果
         decisionTables.setResult(tMonitorStrategyDTO.getResult());
@@ -171,8 +199,7 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
         analyseScorecard.setOrganId(tMonitorStrategyDTO.getOrganId());
         analyseScorecard.setScorecardId(tMonitorStrategyDTO.getStrategyId());
         analyseScorecard.setScorecardName(tMonitorStrategyDTO.getStrategyName());
-        analyseScorecard.setScorecardVersionCode(null);
-        analyseScorecard.setScorecardVersionId(null);
+        analyseScorecard.setScorecardVersionCode(tMonitorStrategyDTO.getStrategyVersionCode());
         //评分卡执行输出结果
         analyseScorecard.setResult(tMonitorStrategyDTO.getResult());
         analyseScorecard.setResultCount(tMonitorStrategyDTO.getTotal());
@@ -184,7 +211,7 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
     }
 
     /**
-     * 表格 规则调用次数 统计（一天统计 一次）
+     * 表格 规则命中次数 统计（一天统计 一次）
      */
     private void AnalyseRuleCount() {
         //一天统计一次  按照时间统计
@@ -199,6 +226,7 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
     }
 
     private void buildRules(TMonitorStrategyDTO tMonitorStrategyDTO, List<AnalyseRule> analyseRules) {
+
         AnalyseRule analyseRule = new AnalyseRule();
         analyseRule.setCallDate(tMonitorStrategyDTO.getCallDate());
         //引擎id
@@ -210,8 +238,7 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
         analyseRule.setOrganId(tMonitorStrategyDTO.getOrganId());
         analyseRule.setRuleId(tMonitorStrategyDTO.getStrategyId());
         analyseRule.setRuleName(tMonitorStrategyDTO.getStrategyName());
-        analyseRule.setRuleVersionCode(null);
-        analyseRule.setRuleVersionId(null);
+        analyseRule.setRuleVersionCode(tMonitorStrategyDTO.getStrategyVersionCode());
         analyseRule.setHitCount(tMonitorStrategyDTO.getTotal());
         analyseRule.setCreateTime(new Date());
         analyseRule.setCreateUserId(Long.valueOf(1));
@@ -246,11 +273,13 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
             //决策引擎调用次数每天趋势  按天统计次数
             QueryWrapper<TMonitorEngine> monitorEngineQueryWrapper = new QueryWrapper<>();
             monitorEngineQueryWrapper.eq("engine_version_id",versionId);
-            //统计今天
-            monitorEngineQueryWrapper.le("create_time", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDays(new Date(),1)));
-            monitorEngineQueryWrapper.ge("create_time", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDays(new Date(),0)));
+            //统计昨天
+            monitorEngineQueryWrapper.le("create_time", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDays(new Date(),0)));
+            monitorEngineQueryWrapper.ge("create_time", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDays(new Date(),-1)));
             Integer countNum = monitorEngineMapper.selectCount(monitorEngineQueryWrapper);
-            buildModels(engine1,versionId,engineCalls,Long.valueOf(countNum));
+            if(countNum>0){
+                buildModels(engine1,versionId,engineCalls,Long.valueOf(countNum));
+            }
         }
         insertIntoDB(engineCalls);
     }
@@ -260,7 +289,7 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
      */
     private void AnalyseDecisionResultCount() {
         //决策引擎调用次数每天趋势  按天统计次数
-        //统计今天
+        //统计昨天
         List<AnalyseDecisionResult> analyseDecisionResults = new ArrayList<>();
         List<EngineResultSetDTO> engineResultSetList = engineVersionMapper.countDecisionResult();
         for (int i = 0; i < engineResultSetList.size(); i++) {
@@ -273,6 +302,9 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
     private void buildEngineResultModels(EngineResultSetDTO decisionResult, List<AnalyseDecisionResult> analyseDecisionResults) {
         AnalyseDecisionResult analyseDecisionResult = new AnalyseDecisionResult();
         analyseDecisionResult.setCallDate(decisionResult.getCallDate());
+        if(StringUtils.isBlank(decisionResult.getResult())){
+            decisionResult.setResult("无");
+        }
         analyseDecisionResult.setResult(decisionResult.getResult());
         //引擎id
         analyseDecisionResult.setEngineId(decisionResult.getEngineId());
@@ -315,7 +347,7 @@ public class AnalyseChartStatisticServiceImpl implements StatisticsService {
         analyseEngineCall.setUpdateUserId(Long.valueOf(1));
         analyseEngineCall.setCreateTime(new Date());
         analyseEngineCall.setUpdateTime(new Date());
-        analyseEngineCall.setCallDate(new Date());
+        analyseEngineCall.setCallDate(DateUtils.addDays(new Date(),-1));
         engineCalls.add(analyseEngineCall);
     }
 }

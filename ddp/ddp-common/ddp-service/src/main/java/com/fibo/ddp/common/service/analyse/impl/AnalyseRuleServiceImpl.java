@@ -35,7 +35,7 @@ public class AnalyseRuleServiceImpl extends ServiceImpl<AnalyseRuleMapper, Analy
         Map<String,List<AnalyseRule>> map = new HashMap<>();
         for (AnalyseRule item : AnalyseRules) {
             List<AnalyseRule> list = null;
-            String key = String.valueOf(item.getRuleId())+"|"+String.valueOf(item.getRuleVersionId());
+            String key = item.getRuleId()+"|"+item.getRuleVersionCode();
             if (map.containsKey(key)){
                 list = map.get(key);
             }else {
