@@ -218,7 +218,7 @@ public class RiskEngineBusinessImpl implements RiskEngineBusiness {
                 resultSet.setOutput(JSONObject.toJSONString(tmpJsonObject));
                 resultSetMapper.insertResultSet(resultSet);
                 Integer resultId = resultSet.getId();
-//                this.monitorDecisionFlow(inputParam, engine, engineVersion, engineNodeList, outMap, paramJson, resultId);
+                this.monitorDecisionFlow(inputParam, engine, engineVersion, engineNodeList, outMap, paramJson, resultId);
                 // 正常返回结果回调
                 decisionCallback(engine.getCallbackUrl(), paramJson, result);
             }

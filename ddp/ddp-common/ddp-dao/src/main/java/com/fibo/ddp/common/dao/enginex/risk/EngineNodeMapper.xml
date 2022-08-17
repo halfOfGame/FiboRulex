@@ -20,7 +20,7 @@
   </resultMap>
   
   <sql id="Base_Column_List">
-    node_id, parent_id, version_id, node_name, node_code, node_order, node_type, node_x, node_y,node_json,node_script,next_nodes,params
+    node_id, parent_id, version_id, node_name, node_code, node_order, node_type, node_x, node_y,node_json,node_script,next_nodes,params,snapshot
   </sql>
   
   <select id="getEngineTypedNodeListByEngineVersionId" resultMap="EngineNodeMap">

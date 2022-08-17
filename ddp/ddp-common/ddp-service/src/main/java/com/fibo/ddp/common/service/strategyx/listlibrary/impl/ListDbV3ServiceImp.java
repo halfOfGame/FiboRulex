@@ -161,7 +161,7 @@ public class ListDbV3ServiceImp extends ServiceImpl<ListDbMapper, ListDb> implem
 		ListDb listDb = listDbMapper.selectById(id);
 		String tableName = "organ" + "_" + listDb.getOrganId() + "_" + listDb.getListType() + "_" + id;
 		// 插入多行数据 insertOne into  user_info (user_account,user_name,user_age,user_class) values ('00001', '张三 ','20','计算机系'), ('00002', '李四','19','计算机系');
-		String sqlStr = "insertOne into " + tableName + "(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, user_id) values ";
+		String sqlStr = "insert into " + tableName + "(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, user_id) values ";
 
 		// 只取第一个Sheet页
 		sheet = workbook.getSheetAt(0);

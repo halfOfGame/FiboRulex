@@ -129,12 +129,7 @@ public class BlackOrWhiteNode implements EngineRunnerNode {
         JSONObject resultJson = new JSONObject();
         Integer matchs = 0;
         Integer revMatchs = 0; //模糊查询时反向匹配
-//        JSONArray strategySnopshot = new JSONArray();
         Long listDbId = listDb.getId();
-//        if (listDb.getSnapshot() != null) {
-//
-//            strategySnopshot.add(listDb.getSnapshot());
-//        }
         inputParam.put("listDb", listDb);
 
         ListDb version = listDb;
@@ -165,11 +160,11 @@ public class BlackOrWhiteNode implements EngineRunnerNode {
                 String columnKey = "t" + k;
                 for (TblColumn tblColumn : columnList) {
                     String colName = tblColumn.getColName(); //t5
-                    String paramValue = inputParam.get(fieldEn).toString();
                     if (columnKey.equals(colName)) {
-                        if (paramValue == null || paramValue.equals("")) {
+                        if (inputParam.get(fieldEn) == null) {
                             continue ; //数据项缺失导致无法命中，默认返回没命中
                         } else {
+                            String paramValue = inputParam.get(fieldEn).toString();
                             loc += 1;
                             if (matchType == 1) {
                                 if (loc > 1 && queryType == 1) {
