@@ -12,6 +12,7 @@ import com.fibo.ddp.common.service.datax.runner.ExecuteUtils;
 import com.fibo.ddp.common.service.strategyx.aimodel.ModelsService;
 import com.fibo.ddp.common.service.strategyx.aimodel.PMMLExecutor.PMMLExecutor;
 import com.fibo.ddp.common.service.strategyx.strategyout.StrategyOutputService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.common.utils.constant.strategyx.StrategyType;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
 import org.slf4j.Logger;
@@ -65,15 +66,13 @@ public class ModelNode implements EngineRunnerNode {
 
     @Override
     public void runNode(EngineNode engineNode, Map<String, Object> inputParam, Map<String, Object> outMap) {
-        List<Long> modelIds = getExecuteVersionIdList(engineNode);
-        if (modelIds == null || modelIds.isEmpty()) {
-            logger.error("模型节点内容为空，node：{}", engineNode);
-            return;
+        //监控中心--记录节点快照信息
+        if (engineNode != null && engineNode.getSnapshot() != null) {
+            outMap.put("nodeSnapshot", engineNode.getSnapshot());
         }
+        List<Long> modelIds = getExecuteVersionIdList(engineNode);
         Long modelId = modelIds.get(0);
         MachineLearningModels models = modelsService.selectById(Integer.valueOf(modelId.toString()));
-        //监控中心--节点信息记录
-        outMap.put("nodeSnapshot", JSONObject.toJSONString(models));
         JSONObject nodeInfo = new JSONObject();
         nodeInfo.put("engineNode", engineNode);
         nodeInfo.put("nodeId", engineNode.getNodeId());
@@ -122,6 +121,7 @@ public class ModelNode implements EngineRunnerNode {
         inputParam.put(models.getResultFieldEn(), modelResult);
         outMap.put("model_" + modelId, modelResult);
         terminalCondition(engineNode, inputParam, outMap, modelResult);
+        outMap.put(RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX + engineNode.getNodeId(), JSONObject.toJSONString(models));
     }
 
     private void terminalCondition(EngineNode engineNode, Map<String, Object> inputParam, Map<String, Object> outMap, Object executeResult) {
