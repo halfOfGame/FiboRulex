@@ -49,6 +49,8 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
     private MonitorMysqlListDbNode monitorMysqlListDbNode;
     @Autowired
     private MonitorMysqlDecisionTreeNode monitorMysqlDecisionTreeNode;
+    @Autowired
+    private MonitorMysqlModelNode monitorMysqlModelNode;
 
     @Override
     public String getStorageType() {
@@ -136,8 +138,9 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
                 //评分卡
                 monitorMysqlScorecardNode.createMonitorStrategy(monitorNode,outMap);
                 break;
-            case 5: // 黑名单
-            case 6: // 白名单
+            case 5:
+            case 6:
+                // 名单库
                 monitorMysqlListDbNode.createMonitorStrategy(monitorNode,outMap);
                 break;
             case 7:
@@ -151,6 +154,7 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
                 break;
             case 15:
                 //模型
+                monitorMysqlModelNode.createMonitorStrategy(monitorNode, outMap);
                 break;
             case 16:
                 //决策表
