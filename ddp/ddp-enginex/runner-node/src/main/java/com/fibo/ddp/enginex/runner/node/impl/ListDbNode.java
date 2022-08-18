@@ -92,7 +92,7 @@ public class ListDbNode implements EngineRunnerNode {
             }
         }
         //监控中心==》策略层面快照信息记录
-        outMap.put("strategySnapshot",strategySnapshot);
+        outMap.put("strategySnapshot-"+engineNode.getNodeId(),strategySnapshot);
         //构造节点信息
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("nodeId", engineNode.getNodeId());
