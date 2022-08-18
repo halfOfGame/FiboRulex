@@ -50,7 +50,7 @@ public class MonitorMysqlBlackOrWhiteNode implements MonitorMysqlService {
             String ruleVersionId = jsonObject.get("id")+"";
             monitorStrategy1.setStrategyId(Long.valueOf(ruleVersionId));
             //策略名称 决策表名称
-            monitorStrategy1.setStrategyName(JSONObject.parseObject(monitorNode.getSnapshot()).getString("name"));
+            monitorStrategy1.setStrategyName(jsonObject.getString("listName"));
             //策略类型
             monitorStrategy1.setStrategyType(monitorNode.getNodeType());
             //业务id

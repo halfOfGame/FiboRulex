@@ -55,7 +55,6 @@ public class MonitorController {
         return ResponseEntityBuilder.buildNormalResponse(modelMap);
     }
 
-
     /**
      * @api {POST} /v2/monitor/decisionFlow 8.10.01. 查看决策流某条对应的详情（全部节点树以及执行过的节点轨迹）
      * @apiVersion 2.0.0
@@ -80,7 +79,6 @@ public class MonitorController {
         return ResponseEntityBuilder.buildNormalResponse(resultSets);
     }
 
-
     /**
      * @api {POST} /v2/monitor/node 8.10.01. 查看节点配置详情（节点下配置等）
      * @apiVersion 2.0.0
@@ -103,6 +101,7 @@ public class MonitorController {
         List<?> resultSets  = MonitorCenterFactory.getMonitorCenterServiceImp(MonitorStorageType.Mysql).getResultNodeDetail(param);
         return ResponseEntityBuilder.buildNormalResponse(resultSets);
     }
+
     /**
      * @api {POST} /v2/monitor/strategy 8.10.01. 查看策略配置详情（具体策略下配置等）
      * @apiVersion 2.0.0
@@ -118,6 +117,7 @@ public class MonitorController {
         List<?> resultSets  =  MonitorCenterFactory.getMonitorCenterServiceImp(MonitorStorageType.HBase).getResultStrategyDetail(param);
         return ResponseEntityBuilder.buildNormalResponse(resultSets!=null?resultSets.get(0):"");
     }
+
     @RequestMapping(value = "/strategyMysql", method = RequestMethod.POST)
     public ResponseEntityDto<Object> getResultStrategyMysqlDetail(@RequestBody DecisionFlowRequestDTO param) {
         logger.info("/v2/monitor/strategyMysql inputParam :{}",param);
