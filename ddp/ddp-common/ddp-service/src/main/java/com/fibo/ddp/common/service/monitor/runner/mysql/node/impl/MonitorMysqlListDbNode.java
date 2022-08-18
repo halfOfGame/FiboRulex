@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
-public class MonitorMysqlBlackOrWhiteNode implements MonitorMysqlService {
+public class MonitorMysqlListDbNode implements MonitorMysqlService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private TMonitorStrategyMapper monitorStrategyMapper;

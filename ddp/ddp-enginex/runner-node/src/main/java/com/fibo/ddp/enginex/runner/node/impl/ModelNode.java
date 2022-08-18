@@ -2,16 +2,17 @@ package com.fibo.ddp.enginex.runner.node.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fibo.ddp.common.model.datax.datamanage.Field;
 import com.fibo.ddp.common.model.enginex.risk.EngineNode;
 import com.fibo.ddp.common.model.strategyx.aimodel.MachineLearningModels;
 import com.fibo.ddp.common.model.strategyx.strategyout.StrategyOutput;
+import com.fibo.ddp.common.service.datax.datamanage.FieldService;
 import com.fibo.ddp.common.service.datax.runner.CommonService;
 import com.fibo.ddp.common.service.datax.runner.ExecuteUtils;
 import com.fibo.ddp.common.service.strategyx.aimodel.ModelsService;
 import com.fibo.ddp.common.service.strategyx.aimodel.PMMLExecutor.PMMLExecutor;
 import com.fibo.ddp.common.service.strategyx.strategyout.StrategyOutputService;
 import com.fibo.ddp.common.utils.constant.strategyx.StrategyType;
-import com.fibo.ddp.common.utils.util.StringUtil;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ModelNode implements EngineRunnerNode {
@@ -36,6 +35,8 @@ public class ModelNode implements EngineRunnerNode {
     private PMMLExecutor pmmlExecutor;
     @Resource
     private StrategyOutputService outputService;
+    @Autowired
+    private FieldService fieldService;
 
     private List<Long> getExecuteVersionIdList(EngineNode engineNode) {
         return ExecuteUtils.getExecuteIdList(engineNode, "modelId");
@@ -44,16 +45,19 @@ public class ModelNode implements EngineRunnerNode {
     @Override
     public void getNodeField(EngineNode engineNode, Map<String, Object> inputParam) {
         logger.info("start【获取模型节点指标】ModelNode.getNodeField engineNode:{},inputParam:{}", JSONObject.toJSONString(engineNode), JSONObject.toJSONString(inputParam));
-//        Long modelId = Long.valueOf(engineNode.getNodeJson());
         List<Long> modelIds = getExecuteVersionIdList(engineNode);
-        List<Long> ids = new ArrayList<>();
+        List<String> ens = new ArrayList<>();
         for (Long modelId : modelIds) {
             MachineLearningModels models = modelsService.selectById(Integer.valueOf(modelId.toString()));
-            ids.addAll(StringUtil.toLongList(models.getMappingField()));
+            List<String> mappingFieldList = Arrays.asList(models.getMappingField().split(","));
+            ens.addAll(mappingFieldList);
         }
+        List<Field> fieldList = fieldService.listByEns(ens);
+        Set<Long> fieldIdSet = fieldList.stream().map(item -> item.getId()).collect(Collectors.toSet());
+        List<Long> ids = new ArrayList<>(fieldIdSet);
         try {
             commonService.getFieldByIds(ids, inputParam);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("模型中字段未完全找到");
             e.printStackTrace();
         }
@@ -61,16 +65,15 @@ public class ModelNode implements EngineRunnerNode {
 
     @Override
     public void runNode(EngineNode engineNode, Map<String, Object> inputParam, Map<String, Object> outMap) {
-
         List<Long> modelIds = getExecuteVersionIdList(engineNode);
-        if (modelIds == null || modelIds.isEmpty()){
-            logger.error("模型节点内容为空，node：{}",engineNode);
+        if (modelIds == null || modelIds.isEmpty()) {
+            logger.error("模型节点内容为空，node：{}", engineNode);
             return;
         }
         Long modelId = modelIds.get(0);
         MachineLearningModels models = modelsService.selectById(Integer.valueOf(modelId.toString()));
         //监控中心--节点信息记录
-        outMap.put("nodeSnapshot", models);
+        outMap.put("nodeSnapshot", JSONObject.toJSONString(models));
         JSONObject nodeInfo = new JSONObject();
         nodeInfo.put("engineNode", engineNode);
         nodeInfo.put("nodeId", engineNode.getNodeId());
@@ -89,15 +92,17 @@ public class ModelNode implements EngineRunnerNode {
         // 调用模型
         double modelResult = 0d;
         try {
-            modelResult =pmmlExecutor.predict(evaluator, input);
-        }catch (Exception e){
-            logger.error("模型节点执行异常,node：{}",engineNode);
+            modelResult = pmmlExecutor.predict(evaluator, input);
+        } catch (Exception e) {
+            logger.error("模型执行异常", e);
+            throw e;
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("nodeId", engineNode.getNodeId());
         jsonObject.put("nodeName", engineNode.getNodeName());
         jsonObject.put("modelId", models.getId());
         jsonObject.put("modelName", models.getModelName());
+        jsonObject.put("result", modelResult);
         List<JSONObject> fieldList = new ArrayList<>();
         JSONObject result = new JSONObject();
         result.put(models.getResultFieldEn(), modelResult);

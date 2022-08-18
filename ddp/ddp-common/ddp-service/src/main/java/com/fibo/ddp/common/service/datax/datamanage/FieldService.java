@@ -162,4 +162,6 @@ public interface FieldService extends IService<Field> {
     Field findByFieldEnbyorganId(Long organId, String fieldEn);
 
     Field findByFieldCnbyorganId(Long organId, String fieldCn);
+
+    List<Field> listByEns(List<String> ens);
 }

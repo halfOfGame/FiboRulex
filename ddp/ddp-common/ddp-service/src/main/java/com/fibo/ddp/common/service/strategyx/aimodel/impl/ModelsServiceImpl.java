@@ -81,7 +81,7 @@ public class ModelsServiceImpl extends ServiceImpl<MachineLearningModelsMapper, 
             String key = RedisUtils.getPrimaryKey(TableEnum.T_MACHINE_LEARNING_MODELS, id);
             machineLearningModels = redisManager.getByPrimaryKey(key, MachineLearningModels.class);
         } else {
-            machineLearningModels = this.selectById(id);
+            machineLearningModels = this.getById(id);
         }
 
         return machineLearningModels;
