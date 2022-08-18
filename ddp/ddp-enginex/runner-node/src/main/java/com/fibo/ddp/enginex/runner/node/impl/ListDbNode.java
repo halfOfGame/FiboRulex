@@ -235,20 +235,6 @@ public class ListDbNode implements EngineRunnerNode {
         return false;
     }
 
-    /**
-     * 根据传入数据监测是否命中黑名单
-     *
-     * @param paramMap
-     * @return
-     * @see
-     */
-    public boolean findByQueryKey(Map<String, Object> paramMap, Map<String, Object> outmap, Integer type, EngineNode engineNode) {
-
-
-        return false;
-    }
-
-
     private String getDbName() {
         return "riskmanage";
     }

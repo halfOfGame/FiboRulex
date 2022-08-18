@@ -224,11 +224,11 @@ public class ModelsController {
                 models.setModelFieldArr(StringUtils.isBlank(modelField) ? new ArrayList<>() : Arrays.asList(modelField.split(",")));
 
                 String mappingField = models.getMappingField();
-                List<Integer> mappingFieldArr = new ArrayList<>();
+                List<String> mappingFieldArr = new ArrayList<>();
                 if(StringUtils.isNotBlank(mappingField)){
                     String[] mappingFields = mappingField.split(",");
                     for(String str : mappingFields){
-                        mappingFieldArr.add(Integer.valueOf(str));
+                        mappingFieldArr.add(str);
                     }
                 }
                 models.setMappingFieldArr(mappingFieldArr);

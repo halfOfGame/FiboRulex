@@ -46,7 +46,7 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
     @Autowired
     private MonitorMysqlDecisionTablesNode monitorMysqlDecisionTablesNode;
     @Autowired
-    private MonitorMysqlBlackOrWhiteNode monitorMysqlBlackOrWhiteNode;
+    private MonitorMysqlListDbNode monitorMysqlListDbNode;
     @Autowired
     private MonitorMysqlDecisionTreeNode monitorMysqlDecisionTreeNode;
 
@@ -136,13 +136,9 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
                 //评分卡
                 monitorMysqlScorecardNode.createMonitorStrategy(monitorNode,outMap);
                 break;
-            case 5:
-                //黑名单
-                monitorMysqlBlackOrWhiteNode.createMonitorStrategy(monitorNode,outMap);
-                break;
-            case 6:
-                //白名单
-                monitorMysqlBlackOrWhiteNode.createMonitorStrategy(monitorNode,outMap);
+            case 5: // 黑名单
+            case 6: // 白名单
+                monitorMysqlListDbNode.createMonitorStrategy(monitorNode,outMap);
                 break;
             case 7:
                 //沙盒比例

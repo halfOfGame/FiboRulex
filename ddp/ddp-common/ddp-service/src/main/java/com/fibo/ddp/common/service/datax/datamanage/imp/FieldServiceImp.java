@@ -3,6 +3,7 @@ package com.fibo.ddp.common.service.datax.datamanage.imp;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fibo.ddp.common.dao.canal.TableEnum;
 import com.fibo.ddp.common.dao.datax.datamanage.*;
@@ -19,8 +20,8 @@ import com.fibo.ddp.common.model.datax.datamanage.FieldUser;
 import com.fibo.ddp.common.model.strategyx.knowledge.Rule;
 import com.fibo.ddp.common.model.strategyx.listlibrary.ListDb;
 import com.fibo.ddp.common.model.strategyx.scorecard.Scorecard;
-import com.fibo.ddp.common.service.common.runner.RunnerSessionManager;
 import com.fibo.ddp.common.service.common.SessionManager;
+import com.fibo.ddp.common.service.common.runner.RunnerSessionManager;
 import com.fibo.ddp.common.service.datax.datamanage.FieldService;
 import com.fibo.ddp.common.service.redis.RedisManager;
 import com.fibo.ddp.common.service.redis.RedisUtils;
@@ -1196,5 +1197,12 @@ public class FieldServiceImp extends ServiceImpl<FieldMapper,Field> implements F
             field = fieldMapper.findByFieldCnbyorganId(paramMap);
         }
         return field;
+    }
+
+    @Override
+    public List<Field> listByEns(List<String> ens) {
+        LambdaQueryWrapper<Field> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Field::getFieldEn, ens);
+        return this.list(queryWrapper);
     }
 }
