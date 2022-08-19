@@ -4,10 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fibo.ddp.common.dao.authx.system.SysUserMapper;
 import com.fibo.ddp.common.model.authx.system.SysUser;
+import com.fibo.ddp.common.model.common.enums.ErrorCodeEnum;
 import com.fibo.ddp.common.service.authx.system.SysUserService;
 import com.fibo.ddp.common.service.common.SessionManager;
 import com.fibo.ddp.common.utils.common.MD5;
 import com.fibo.ddp.common.utils.constant.StatusConst;
+import com.fibo.ddp.common.utils.constant.TokenConstants;
+import com.fibo.ddp.common.utils.exception.ApiException;
+import com.fibo.ddp.common.utils.util.PwdCheckUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +49,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public long createSysUser(SysUser sysUser) {
         long num = 0;
         //密码加密
-        String password = MD5.GetMD5Code("111111");
+        String password = MD5.GetMD5Code(PwdCheckUtil.SYS_DEFAULT_PASSWORD);
         sysUser.setPassword(password);
         //创建人
         SysUser user = SessionManager.getLoginAccount();
@@ -106,7 +110,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 //		SysUser sysUser = SessionManager.getLoginAccount();
 //    	long userId = sysUser.getUserId();
         //密码加密
-        String password = MD5.GetMD5Code(sysUser.getPassword());
+        /**
+         * 校验密码复杂度
+         */
+        String pwd = sysUser.getPassword();
+        if(!PwdCheckUtil.isValidPassword(pwd)){
+           throw new ApiException(ErrorCodeEnum.USER_PWD_CHECKERROR.getCode(),ErrorCodeEnum.USER_PWD_CHECKERROR.getMessage());
+        }
+
+        String password = MD5.GetMD5Code(pwd);
         sysUser.setPassword(password);
 //		sysUser.setUserId(userId);
         return sysUserMapper.updatePassword(sysUser);
