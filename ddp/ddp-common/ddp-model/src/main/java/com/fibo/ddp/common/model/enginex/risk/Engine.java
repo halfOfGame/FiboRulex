@@ -93,4 +93,10 @@ public class Engine implements Serializable {
      */
     @TableField(exist = false)
     private boolean checked;
+
+	/**
+	 * 执行器记录当前引擎结果id
+	 */
+	@TableField(exist = false)
+    private Integer resultId;
 }

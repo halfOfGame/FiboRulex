@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+/**
+ * 分流节点
+ */
 @Service
 public class MonitorMysqlSandboxProportionNode implements MonitorMysqlService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
     @Override
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {

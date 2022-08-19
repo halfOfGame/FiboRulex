@@ -31,6 +31,9 @@ import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 评分卡节点
+ */
 @Service
 public class ScorecardNode implements EngineRunnerNode {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -75,7 +78,7 @@ public class ScorecardNode implements EngineRunnerNode {
     public void runNode(EngineNode engineNode, Map<String, Object> inputParam, Map<String, Object> outMap) {
         //监控中心--节点快照信息
         if (engineNode != null && engineNode.getSnapshot() != null) {
-            outMap.put("nodeSnapshot", engineNode.getSnapshot());
+            outMap.put(RunnerConstants.NODE_SNAPSHOT, engineNode.getSnapshot());
         }
         List<Long> versionIdList = getExecuteVersionIdList(engineNode);
         for (Long versionId : versionIdList) {

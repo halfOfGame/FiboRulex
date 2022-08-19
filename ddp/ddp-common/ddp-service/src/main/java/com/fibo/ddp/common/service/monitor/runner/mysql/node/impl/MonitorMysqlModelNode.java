@@ -30,14 +30,12 @@ public class MonitorMysqlModelNode implements MonitorMysqlService {
         if (!outMap.containsKey(strategyKey)) {
             return;
         }
-        JSONObject object = JSONObject.parseObject(outMap.get(strategyKey).toString());
+        JSONObject jsonObject = JSONObject.parseObject(outMap.get(strategyKey).toString());
         outMap.remove(strategyKey);
-        if (object == null) {
+        if (jsonObject == null) {
             return;
         }
         TMonitorStrategy monitorStrategy1 = new TMonitorStrategy();
-        //1.节点监控JSONObject信息中拿出策略层面的信息
-        JSONObject jsonObject = JSONObject.parseObject(object + "");
         //策略快照
         monitorStrategy1.setSnapshot(jsonObject.toString());
         //全量入参
@@ -46,7 +44,7 @@ public class MonitorMysqlModelNode implements MonitorMysqlService {
         monitorStrategy1.setOutput(monitorNode.getOutput());
         logger.info("MonitorMysqlModelNode============================「监控中心-策略监控信息」monitorInfo:{}", monitorStrategy1);
         //策略ID
-        monitorStrategy1.setStrategyId(Long.valueOf(jsonObject.getLong("id")));
+        monitorStrategy1.setStrategyId(jsonObject.getLong("id"));
         //策略名称
         monitorStrategy1.setStrategyName(jsonObject.getString("modelName"));
         //策略结果
@@ -62,8 +60,6 @@ public class MonitorMysqlModelNode implements MonitorMysqlService {
         monitorStrategy1.setNodeType(monitorNode.getNodeType());
         //引擎版本id
         monitorStrategy1.setEngineVersionId(monitorNode.getEngineVersionId());
-        //策略版本
-        monitorStrategy1.setStrategyVersionCode(jsonObject.getString("versionCode"));
         logger.info("MonitorMysqlModelNode============================「监控中心-策略监控信息」baseInfo:{}", monitorStrategy1);
         //组织id
         monitorStrategy1.setOrganId(monitorNode.getOrganId());

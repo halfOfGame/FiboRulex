@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fibo.ddp.common.model.enginex.risk.EngineNode;
 import com.fibo.ddp.common.model.enginex.runner.Sandbox;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * 分流节点
+ */
 @Service
 public class SandboxProportionNode implements EngineRunnerNode {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -30,8 +34,8 @@ public class SandboxProportionNode implements EngineRunnerNode {
             List<Sandbox> list = JSON.parseArray(engineNode.getNodeScript(), Sandbox.class);
             //监控中心-- 节点配置信息记录(不需要策略层面的监控)
             JSONObject nodeSnapshot = new JSONObject();
-            nodeSnapshot.put("nodeSnapshot",JSON.parseArray(engineNode.getNodeJson()));
-            outMap.put("nodeSnapshot",nodeSnapshot);
+            nodeSnapshot.put(RunnerConstants.NODE_SNAPSHOT, engineNode.getNodeJson());
+            outMap.put(RunnerConstants.NODE_SNAPSHOT,nodeSnapshot);
             JSONObject nodeInfo = new JSONObject();
             nodeInfo.put("engineNode",engineNode);
             nodeInfo.put("nodeId",engineNode.getNodeId());

@@ -51,6 +51,8 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
     private MonitorMysqlDecisionTreeNode monitorMysqlDecisionTreeNode;
     @Autowired
     private MonitorMysqlModelNode monitorMysqlModelNode;
+    @Autowired
+    private MonitorMysqlChildEngineNode monitorMysqlChildEngineNode;
 
     @Override
     public String getStorageType() {
@@ -59,51 +61,52 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
 
     @Override
     public void monitorDecisionFlow(Map<String, Object> inputParam, Engine engine, EngineVersion engineVersion, List<EngineNode> engineNodeList, Map<String, Object> outMap, Map<String, Object> paramJson, Integer resultId) {
-        CompletableFuture.runAsync(()->{
+        CompletableFuture.runAsync(() -> {
             try {
                 //组装插入实体类信息
                 TMonitorEngine monitorEngine = new TMonitorEngine();
-                monitorEngine.setBusinessId((String) paramJson.get("pid"));
-                monitorEngine.setMonitorParentId(resultId+"");
+                monitorEngine.setBusinessId((String) paramJson.get("businessId"));
+                monitorEngine.setMonitorParentId(resultId + "");
                 monitorEngine.setOrganId(engine.getOrganId());
                 monitorEngine.setEngineId(engine.getId());
                 monitorEngine.setEngineName(engine.getName());
                 monitorEngine.setEngineVersionId(engineVersion.getVersionId());
-                monitorEngine.setProcess(outMap.get("executedNodes")+"");
+                monitorEngine.setProcess(outMap.get("executedNodes") + "");
                 monitorEngine.setSnapshot(JSON.toJSONString(engineNodeList));
                 monitorEngine.setInput(JSON.toJSONString(inputParam));
                 //todo 异步写入mysql
                 monitorEngineMapper.insert(monitorEngine);
                 outMap.remove("executedNodes");
                 //todo 组装节点监控 mysql节点业务模型 并存入mysql
-                monitorNode(engine,engineVersion,outMap,monitorEngine);
+                monitorNode(engine, engineVersion, outMap, monitorEngine);
             } catch (Exception e) {
-                logger.info("==============监控中心========监控信息入库出错:{}",e);
+                logger.info("==============监控中心========监控信息入库出错:{}", e);
             }
-        },threadPoolTaskExecutor);
+        }, threadPoolTaskExecutor);
     }
 
 
     /**
      * 组装节点监控 Hbase节点业务模型 并存入hbase
+     *
      * @param engine
      * @param engineVersion
      * @param outMap
      * @param monitorEngine
      */
-    private void monitorNode(Engine engine, EngineVersion engineVersion, Map<String, Object> outMap,TMonitorEngine monitorEngine) {
-        if(outMap.containsKey("monitorNodes")){
-            List<MonitorNode> monitorNodeInfoList = (List<MonitorNode>)outMap.get("monitorNodes");
+    private void monitorNode(Engine engine, EngineVersion engineVersion, Map<String, Object> outMap, TMonitorEngine monitorEngine) {
+        if (outMap.containsKey("monitorNodes")) {
+            List<MonitorNode> monitorNodeInfoList = (List<MonitorNode>) outMap.get("monitorNodes");
             logger.debug("=============================monitorNode:{}", JSONArray.toJSONString(monitorNodeInfoList));
             //循环拿出list中的数据，重新组装业务模型，插入Hbase表中
-            monitorNodeInfoList.stream().forEach(item->{
+            monitorNodeInfoList.stream().forEach(item -> {
                 //组装节点层面 插入实体类信息
                 TMonitorNode monitorNode = new TMonitorNode();
                 monitorNode.setBusinessId(item.getBaseInfo().getBusinessId());
                 monitorNode.setOrganId(engine.getOrganId());
                 monitorNode.setEngineId(engine.getId());
                 monitorNode.setEngineVersionId(engineVersion.getVersionId());
-                monitorNode.setMonitorParentId(monitorEngine.getId()+"");
+                monitorNode.setMonitorParentId(monitorEngine.getId() + "");
                 monitorNode.setNodeId(Long.valueOf(item.getBaseInfo().getNodeId()));
                 monitorNode.setNodeName(item.getBaseInfo().getNodeName());
                 monitorNode.setNodeType(item.getBaseInfo().getNodeType());
@@ -113,35 +116,37 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
                 monitorNode.setCreateTime(LocalDateTime.now());
                 monitorNodeMapper.insert(monitorNode);
                 //根绝节点类型拆分出策略层面的数据，组装策略监控信息业务模型
-                buildMonitorStrategyModel(monitorNode,outMap);
+                buildMonitorStrategyModel(monitorNode, outMap);
             });
             outMap.remove("monitorDecisionFlow");
         }
     }
+
     /**
      * 根绝节点类型拆分出策略层面的数据，组装策略监控信息业务模型
      * 并写入Hbase
+     *
      * @param monitorNode
      * @Param outMap 输出变量池
      */
     public void buildMonitorStrategyModel(TMonitorNode monitorNode, Map<String, Object> outMap) {
         String nodeType = monitorNode.getNodeType();
-        switch(Integer.valueOf(StringEscapeUtils.unescapeJava(nodeType))){
+        switch (Integer.valueOf(StringEscapeUtils.unescapeJava(nodeType))) {
             case 2:
                 //规则
-                monitorMysqlRuleSetNode.createMonitorStrategy(monitorNode,outMap);
+                monitorMysqlRuleSetNode.createMonitorStrategy(monitorNode, outMap);
                 break;
             case 3:
                 //分组
                 break;
             case 4:
                 //评分卡
-                monitorMysqlScorecardNode.createMonitorStrategy(monitorNode,outMap);
+                monitorMysqlScorecardNode.createMonitorStrategy(monitorNode, outMap);
                 break;
             case 5:
             case 6:
                 // 名单库
-                monitorMysqlListDbNode.createMonitorStrategy(monitorNode,outMap);
+                monitorMysqlListDbNode.createMonitorStrategy(monitorNode, outMap);
                 break;
             case 7:
                 //沙盒比例
@@ -151,6 +156,7 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
                 break;
             case 14:
                 //子引擎
+                monitorMysqlChildEngineNode.createMonitorStrategy(monitorNode, outMap);
                 break;
             case 15:
                 //模型
@@ -158,11 +164,11 @@ public class MonitorCenterMysqlServiceImpl implements IMonitorCenterService {
                 break;
             case 16:
                 //决策表
-                monitorMysqlDecisionTablesNode.createMonitorStrategy(monitorNode,outMap);
+                monitorMysqlDecisionTablesNode.createMonitorStrategy(monitorNode, outMap);
                 break;
             case 17:
                 //决策树
-                monitorMysqlDecisionTreeNode.createMonitorStrategy(monitorNode,outMap);
+                monitorMysqlDecisionTreeNode.createMonitorStrategy(monitorNode, outMap);
                 break;
             default:
                 break;

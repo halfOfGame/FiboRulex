@@ -2,6 +2,7 @@ package com.fibo.ddp.enginex.runner.node.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fibo.ddp.common.model.enginex.risk.EngineNode;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class AggregationNode implements EngineRunnerNode {
         // 直接返回下一个节点
         outMap.put("nextNode", engineNode.getNextNodes());
         if (engineNode != null && engineNode.getSnapshot() != null) {
-            outMap.put("nodeSnapshot", engineNode.getSnapshot());
+            outMap.put(RunnerConstants.NODE_SNAPSHOT, engineNode.getSnapshot());
         }
     }
 

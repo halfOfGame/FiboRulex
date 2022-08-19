@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 决策树节点
+ */
 @Service
 public class DecisionTreeNode implements EngineRunnerNode {
     @Autowired
@@ -47,7 +50,7 @@ public class DecisionTreeNode implements EngineRunnerNode {
     public void runNode(EngineNode engineNode, Map<String, Object> inputParam, Map<String, Object> outMap) {
         //监控中心--记录节点快照信息
         if (engineNode != null && engineNode.getSnapshot() != null) {
-            outMap.put("nodeSnapshot", engineNode.getSnapshot());
+            outMap.put(RunnerConstants.NODE_SNAPSHOT, engineNode.getSnapshot());
         }
         List<Long> list = getExecuteVersionIdList(engineNode);
         JSONObject nodeInfo = new JSONObject();

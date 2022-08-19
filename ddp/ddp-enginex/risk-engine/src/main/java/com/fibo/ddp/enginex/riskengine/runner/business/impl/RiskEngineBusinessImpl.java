@@ -16,6 +16,7 @@ import com.fibo.ddp.common.service.monitor.runner.MonitorCommonService;
 import com.fibo.ddp.common.service.monitor.runner.hbase.IFeatureRecordService;
 import com.fibo.ddp.common.utils.constant.enginex.NodeTypeEnum;
 import com.fibo.ddp.common.utils.constant.monitor.MonitorStorageType;
+import com.fibo.ddp.enginex.riskengine.runner.business.ChildEngineNode;
 import com.fibo.ddp.enginex.riskengine.runner.business.RiskEngineBusiness;
 import com.fibo.ddp.enginex.runner.node.impl.*;
 import org.apache.commons.lang3.StringUtils;
@@ -144,8 +145,7 @@ public class RiskEngineBusinessImpl implements RiskEngineBusiness {
                 resultSet.setEngineName(engine.getName());
                 resultSet.setType(2);
                 resultSet.setSubVersion(engineVersion.getSubVersion());
-                resultSet.setUid(String.valueOf(paramJson.get("uid")));
-                resultSet.setPid(String.valueOf(paramJson.get("pid")));
+                resultSet.setPid(String.valueOf(paramJson.get("businessId")));
 
                 // 节点终止输出
                 if (outMap.containsKey("result")) {
@@ -218,6 +218,7 @@ public class RiskEngineBusinessImpl implements RiskEngineBusiness {
                 resultSet.setOutput(JSONObject.toJSONString(tmpJsonObject));
                 resultSetMapper.insertResultSet(resultSet);
                 Integer resultId = resultSet.getId();
+                jsonObject.put("resultId", resultId);
                 this.monitorDecisionFlow(inputParam, engine, engineVersion, engineNodeList, outMap, paramJson, resultId);
                 // 正常返回结果回调
                 decisionCallback(engine.getCallbackUrl(), paramJson, result);

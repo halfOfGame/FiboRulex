@@ -41,6 +41,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+/**
+ * 规则集节点
+ */
 @Service
 public class RuleSetNode implements EngineRunnerNode {
 
@@ -116,7 +119,7 @@ public class RuleSetNode implements EngineRunnerNode {
         JSONObject nodeJson = JSONObject.parseObject(engineNode.getNodeJson());
         //监控中心--记录节点快照信息
         if (engineNode != null && engineNode.getSnapshot() != null) {
-            outMap.put("nodeSnapshot", engineNode.getSnapshot());
+            outMap.put(RunnerConstants.NODE_SNAPSHOT, engineNode.getSnapshot());
         }
         JSONObject nodeInfo = new JSONObject();
         nodeInfo.put("engineNode", engineNode);

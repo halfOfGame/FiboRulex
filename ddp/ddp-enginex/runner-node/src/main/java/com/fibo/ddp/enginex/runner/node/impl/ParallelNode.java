@@ -2,6 +2,7 @@ package com.fibo.ddp.enginex.runner.node.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fibo.ddp.common.model.enginex.risk.EngineNode;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class ParallelNode implements EngineRunnerNode {
         logger.info("start【执行并行节点】ParallelNode.runNode engineNode:{},inputParam:{},outMap:{}"
                 , JSONObject.toJSONString(engineNode), JSONObject.toJSONString(inputParam), JSONObject.toJSONString(outMap));
         if (engineNode != null && engineNode.getSnapshot() != null) {
-            outMap.put("nodeSnapshot", engineNode.getSnapshot());
+            outMap.put(RunnerConstants.NODE_SNAPSHOT, engineNode.getSnapshot());
         }
 
     }
