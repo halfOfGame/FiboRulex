@@ -218,7 +218,8 @@
 				window.localStorage.setItem("engineId", id);
 				bus.$emit('EngineSwitchover',id)
 				
-				window.top.location.href = h5Path + "/#/engine_decision_flow";
+				// window.top.location.href = h5Path + "/#/engine_decision_flow";
+				this.$router.push('engine_decision_flow')
 			},
 			// 对话框
 			handleClose(done) {
