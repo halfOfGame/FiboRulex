@@ -10,6 +10,7 @@ import com.fibo.ddp.common.model.strategyx.guiderule.RuleInfo;
 import com.fibo.ddp.common.service.monitor.runner.mysql.node.MonitorMysqlService;
 import com.fibo.ddp.common.service.strategyx.guiderule.RuleService;
 import com.fibo.ddp.common.utils.constant.Constants;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class MonitorMysqlRuleSetNode implements MonitorMysqlService {
     @Override
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
         JSONObject nodeJson = JSONObject.parseObject(monitorNode.getSnapshot());
-        String strategySnopshotKeyId = "strategySnopshot-"+monitorNode.getNodeId();
+        String strategySnopshotKeyId = RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX+monitorNode.getNodeId();
         //根据快照中数据的个数进行确定存取条数。
         //规则
         logger.info("MonitorMysqlRuleSetNode============================「监控中心-策略监控信息」参数:{},{}",monitorNode,JSONObject.toJSONString(outMap.get(strategySnopshotKeyId)));

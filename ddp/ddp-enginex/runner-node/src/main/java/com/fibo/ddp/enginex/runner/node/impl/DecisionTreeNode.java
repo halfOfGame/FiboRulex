@@ -11,6 +11,7 @@ import com.fibo.ddp.common.model.strategyx.decisiontree.vo.DecisionTreeVo;
 import com.fibo.ddp.common.service.datax.runner.CommonService;
 import com.fibo.ddp.common.service.datax.runner.ExecuteUtils;
 import com.fibo.ddp.common.service.strategyx.decisiontree.DecisionTreeService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +116,7 @@ public class DecisionTreeNode implements EngineRunnerNode {
         //监控中心==》策略层面快照信息记录
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("snapshot",strategySnapshot);
-        outMap.put("decisionTreeStrategy-"+engineNode.getNodeId(),jsonObject);
+        outMap.put(RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX+engineNode.getNodeId(),jsonObject);
     }
 
     private Object executeDecisionTree(DecisionTreeVersionVo version, Map<String, Object> inputParam) {

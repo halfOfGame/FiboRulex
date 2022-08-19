@@ -22,6 +22,7 @@
 	organ_id,
 	strategy_id,
 	strategy_name,
+	strategy_version_code,
 	result
     </select>
     <select id="countScorecardHit" resultType="com.fibo.ddp.common.model.monitor.decisionflow.TMonitorStrategyDTO">
@@ -45,6 +46,7 @@
 	organ_id,
 	strategy_id,
 	strategy_name,
+	strategy_version_code,
 	result
 	</select>
     <select id="countDecisionTables" resultType="com.fibo.ddp.common.model.monitor.decisionflow.TMonitorStrategyDTO">
@@ -68,6 +70,7 @@
 	organ_id,
 	strategy_id,
 	strategy_name,
+	strategy_version_code,
 	result
 	</select>
 </mapper>

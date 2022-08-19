@@ -16,6 +16,7 @@ import com.fibo.ddp.common.service.datax.runner.ExecuteUtils;
 import com.fibo.ddp.common.service.strategyx.scorecard.ScorecardDetailService;
 import com.fibo.ddp.common.service.strategyx.scorecard.ScorecardDimensionService;
 import com.fibo.ddp.common.service.strategyx.scorecard.ScorecardService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.common.utils.util.runner.JevalUtil;
 import com.fibo.ddp.common.utils.util.runner.StrUtils;
 import com.fibo.ddp.common.utils.util.runner.jeval.EvaluationException;
@@ -92,7 +93,7 @@ public class ScorecardNode implements EngineRunnerNode {
             if (versionVo != null) {
                 //监控中心 == 策略层面快照信息
                 if (versionVo != null && versionVo.getSnapshot() != null) {
-                    outMap.put("scorecardStrategy-"+engineNode.getNodeId(), versionVo.getSnapshot());
+                    outMap.put(RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX+engineNode.getNodeId(), versionVo.getSnapshot());
                 }
                 scorecardDimensions = versionVo.getScorecardDimension();
                 for (ScorecardDimensionVo scorecardDimensionVo : scorecardDimensions) {

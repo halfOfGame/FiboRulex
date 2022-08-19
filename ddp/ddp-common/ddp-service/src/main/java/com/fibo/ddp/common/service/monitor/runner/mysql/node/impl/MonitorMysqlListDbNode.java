@@ -7,6 +7,7 @@ import com.fibo.ddp.common.dao.monitor.decisionflow.TMonitorStrategyMapper;
 import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorNode;
 import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorStrategy;
 import com.fibo.ddp.common.service.monitor.runner.mysql.node.MonitorMysqlService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class MonitorMysqlListDbNode implements MonitorMysqlService {
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
         //名单库需要继续
         //根据快照中数据的个数进行确定存取条数。
-        String strategySnapshotKeyId = "strategySnapshot-"+monitorNode.getNodeId();
+        String strategySnapshotKeyId = RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX+monitorNode.getNodeId();
         //决策表
         logger.info("MonitorMysqlBlackOrWhiteNode============================「监控中心-策略监控信息」参数:{},{}",monitorNode, JSONObject.toJSONString(outMap.get(strategySnapshotKeyId)));
         if(!outMap.containsKey(strategySnapshotKeyId)){

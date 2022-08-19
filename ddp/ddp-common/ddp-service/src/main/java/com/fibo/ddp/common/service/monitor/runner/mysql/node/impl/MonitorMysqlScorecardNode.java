@@ -7,6 +7,7 @@ import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorNode;
 import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorStrategy;
 import com.fibo.ddp.common.model.strategyx.scorecard.vo.ScorecardVersionVo;
 import com.fibo.ddp.common.service.monitor.runner.mysql.node.MonitorMysqlService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ public class MonitorMysqlScorecardNode implements MonitorMysqlService {
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
         logger.info("MonitorMysqlScorecardNode============================「监控中心-策略监控信息」参数:{}",monitorNode);
         //策略快照 根绝评分卡id，去查对应的字段。
-        String strategySnopshotKeyId = "scorecardStrategy-"+monitorNode.getNodeId();
+        String strategySnopshotKeyId = RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX+monitorNode.getNodeId();
         if(!outMap.containsKey(strategySnopshotKeyId)){
             return;
         }

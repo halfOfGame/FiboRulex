@@ -9,6 +9,7 @@ import com.fibo.ddp.common.model.monitor.decisionflow.TMonitorStrategy;
 import com.fibo.ddp.common.model.strategyx.decisiontable.DecisionTables;
 import com.fibo.ddp.common.service.monitor.runner.mysql.node.MonitorMysqlService;
 import com.fibo.ddp.common.service.strategyx.decisiontable.DecisionTablesService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class MonitorMysqlDecisionTablesNode implements MonitorMysqlService {
     @Override
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
         //根据快照中数据的个数进行确定存取条数。目前决策表只能选择一个，此处数组是预留防止以后多个的情况
-        String decisionTableStrategyId = "decisionTableStrategy-"+monitorNode.getNodeId();
+        String decisionTableStrategyId = RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX+monitorNode.getNodeId();
         //决策表
         logger.info("MonitorMysqlDecisionTablesNode============================「监控中心-策略监控信息」参数:{},{}", monitorNode, JSONObject.toJSONString(outMap.get(decisionTableStrategyId)));
         if (!outMap.containsKey(decisionTableStrategyId)) {
