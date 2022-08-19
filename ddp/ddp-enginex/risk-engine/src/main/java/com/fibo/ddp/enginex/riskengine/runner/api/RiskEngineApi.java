@@ -1,5 +1,6 @@
 package com.fibo.ddp.enginex.riskengine.runner.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fibo.ddp.common.service.common.runner.RunnerSessionManager;
 import com.fibo.ddp.common.service.common.runner.SessionData;
 import com.fibo.ddp.enginex.riskengine.runner.business.DecisionApiBizData;
@@ -31,26 +32,16 @@ public class RiskEngineApi {
     public String decision(@RequestBody DecisionApiRequest apiRequest) {
         long start = System.currentTimeMillis();
         DecisionApiBizData bizData = apiRequest.getBiz_data();
-        Map<String, Object> map = new HashMap<>();
-        map.put("pid", bizData.getBusinessId());
-        map.put("uid", "");
-        map.put("reqType", 1);
-        map.put("engineId", bizData.getEngineId());
-        map.put("organId", bizData.getOrganId());
-
+        // 封装本地线程变量
         SessionData sessionData = new SessionData();
         sessionData.setOrganId(bizData.getOrganId());
         sessionData.setEngineId(bizData.getEngineId());
-        sessionData.setReqType(1);
+        sessionData.setBusinessId(bizData.getBusinessId());
         sessionData.setRuleHitRspConfig(bizData.getRuleHitRspConfig());
         RunnerSessionManager.setSession(sessionData);
-
-        if(bizData.getFields() != null){
-            map.put("fields", bizData.getFields());
-        } else {
-            map.put("fields", new HashMap<>());
-        }
-        String result = riskEngineBusiness.engineApi(map);
+        // 决策流执行
+        Map<String, Object> paramJson = JSONObject.parseObject(JSONObject.toJSONString(bizData), Map.class);
+        String result = riskEngineBusiness.engineApi(paramJson);
         long end = System.currentTimeMillis();
         logger.info("============ 接口调用耗时：{}ms ============", (end -start));
         return result;

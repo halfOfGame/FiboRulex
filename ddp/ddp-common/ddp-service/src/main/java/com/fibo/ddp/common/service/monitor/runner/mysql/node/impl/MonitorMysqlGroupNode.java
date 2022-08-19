@@ -8,13 +8,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+/**
+ * 分组节点
+ */
 @Service
 public class MonitorMysqlGroupNode implements MonitorMysqlService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
     @Override
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
-        //策略层面分组先不需要记录
+        //不需要记录
     }
 }

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fibo.ddp.common.model.datax.datainterface.InterfaceInfo;
 import com.fibo.ddp.common.model.enginex.risk.EngineNode;
 import com.fibo.ddp.common.service.datax.datainterface.InterfaceService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class RpcNode implements EngineRunnerNode {
         logger.info("start【执行RPC节点】RpcNode.runNode engineNode:{},inputParam:{},outMap:{}"
                 , JSONObject.toJSONString(engineNode), JSONObject.toJSONString(inputParam), JSONObject.toJSONString(outMap));
         if (engineNode != null && engineNode.getSnapshot() != null) {
-            outMap.put("nodeSnapshot", engineNode.getSnapshot());
+            outMap.put(RunnerConstants.NODE_SNAPSHOT, engineNode.getSnapshot());
         }
         JSONObject nodeJson = JSONObject.parseObject(engineNode.getNodeJson());
         JSONObject callConfig = nodeJson.getJSONObject("callConfig");

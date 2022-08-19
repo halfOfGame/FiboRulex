@@ -43,6 +43,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+/**
+ * 决策表节点
+ */
 @Service
 public class DecisionTablesNode implements EngineRunnerNode {
     private static final Logger logger = LoggerFactory.getLogger(DecisionTablesServiceImpl.class);
@@ -83,7 +86,7 @@ public class DecisionTablesNode implements EngineRunnerNode {
     public void runNode(EngineNode engineNode, Map<String, Object> inputParam, Map<String, Object> outMap) {
         //监控中心-节点信息快照记录
         if (engineNode != null && engineNode.getNodeJson() != null) {
-            outMap.put("nodeSnapshot", engineNode.getNodeJson());
+            outMap.put(RunnerConstants.NODE_SNAPSHOT, engineNode.getNodeJson());
         }
         List<Long> versionIdList = getExecuteVersionIdList(engineNode);
         JSONObject nodeInfo = new JSONObject();

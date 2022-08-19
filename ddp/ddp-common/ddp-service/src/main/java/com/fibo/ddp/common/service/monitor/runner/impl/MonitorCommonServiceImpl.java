@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fibo.ddp.common.model.enginex.risk.EngineNode;
 import com.fibo.ddp.common.model.monitor.decisionflow.MonitorNode;
 import com.fibo.ddp.common.service.monitor.runner.MonitorCommonService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +32,11 @@ public class MonitorCommonServiceImpl implements MonitorCommonService {
             MonitorNode.MonitorInfo monitorInfo = new MonitorNode.MonitorInfo();
             MonitorNode.BaseInfo baseInfo = new MonitorNode.BaseInfo();
             //输出变量池 节点快照(节点配置，不同节点的配置获取情况不同，一般直接拿nodeJson)
-            if(outMap.containsKey("nodeSnapshot")){
-                JSONObject snapshot= null;
-                try {
-                    snapshot = JSONObject.parseObject(StringEscapeUtils.unescapeJava(JSON.toJSONString(outMap.get("nodeSnapshot"))));
-                } catch (Exception e) {
-                    snapshot = JSON.parseObject(outMap.get("nodeSnapshot")+"");
-                }
+            if(outMap.containsKey(RunnerConstants.NODE_SNAPSHOT)){
+                // 节点快照统一封装成JSONObject（其中分流、子引擎节点的nodeJson外层封装了一层nodeSnapshot）
+                JSONObject snapshot = JSONObject.parseObject(outMap.get(RunnerConstants.NODE_SNAPSHOT).toString());
                 monitorInfo.setSnapshot(snapshot);
-                outMap.remove("nodeSnapshot");
+                outMap.remove(RunnerConstants.NODE_SNAPSHOT);
             }
             //输出变量池 获取节点输出结果(不同节点类型的输出结果不同)
             if(outMap.containsKey("nodeResult")){

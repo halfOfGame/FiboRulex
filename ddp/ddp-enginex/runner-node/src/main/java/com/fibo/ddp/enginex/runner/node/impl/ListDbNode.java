@@ -28,6 +28,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.*;
 
+/**
+ * 名单库节点
+ */
 @Service
 public class ListDbNode implements EngineRunnerNode {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -64,7 +67,7 @@ public class ListDbNode implements EngineRunnerNode {
     public void runNode(EngineNode engineNode, Map<String, Object> inputParam, Map<String, Object> outMap) {
         //监控中心-节点信息快照记录
         if(engineNode!=null && engineNode.getNodeJson()!=null){
-            outMap.put("nodeSnapshot",engineNode.getNodeJson());
+            outMap.put(RunnerConstants.NODE_SNAPSHOT,engineNode.getNodeJson());
         }
         inputParam.put("nodeId", engineNode.getNodeId());
         inputParam.put("nodeName", engineNode.getNodeName());

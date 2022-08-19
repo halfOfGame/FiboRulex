@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fibo.ddp.common.model.enginex.risk.EngineNode;
 import com.fibo.ddp.common.service.datax.runner.CommonService;
 import com.fibo.ddp.common.utils.constant.CommonConst;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.common.utils.util.runner.JevalUtil;
 import com.fibo.ddp.common.utils.util.runner.jeval.EvaluationException;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
@@ -18,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 分组节点
+ */
 @Service
 public class GroupNode implements EngineRunnerNode {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -45,7 +49,7 @@ public class GroupNode implements EngineRunnerNode {
     public void runNode(EngineNode engineNode, Map<String, Object> inputParam, Map<String, Object> outMap) {
         JSONObject jsonScript = JSONObject.parseObject(engineNode.getNodeScript());
         //监控中心--节点信息记录(不需要策略层面的监控)
-        outMap.put("nodeSnapshot",JSONObject.parse(engineNode.getNodeJson()));
+        outMap.put(RunnerConstants.NODE_SNAPSHOT,engineNode.getNodeJson());
         JSONObject nodeInfo = new JSONObject();
         nodeInfo.put("engineNode",engineNode);
         nodeInfo.put("nodeId",engineNode.getNodeId());

@@ -15,9 +15,8 @@ import java.util.Map;
 public class MonitorMysqlDecisionOptionsNode implements MonitorMysqlService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
     @Override
     public void createMonitorStrategy(TMonitorNode monitorNode, Map<String, Object> outMap) {
-        //决策选项不需要记录
+        //不需要记录
     }
 }

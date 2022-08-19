@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fibo.ddp.common.model.enginex.risk.EngineNode;
 import com.fibo.ddp.common.service.datax.runner.CommonService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.common.utils.util.runner.JevalUtil;
 import com.fibo.ddp.common.utils.util.runner.jeval.EvaluationException;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
@@ -47,7 +48,7 @@ public class DecisionOptionsNode implements EngineRunnerNode {
     @Override
     public void runNode(EngineNode engineNode, Map<String, Object> inputParam, Map<String, Object> outMap) {
         //监控信息--节点信息记录（不需要策略层面的监控）
-        outMap.put("nodeSnapshot",JSON.parseObject(engineNode.getNodeJson()));
+        outMap.put(RunnerConstants.NODE_SNAPSHOT, engineNode.getNodeJson());
         JSONObject nodeInfo = new JSONObject();
         nodeInfo.put("engineNode",engineNode);
         nodeInfo.put("nodeId",engineNode.getNodeId());
