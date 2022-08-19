@@ -22,6 +22,7 @@ import com.fibo.ddp.common.service.strategyx.guiderule.RuleService;
 import com.fibo.ddp.common.service.strategyx.guiderule.RuleVersionService;
 import com.fibo.ddp.common.service.strategyx.scriptrule.RuleScriptVersionService;
 import com.fibo.ddp.common.utils.constant.Constants;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.common.utils.constant.strategyx.RuleConst;
 import com.fibo.ddp.common.utils.constant.strategyx.StrategyType;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
@@ -207,7 +208,7 @@ public class RuleSetNode implements EngineRunnerNode {
         JSONObject jsonObject1 = new JSONObject();
         jsonObject1.put("snopshot", jsonObject);
         logger.info("===========================监控添加策略信息快照情况:{}", jsonObject1);
-        outMap.put("strategySnopshot-"+nodeId, jsonObject1);
+        outMap.put(RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX+nodeId, jsonObject1);
     }
 
     /**

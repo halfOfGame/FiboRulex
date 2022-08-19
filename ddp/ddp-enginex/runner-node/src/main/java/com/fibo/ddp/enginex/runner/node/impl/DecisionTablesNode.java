@@ -20,6 +20,7 @@ import com.fibo.ddp.common.service.strategyx.decisiontable.DecisionTablesService
 import com.fibo.ddp.common.service.strategyx.decisiontable.impl.DecisionTablesServiceImpl;
 import com.fibo.ddp.common.utils.common.MD5;
 import com.fibo.ddp.common.utils.constant.CommonConst;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.enginex.runner.ksession.KSessionPool;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
 import org.apache.commons.lang3.StringUtils;
@@ -153,7 +154,7 @@ public class DecisionTablesNode implements EngineRunnerNode {
         //监控中心==》策略层面快照信息记录
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("snapshot", strategySnapshot);
-        outMap.put("decisionTableStrategy-"+engineNode.getNodeId(), jsonObject);
+        outMap.put(RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX+engineNode.getNodeId(), jsonObject);
     }
 
     //执行整个决策表返回决策结果数据

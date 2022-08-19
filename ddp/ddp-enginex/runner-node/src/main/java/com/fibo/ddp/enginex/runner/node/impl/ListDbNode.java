@@ -17,6 +17,7 @@ import com.fibo.ddp.common.service.datax.runner.CommonService;
 import com.fibo.ddp.common.service.datax.runner.ExecuteUtils;
 import com.fibo.ddp.common.service.strategyx.listlibrary.ListDbService;
 import com.fibo.ddp.common.service.strategyx.strategyout.StrategyOutputService;
+import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.common.utils.constant.strategyx.StrategyType;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
 import org.slf4j.Logger;
@@ -92,7 +93,7 @@ public class ListDbNode implements EngineRunnerNode {
             }
         }
         //监控中心==》策略层面快照信息记录
-        outMap.put("strategySnapshot-"+engineNode.getNodeId(),strategySnapshot);
+        outMap.put(RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX+engineNode.getNodeId(),strategySnapshot);
         //构造节点信息
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("nodeId", engineNode.getNodeId());
