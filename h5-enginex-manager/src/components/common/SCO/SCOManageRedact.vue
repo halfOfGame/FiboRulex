@@ -49,7 +49,7 @@
 	font-size: 14px;
 }
 .sco_cont_home{
-	overflow: scroll;
+	/* overflow: scroll; */
 	flex: 1;
 }
 .sco_version{

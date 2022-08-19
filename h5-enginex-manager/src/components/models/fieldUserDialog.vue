@@ -1,6 +1,6 @@
 <template> 
     <div class="field-wrapper">
-        <el-dialog title="输入参数" :visible.sync="isShow" width="50%" :before-close="fieldClose">
+        <el-dialog title="输入参数" :visible.sync="isShow" width="50%" append-to-body :before-close="fieldClose">
 			<div class="rule_dialg_header" style="padding-left:0;">
 				当前选项为： {{radio.fieldCn}}
 				<div>

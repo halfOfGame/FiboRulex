@@ -2,7 +2,7 @@
 	.rule_com {
 		/* height: 51vh; */
 		flex: 1;
-		overflow: scroll;
+		/* overflow: scroll; */
 		/* overflow-x: hidden; */
 		margin: 0px 0px 0px 10px;
 		padding-bottom: 100px;

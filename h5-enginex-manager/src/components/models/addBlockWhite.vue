@@ -1,6 +1,6 @@
 <template>
 	<div class="blackwhite-edit-wrapper">
-		<el-dialog :title="title" :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
+		
 			<el-form ref="form" :model="form" :rules="rules" label-width="120px" :class="disabled ? 'mask-wrapper' : ''">
 				<el-row>
 					<el-col :span="6">
@@ -53,14 +53,9 @@
 						<el-radio label="模糊匹配"></el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item label="名单库字段" prop="queryType">
-					<el-radio-group v-model="form.queryType">
-						<el-radio label="or"></el-radio>
-						<el-radio label="and"></el-radio>
-					</el-radio-group>
-				</el-form-item>
+			
 
-				<el-form-item label="">
+				<el-form-item label="名单库字段">
 					<div class="tag-wrapper">
 						<el-tag :key="tag.fieldCn" v-for="tag in tableColumn" :closable="!dataItem.id"
 							:disable-transitions="false" @close="tagClose(tag)">
@@ -70,7 +65,12 @@
 							@click="addTag1"></el-button>
 					</div>
 				</el-form-item>
+				
 				<el-form-item label="查询匹配字段">
+					<el-radio-group v-model="form.queryType">
+						<el-radio label="or"></el-radio>
+						<el-radio label="and"></el-radio>
+					</el-radio-group>
 					<div class="tag-wrapper">
 						<el-tag :key="tag.fieldCn" v-for="tag in queryField" :closable="!dataItem.id"
 							:disable-transitions="false" @close="tagClose1(tag)">
@@ -108,7 +108,7 @@
 					<el-button @click="handleClose">取消</el-button>
 				</el-form-item>
 			</el-form>
-		</el-dialog>
+		
 		<field-user-dialog @selEvent="selFielod" @fieldClose="fieldClose" :isShow="isshow" :type="isTpye"
 			:radioList="radioList"></field-user-dialog>
 	</div>
@@ -136,6 +136,7 @@ export default {
 		outcontent
 	},
 	props: {
+		
 		dialogVisible: {
 			type: Boolean,
 			default: false
@@ -168,34 +169,12 @@ export default {
 			}
 		}
 	},
+	created(){
+		this.setForm(this.dataItem)
+	},
 	watch: {
 		dataItem(newVal) {
-			if (JSON.stringify(newVal) !== '{}') {
-				this.form = {
-					listName: newVal.listName,
-					// dataSource: newVal.dataSource.toString(),
-					listType: newVal.listType,
-					listDesc: newVal.listDesc,
-					matchType: newVal.matchType == 1 ? '精准匹配' : '模糊匹配',
-					queryType: newVal.queryType == 1 ? 'and' : 'or',
-					// listAttr: newVal.listAttr,
-					resultFieldEn: newVal.resultFieldEn,
-					strategyOutputList: newVal.strategyOutputList
-				}
-				let tableColumnArr = newVal.tableColumn.split(',');
-				let queryFieldArr = newVal.queryField.split(',');
-
-				this.tableColumn = tableColumnArr.map(value => this.mixinGetValueById(Number(value)))
-
-
-				this.queryField = queryFieldArr.map(value => this.mixinGetValueById(Number(value)))
-
-
-			} else {
-				if (this.$refs['form'] != undefined) {
-					this.$refs["form"].resetFields();
-				}
-			}
+			this.setForm(newVal)
 		},
 		dialogVisible: function (val, oldVla) {
 			if (this.$refs['form'] != undefined) {
@@ -214,8 +193,8 @@ export default {
 				// dataSource: '',
 				listType: 'b',
 				listDesc: '',
-				matchType: '',
-				queryType: '',
+				matchType: '精准匹配',
+				queryType: 'or',
 				// listAttr: ''
 			},
 			rules: {
@@ -252,6 +231,34 @@ export default {
 		}
 	},
 	methods: {
+		setForm(newVal){
+			if (JSON.stringify(newVal) !== '{}') {
+				this.form = {
+					listName: newVal.listName,
+					// dataSource: newVal.dataSource.toString(),
+					listType: newVal.listType,
+					listDesc: newVal.listDesc,
+					matchType: newVal.matchType == 1 ? '精准匹配' : '模糊匹配',
+					queryType: newVal.queryType == 1 ? 'and' : 'or',
+					// listAttr: newVal.listAttr,
+					resultFieldEn: newVal.resultFieldEn,
+					strategyOutputList: newVal.strategyOutputList
+				}
+				let tableColumnArr = newVal.tableColumn.split(',');
+				let queryFieldArr = newVal.queryField.split(',');
+
+				this.tableColumn = tableColumnArr.map(value => this.mixinGetValueById(Number(value)))
+
+
+				this.queryField = queryFieldArr.map(value => this.mixinGetValueById(Number(value)))
+
+
+			} else {
+				if (this.$refs['form'] != undefined) {
+					this.$refs["form"].resetFields();
+				}
+			}
+		},
 		selFielod(data) {
 			let check = true;
 			if (this.isTpye === 0) {
@@ -391,8 +398,8 @@ export default {
 				// dataSource: '',
 				listType: 'b',
 				listDesc: '',
-				matchType: '',
-				queryType: '',
+				matchType: '精准匹配',
+				queryType: 'or',
 				// listAttr: '',
 				resultFieldEn: '',
 				strategyOutputList: []

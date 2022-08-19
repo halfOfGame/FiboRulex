@@ -134,20 +134,12 @@
 			this.selectTime = [
 				this.fun_date(-7), new Date()
 			]
-			this.engineId = Number(localStorage.getItem('engineId'))
+			this.engineId =  Number(localStorage.getItem('engineId'))
 			this.getList()
-			// getEngineList({
-			// 	pageNo: 1,
-			// 	pageSize: 999999
-			// }).then(res => {
-			// 	if (res.status == "1") {
-			// 		this.engineList = res.data.enginelist
-			// 	}
-			// 	this.headerLoading = false
-			// }).catch(err => {
-			// 	this.headerLoading = false
-			// })
+			
+			
 		},
+	
 		computed:{
 			engineList(){
 				
@@ -164,6 +156,7 @@
 				this.$router.push('/engine_result_cont/' + item.hbaseRowKey+'|'+item.id)
 			},
 			getList() {
+				localStorage.setItem('engineId',this.engineId)
 				this.getMonitorResult(this.engineId, this.formateDate(this.selectTime[0]), this.formateDate(this.selectTime[1]),
 					this.searchInput, this.currPage, 10)
 			},

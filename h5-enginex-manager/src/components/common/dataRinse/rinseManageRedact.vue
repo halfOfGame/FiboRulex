@@ -26,7 +26,7 @@
 
 	.listOp_home {
 		border-top: 1px solid #ddd;
-		overflow: scroll;
+		/* overflow: scroll; */
 		flex: 1;
 	}
 </style>
