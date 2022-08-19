@@ -26,7 +26,7 @@
 .dec_home{
 	padding-bottom: 20px;
 	border-top: 1px solid #ddd;
-	overflow: scroll;
+	/* overflow: scroll; */
 	flex: 1;
 }
 

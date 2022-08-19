@@ -3,7 +3,7 @@
 	<el-dialog :visible="strategyDialogVisible" width="70%"
 		@update:visible="$emit('update:strategyDialogVisible',$event)" :show-close="false">
 		<div style="position: relative;">
-			<div style="position: absolute;height: 100%;width: 100%;z-index: 9999;">
+			<div style="position: absolute;height: 100%;width: 100%;z-index: 9999;" v-show="data.strategyType!=15">
 
 			</div>
 			<!-- {{data}} -->
@@ -95,6 +95,17 @@
 				
 			</div>
 			
+			<div v-if="data.strategyType==5">
+			<add-block-white  :dataItem="data.snapshot" disabled>
+			</add-block-white>
+			</div>
+<!-- {{data.strategyType}} -->
+			<div v-if="data.strategyType==15">
+			<!-- {{data.snapshot}} -->
+			<BrandDetail :snapshotData="data.snapshot" />
+			<!-- snapshotData -->
+			</div>
+
 			<div v-if="data.strategyType==17" style="background-color: #f3f3f3;padding: 20px;">
 				<tree :treeData="data.snapshot.detailList[0]"></tree>
 
@@ -182,6 +193,7 @@
 </template>
 
 <script>
+import AddBlockWhite from '@/components/models/addBlockWhite.vue';
 	import SCOrecursion from '@/components/common/SCO/recursion.vue'
 	import recursion from '@/components/common/decision/recursion.vue'
 	import topRecursion from '@/components/common/decision/topRecursion.vue'
@@ -189,6 +201,7 @@
 	import tree from '@/components/common/decisionTree/tree.vue'
 	import type2 from '@/components/common/rule/ruleBlockVo.vue'
 	import outcontent from '@/components/models/outcontent.vue'
+	import BrandDetail from '@/components/models/detail'
 	export default {
 		components: {
 			SCOrecursion,
@@ -197,7 +210,9 @@
 			tree,
 			recursion,
 			topRecursion,
-			textInput
+			textInput,
+			AddBlockWhite,
+			BrandDetail
 		},
 
 		props: {
@@ -229,7 +244,11 @@
 				this.Type1617Enformat(this.data.snapshot.leftDetailVo,'Array')
 				this.Type1617Enformat(this.data.snapshot.topDetailVo,'Array')
 			}
-			console.log(this.data)
+			// if(this.dataCont.strategyType == 5){
+			// 	// data
+			// 	console.log(this.data.snapshot)
+			// }
+			// console.log(this.data)
 
 
 
@@ -246,7 +265,7 @@
 		computed: {
 			FieldUser() {
 				if (this.$store.state.FieldUser) {
-					console.log(this.$store.state.FieldUser.data.fieldList)
+					// console.log(this.$store.state.FieldUser.data.fieldList)
 					return this.$store.state.FieldUser.data.fieldList
 				} else {
 					return []

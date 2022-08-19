@@ -2,7 +2,7 @@
 	<div id="app">
 
 		<!-- <keep-alive include="history"> -->
-		<router-view></router-view>
+		<router-view ></router-view>
 		<!-- </keep-alive> -->
 	</div>
 </template>
@@ -19,6 +19,7 @@
 			// 	console.log(String(res))
 			// })
 		}
+		
 	}
 </script>
 <style>

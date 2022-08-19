@@ -326,7 +326,7 @@
 				<el-card shadow="hover" style="position: relative;" >
 					<el-select v-model="option5Put" size="mini" :loading="option5PutList.length==0" style="margin-left: 20px;position: absolute;z-index: 5;"
 					 filterable value-key="[0][0].id" placeholder="请选择评分卡节点" :key="num">
-						<el-option v-for="item in option5PutList" :key="item[0][0].id" :label="item[0][0].scorecardName" :value="item">
+						<el-option v-for="item in option5PutList" :key="item[0][0].id" :label="item[0][0].scorecardName+':'+item[0][0].scorecardVersionCode" :value="item">
 						</el-option>
 					</el-select>
 					<charts sid="a5" :option="option5" height="300px" width="750px"></charts>
@@ -348,7 +348,7 @@
 				<el-card shadow="hover" style="position: relative;" >
 					<el-select v-model="option6Put" size="mini" :loading="option6PutList.length==0" style="margin-left: 20px;position: absolute;z-index: 5;"
 					 filterable value-key="[0][0].id" placeholder="请选择入参" :key="num">
-						<el-option v-for="item in option6PutList" :key="item[0][0].id" :label="item[0][0].decisonTablesName" :value="item">
+						<el-option v-for="item in option6PutList" :key="item[0][0].id" :label="item[0][0].decisonTablesName+':'+item[0][0].decisonTablesVersionCode" :value="item">
 						</el-option>
 					</el-select>
 					<charts sid="a6" :option="option6" height="300px" width="750px"></charts>

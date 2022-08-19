@@ -1,7 +1,7 @@
 	.cont_cont {
 		display: flex;
 		border-radius: 20px;
-		height: 85vh;
+		min-height: 85vh;
 	}
 
 	.cont_left {

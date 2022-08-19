@@ -10,7 +10,7 @@
 		</div>
 		<div class="tab-wrapper">
 
-			<el-tabs v-model="tabs" @tab-click="pager.pageNum=1;getlist()">
+			<el-tabs v-model="tabs" @tab-click="page=1;getlist()">
 				<el-tab-pane :label="value.label" :name="value.label" v-for="value in systemList" :key="value.value"></el-tab-pane>
 				
 			</el-tabs>
@@ -48,6 +48,7 @@
 								<el-button icon="el-icon-edit" circle size="mini" @click="editDiaglo(scope.row)">
 								</el-button>
 							</el-tooltip>
+							
 							<el-tooltip content="删除" placement="right">
 								<el-button icon="el-icon-delete" circle size="mini" @click="setStatus(-1,scope.row.resourceId)">
 								</el-button>

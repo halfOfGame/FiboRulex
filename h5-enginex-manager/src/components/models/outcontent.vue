@@ -101,7 +101,7 @@
 
 			</div>
 		</div>
-		<el-dialog title="输入参数"  :visible.sync="dialogVisible" width="50%" >
+		<el-dialog title="输入参数"  :visible.sync="dialogVisible" append-to-body width="50%" >
 			<div class="rule_dialg_header">
 				请选择参数：
 				<div>
@@ -118,7 +118,7 @@
 				<el-button type="primary" @click="dialogSure()">确 定</el-button>
 			</span>
 		</el-dialog>
-		<el-dialog title="条件输出" :visible.sync="ruleOutDialog" width="40%" :close-on-click-modal="false" @close="tempOutCondition='';tempIndex=''">
+		<el-dialog title="条件输出" :visible.sync="ruleOutDialog" width="40%" :close-on-click-modal="false" append-to-body @close="tempOutCondition='';tempIndex=''">
 			<el-select v-model="tempOutCondition.logical" placeholder="请选择关系符">
 				<el-option :key="1" label="AND" value="&&"></el-option>
 				<el-option :key="2" label="OR" value="||"></el-option>
