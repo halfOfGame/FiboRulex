@@ -11,6 +11,7 @@ import com.fibo.ddp.common.service.common.SessionManager;
 import com.fibo.ddp.common.service.redis.RedisManager;
 import com.fibo.ddp.common.utils.constant.Constants;
 import com.fibo.ddp.common.utils.constant.ServiceFilterConstant;
+import com.fibo.ddp.common.utils.constant.TokenConstants;
 import com.fibo.ddp.common.utils.exception.ApiException;
 import com.fibo.ddp.common.utils.util.RequestUtil;
 import org.apache.commons.lang.StringUtils;
@@ -44,7 +45,8 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
 		String requestMethod = request.getMethod();
 		StringBuffer requestURL = request.getRequestURL();
 		acsw.setTraceId(reqUuid);
-		String token = request.getHeader(Constants.SYSTEM_KEY_TOKEN);
+		String token = request.getHeader(TokenConstants.HEADER_NAME_SYSTEM_KEY_TOKEN);
+		String tokenKey = TokenConstants.USER_TOKEN_PREFX + token;
 		logger.debug("===>> 【会话拦截】-BEGIN: {} - {} {}, ### traceId:{},{}, token:{} ### ===>>", ip, requestMethod, requestURL, reqUuid, uri, token);
 		SessionManager.setSession(acsw);
 		if (ServiceFilterConstant.isSessionFilter(uri)) {
@@ -56,20 +58,39 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
 		}
 
 		try {
-			String value = redisManager.get(token);
+			String value = redisManager.get(tokenKey);
 			if(StringUtils.isBlank(value)){
 				output(response, ErrorCodeEnum.ERROR_TOKEN_EXPIRE.getCode(),ErrorCodeEnum.ERROR_TOKEN_EXPIRE.getMessage());
 				return false;
 			}
 
 			// token更新频率，设置离过期时间还剩n秒以内才更新一次token
-			Long time = redisManager.ttl(token);
-			if(time.intValue() <= Constants.LOGIN_TOKEN_REFRESH_TIME.intValue()){
-				redisManager.set(token, value, Constants.LOGIN_TOKEN_TIME.intValue());
+			Long time = redisManager.ttl(tokenKey);
+			String userTokenKey = null;
+			if(time.intValue() <= TokenConstants.LOGIN_TOKEN_REFRESH_TIME.intValue()){
+				try {
+					SysUser sysUser = JSON.parseObject(value, SysUser.class);
+					userTokenKey = TokenConstants.USER_CURRENT_TOKEN_PREFX +sysUser.getUserId();
+				}catch (Exception e){
+					logger.error("【根据token获取用户信息失败】 token：{},错误信息:{}",token,e.getMessage());
+				}
+				redisManager.set(tokenKey, value, TokenConstants.LOGIN_TOKEN_TIME.intValue());
+				if (userTokenKey!=null){
+					redisManager.set(userTokenKey, token, TokenConstants.LOGIN_TOKEN_TIME.intValue()+1);
+				}
 			}
 
 			SysUser sysUser = JSONObject.parseObject(value, SysUser.class);
-			acsw.setSysUser(sysUser);
+			userTokenKey = TokenConstants.USER_CURRENT_TOKEN_PREFX +sysUser.getUserId();
+			String userToken = redisManager.get(userTokenKey);
+			if (token.equals(userToken)){
+				acsw.setSysUser(sysUser);
+			}else {
+				logger.error("【会话拦截】token校验失败，token：{}，userId:{}",token,sysUser.getUserId());
+				redisManager.del(tokenKey);
+				output(response, ErrorCodeEnum.ERROR_TOKEN_EXPIRE.getCode(),ErrorCodeEnum.ERROR_TOKEN_EXPIRE.getMessage());
+				return false;
+			}
 		} catch (ApiException e1) {
 			output(response, e1.errCode, e1.getMessage());
 			return false;
@@ -78,7 +99,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
 			output(response, ErrorCodeEnum.SERVER_ERROR.getCode(), ErrorCodeEnum.SERVER_ERROR.getMessage());
 			return false;
 		}
-		
+
 		return true;
 	}
 

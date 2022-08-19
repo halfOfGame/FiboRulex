@@ -15,6 +15,7 @@ import com.fibo.ddp.common.service.redis.RedisManager;
 import com.fibo.ddp.common.utils.common.MD5;
 import com.fibo.ddp.common.utils.constant.Constants;
 import com.fibo.ddp.common.utils.constant.OpTypeConst;
+import com.fibo.ddp.common.utils.constant.TokenConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,9 +64,17 @@ public class LoginController {
 			SysUser user = sysUserService.login(account.trim(), MD5.GetMD5Code(password));
 			if(null != user && user.getStatus()==1){
 				String token = UUID.randomUUID().toString().replaceAll("-", "");
-				redisManager.set(token, JSONObject.toJSONString(user), Constants.LOGIN_TOKEN_TIME.intValue());
-				map.put("token", token);
-
+				String tokenKey = TokenConstants.USER_TOKEN_PREFX + token;
+				String userTokenKey = TokenConstants.USER_CURRENT_TOKEN_PREFX + user.getUserId();
+				String oldToken = redisManager.get(userTokenKey);
+				//防止token重复使用
+				if (oldToken != null) {
+					//清除旧的token
+					redisManager.del(TokenConstants.USER_TOKEN_PREFX + oldToken);
+				}
+				redisManager.set(tokenKey, JSONObject.toJSONString(user), TokenConstants.LOGIN_TOKEN_TIME.intValue());
+				redisManager.set(userTokenKey,token,TokenConstants.LOGIN_TOKEN_TIME.intValue()+1);
+				map.put(TokenConstants.HEADER_NAME_SYSTEM_KEY_TOKEN, token);
 				com.fibo.ddp.common.service.common.AccountSessionWrap acsw = new AccountSessionWrap(null, null);
 				acsw.setSysUser(user);
 				SessionManager.setSession(acsw);
@@ -90,7 +99,7 @@ public class LoginController {
 	@RequestMapping(value = "logout", method = RequestMethod.POST)
 	@ArchivesLog(operationType = OpTypeConst.LOGOUT)
 	public ResponseEntityDto<Object> logout(HttpServletRequest request) {
-		String token = request.getHeader(Constants.SYSTEM_KEY_TOKEN);
+		String token = request.getHeader(TokenConstants.HEADER_NAME_SYSTEM_KEY_TOKEN);
 		if(StringUtils.isNotBlank(token)){
 			redisManager.del(token);
 		}

@@ -38,6 +38,8 @@ public enum ErrorCodeEnum {
     TAG_SAVE_ERROR(ErrorCodeEnum.ERROR_CODE+134,"标签保存失败"),
     TAG_UPDATE_ERROR(ErrorCodeEnum.ERROR_CODE+135,"标签修改状态失败"),
 
+    USER_PWD_CHECKERROR(ErrorCodeEnum.ERROR_CODE+136,"密码必须包含字母、数字、特殊字符,且长度为8-16位"),
+
 
     PARAMS_EXCEPTION(ErrorCodeEnum.ERROR_CODE + 555, "参数异常"),
     CLASS_CAST_EXCEPTION(ErrorCodeEnum.ERROR_CODE + 556, "类型转换异常"),
