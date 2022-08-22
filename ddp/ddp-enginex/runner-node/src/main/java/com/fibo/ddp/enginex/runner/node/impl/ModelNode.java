@@ -15,6 +15,7 @@ import com.fibo.ddp.common.service.strategyx.strategyout.StrategyOutputService;
 import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.common.utils.constant.strategyx.StrategyType;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,9 +121,12 @@ public class ModelNode implements EngineRunnerNode {
             resultJson.add(jsonObject);
             outMap.put("modelJson", resultJson);
         }
-        inputParam.put("model_" + modelId, modelResult);
-        inputParam.put(models.getResultFieldEn(), modelResult);
-        outMap.put("model_" + modelId, modelResult);
+
+        String resultFieldEn = models.getResultFieldEn();
+        if(StringUtils.isBlank(resultFieldEn)){
+            resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + models.getId() + "_result";
+        }
+        inputParam.put(resultFieldEn, modelResult);
         terminalCondition(engineNode, inputParam, outMap, modelResult);
         outMap.put(RunnerConstants.NODE_STRATEGYS_SNAPSHOT_PREFIX + engineNode.getNodeId(), JSONObject.toJSONString(models));
     }

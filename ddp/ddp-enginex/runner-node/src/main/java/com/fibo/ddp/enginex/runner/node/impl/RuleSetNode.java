@@ -354,13 +354,13 @@ public class RuleSetNode implements EngineRunnerNode {
         String resultFieldEn = hitRuleBlock.getResultFieldEn();
         String outputFieldEn = hitRuleBlock.getResultFieldEn();
         if (resultFieldEn == null || "".equals(resultFieldEn)) {
-            resultFieldEn = "rule_" + rule.getId() + "_" + ruleVersion.getId() + "_" + hitRuleBlock.getId() + "_hitResult";
+            resultFieldEn = "rule_" + rule.getId() + "_" + ruleVersion.getId() + "_hitResult";
             outputFieldEn = "ruleResult";
         }
         String scoreFieldEn = hitRuleBlock.getScoreFieldEn();
         String outputScoreEn = hitRuleBlock.getScoreFieldEn();
         if (StringUtils.isBlank(scoreFieldEn)) {
-            scoreFieldEn = "rule_" + rule.getId() + "_" + ruleVersion.getId() + "_" + hitRuleBlock.getId() + "_score";
+            scoreFieldEn = "rule_" + rule.getId() + "_" + ruleVersion.getId() + "_score";
             outputScoreEn = "ruleScore";
         }
         input.put(resultFieldEn, "未命中");

@@ -13,6 +13,7 @@ import com.fibo.ddp.common.service.datax.runner.ExecuteUtils;
 import com.fibo.ddp.common.service.strategyx.decisiontree.DecisionTreeService;
 import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,9 @@ public class DecisionTreeNode implements EngineRunnerNode {
             }
             DecisionTreeVersionVo version = decisionTreeVo.getExecuteVersion();
             String resultFieldEn = version.getResultFieldEn();
+            if (StringUtils.isBlank(resultFieldEn)) {
+                resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + versionId + "_result";
+            }
             //执行决策表
             Object executeResult = this.executeDecisionTree(version, inputParam);
             //处理结果

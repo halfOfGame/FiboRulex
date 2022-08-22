@@ -12,15 +12,13 @@ import com.fibo.ddp.common.model.enginex.risk.EngineNode;
 import com.fibo.ddp.common.model.enginex.risk.consts.EngineNodeConst;
 import com.fibo.ddp.common.model.enginex.risk.response.param.*;
 import com.fibo.ddp.common.model.strategyx.aimodel.MachineLearningModels;
-import com.fibo.ddp.common.model.strategyx.decisiontable.vo.DecisionTablesVersionVo;
-import com.fibo.ddp.common.model.strategyx.decisiontable.vo.DecisionTablesVo;
-import com.fibo.ddp.common.model.strategyx.decisiontree.vo.DecisionTreeVersionVo;
-import com.fibo.ddp.common.model.strategyx.decisiontree.vo.DecisionTreeVo;
+import com.fibo.ddp.common.model.strategyx.decisiontable.DecisionTablesVersion;
+import com.fibo.ddp.common.model.strategyx.decisiontree.DecisionTreeVersion;
 import com.fibo.ddp.common.model.strategyx.guiderule.RuleInfo;
 import com.fibo.ddp.common.model.strategyx.guiderule.RuleVersion;
 import com.fibo.ddp.common.model.strategyx.guiderule.param.RuleSetNodeResultParam;
 import com.fibo.ddp.common.model.strategyx.listlibrary.ListDb;
-import com.fibo.ddp.common.model.strategyx.scorecard.vo.ScorecardVersionVo;
+import com.fibo.ddp.common.model.strategyx.scorecard.ScorecardVersion;
 import com.fibo.ddp.common.model.strategyx.scriptrule.RuleScriptVersion;
 import com.fibo.ddp.common.service.enginex.risk.EngineNodeService;
 import com.fibo.ddp.common.service.enginex.util.EngineNodeUtil;
@@ -28,7 +26,9 @@ import com.fibo.ddp.common.service.enginex.util.EngineUtil;
 import com.fibo.ddp.common.service.redis.RedisManager;
 import com.fibo.ddp.common.service.redis.RedisUtils;
 import com.fibo.ddp.common.service.strategyx.decisiontable.DecisionTablesService;
+import com.fibo.ddp.common.service.strategyx.decisiontable.DecisionTablesVersionService;
 import com.fibo.ddp.common.service.strategyx.decisiontree.DecisionTreeService;
+import com.fibo.ddp.common.service.strategyx.decisiontree.DecisionTreeVersionService;
 import com.fibo.ddp.common.service.strategyx.guiderule.RuleService;
 import com.fibo.ddp.common.service.strategyx.guiderule.RuleVersionService;
 import com.fibo.ddp.common.service.strategyx.scorecard.ScorecardService;
@@ -57,7 +57,11 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
     @Autowired
     private DecisionTablesService decisionTablesService;
     @Autowired
+    private DecisionTablesVersionService decisionTablesVersionService;
+    @Autowired
     private DecisionTreeService decisionTreeService;
+    @Autowired
+    private DecisionTreeVersionService decisionTreeVersionService;
     @Autowired
     private MachineLearningModelsMapper machineLearningModelsMapper;
     @Autowired
@@ -96,8 +100,8 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
         //第一步:插入节点
         int count = engineNodeMapper.updateById(engineNode);
         Map<String, Object> hashParam = new HashedMap();
-        hashParam.put("snapshot",engineNode.getSnapshot());
-        hashParam.put("nodeId",engineNode.getNodeId());
+        hashParam.put("snapshot", engineNode.getSnapshot());
+        hashParam.put("nodeId", engineNode.getNodeId());
         engineNodeMapper.updateSnapshot(hashParam);
         if (count == 1) {
             //节点编号
@@ -106,7 +110,7 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
             if (targetId != null) {
                 EngineNode targetNode = findById(targetId);
                 String targetParentId = targetNode.getParentId();
-                if(StringUtils.isNotBlank(targetParentId)){
+                if (StringUtils.isNotBlank(targetParentId)) {
                     targetParentId = targetParentId.concat(CommonConst.SYMBOL_COMMA).concat(nodeId.toString());
                 } else {
                     targetParentId = nodeId.toString();
@@ -194,7 +198,7 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
 
                 // 更新当前节点的上一节点的nextNodes
                 String[] preEngineNodeIdArr = preEngineNodeId.split(",");
-                for(String preNodeId : preEngineNodeIdArr){
+                for (String preNodeId : preEngineNodeIdArr) {
                     EngineNode preEngineNode = engineNodeMapper.selectById(Long.valueOf(preNodeId));
                     if (preEngineNode != null) {
                         //判断前一节点类型
@@ -279,7 +283,7 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
         EngineNode preEngineNode = engineNodeMapper.selectById(preEngineNodeId);
         //删除连线时修改后一个节点的parentId
         String targetParentId = engineNode.getParentId();
-        if(targetParentId.contains(CommonConst.SYMBOL_COMMA)){
+        if (targetParentId.contains(CommonConst.SYMBOL_COMMA)) {
             List<String> targetParentIdList = Arrays.asList(targetParentId.split(CommonConst.SYMBOL_COMMA));
             targetParentIdList = targetParentIdList.stream().filter(item -> !item.equals(preEngineNodeId.toString())).collect(Collectors.toList());
             targetParentId = StringUtils.join(targetParentIdList, CommonConst.SYMBOL_COMMA);
@@ -351,12 +355,12 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
 //        engineNode.setParentId(null);
         engineNodeMapper.updateById(engineNode);
         if (StringUtil.isValidStr(nextNodes)) {
-            if (nextNodes.equals(engineNode.getNodeCode())){
+            if (nextNodes.equals(engineNode.getNodeCode())) {
                 nextNodes = "";
-            }else if (nextNodes.endsWith(","+engineNode.getNodeCode())){
-                nextNodes=nextNodes.replace(","+engineNode.getNodeCode(),"");
-            }else {
-                nextNodes=nextNodes.replace(engineNode.getNodeCode()+",","");
+            } else if (nextNodes.endsWith("," + engineNode.getNodeCode())) {
+                nextNodes = nextNodes.replace("," + engineNode.getNodeCode(), "");
+            } else {
+                nextNodes = nextNodes.replace(engineNode.getNodeCode() + ",", "");
             }
             preEngineNode.setNextNodes(nextNodes);
         }
@@ -393,7 +397,7 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
                         && item != NodeTypeEnum.CLASSIFY.getValue()
                         && item != NodeTypeEnum.SANDBOX.getValue())
                 .collect(Collectors.toSet());
-        for(Integer nodeType : nodeTypeSet){
+        for (Integer nodeType : nodeTypeSet) {
             NodeTypeEnum nodeTypeEnum = NodeTypeEnum.adapad(nodeType);
             Map<Long, EngineNode> previousNodeMap = new HashMap<>();
             recursivePreviousNode(engineNode, nodeMap, nodeTypeEnum, previousNodeMap);
@@ -442,7 +446,7 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
     private void recursivePreviousNode(EngineNode currentNode, Map<Long, EngineNode> nodeMap, NodeTypeEnum nodeTypeEnum, Map<Long, EngineNode> previousNodeMap) {
         if (StringUtils.isNotBlank(currentNode.getParentId())) {
             List<String> parentIdList = Arrays.asList(currentNode.getParentId().split(CommonConst.SYMBOL_COMMA));
-            for(String parentId : parentIdList){
+            for (String parentId : parentIdList) {
                 EngineNode exNode = nodeMap.get(Long.valueOf(parentId));
                 if (exNode != null && exNode.getNodeType() == nodeTypeEnum.getValue()) {
                     previousNodeMap.put(exNode.getNodeId(), exNode);
@@ -456,81 +460,74 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
 
     /**
      * 获取单个策略的节点信息集合
+     *
      * @param previousNodes
      * @param nodeTypeEnum
      * @return
      */
     private List<NodeInfoResponse> getSingleStrategyNodeInfo(List<EngineNode> previousNodes, NodeTypeEnum nodeTypeEnum) {
         List<NodeInfoResponse> nodeInfoList = new ArrayList<>();
-        for(EngineNode engineNode : previousNodes){
-            if(StringUtils.isBlank(engineNode.getNodeJson())){
+        for (EngineNode engineNode : previousNodes) {
+            if (StringUtils.isBlank(engineNode.getNodeJson())) {
                 continue;
             }
             String resultFieldEn = "";
             String resultFieldCn = "";
             Integer valueType = 1;
-            JSONObject nodeJson = JSON.parseObject(engineNode.getNodeJson());
+            JSONObject nodeJson = null;
+            if (engineNode.getNodeType().intValue() != NodeTypeEnum.CHILD_ENGINE.getValue()) {
+                nodeJson = JSON.parseObject(engineNode.getNodeJson());
+            }
             JSONObject jsonObject = null;
             switch (nodeTypeEnum) {
                 case SCORECARD:
-//                    Scorecard scorecard = scorecardService.getById();
                     jsonObject = JSON.parseObject(JSON.toJSONString(nodeJson.getJSONArray("scorecardList").get(0)));
-                    ScorecardVersionVo versionVo = scorecardVersionService.queryById(jsonObject.getLong("versionId"));
-                    if(StringUtils.isNotBlank(versionVo.getResultFieldEn())){
-                        resultFieldEn = versionVo.getResultFieldEn();
+                    ScorecardVersion scorecardVersion = scorecardVersionService.getById(jsonObject.getLong("versionId"));
+                    if (StringUtils.isNotBlank(scorecardVersion.getResultFieldEn())) {
+                        resultFieldEn = scorecardVersion.getResultFieldEn();
                     } else {
-                        resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + versionVo.getId() + "_score";
+                        resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + scorecardVersion.getId() + "_result";
                     }
                     resultFieldCn = "评分";
                     valueType = 1;
                     break;
                 case DECISION_TABLES:
                     jsonObject = JSON.parseObject(JSON.toJSONString(nodeJson.getJSONArray("decisionTableList").get(0)));
-                    DecisionTablesVo decisionTablesVo = decisionTablesService.queryById(jsonObject.getLong("decisionTableId"));
-                    List<DecisionTablesVersionVo> versionList = decisionTablesVo.getDecisionTablesVersionList();
-                    for (DecisionTablesVersionVo decisionTablesVersionVo : versionList) {
-                        if (decisionTablesVersionVo.getId().equals(jsonObject.getLong("versionId"))){
-                            resultFieldEn = decisionTablesVersionVo.getResultFieldEn();
-                            if (StringUtils.isBlank(resultFieldEn)){
-                                resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + decisionTablesVersionVo.getId() + "_result";
-                            }
-                            break;
-                        }
+                    DecisionTablesVersion decisionTablesVersion = decisionTablesVersionService.getById(jsonObject.getLong("versionId"));
+                    if (StringUtils.isNotBlank(decisionTablesVersion.getResultFieldEn())) {
+                        resultFieldEn = decisionTablesVersion.getResultFieldEn();
+                    } else {
+                        resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + decisionTablesVersion.getId() + "_result";
                     }
-//                    DecisionTables decisionTables = decisionTablesService.getById(Long.valueOf(engineNode.getNodeJson()));
-//                    resultFieldEn = decisionTables.getResultFieldEn();
-                    resultFieldCn = "决策结果";
+                    resultFieldCn = "决策表结果";
                     valueType = 2;
                     break;
                 case DECISION_TREE:
                     //决策树
                     jsonObject = JSON.parseObject(JSON.toJSONString(nodeJson.getJSONArray("decisionTreeList").get(0)));
-                    DecisionTreeVo decisionTree = decisionTreeService.queryById(jsonObject.getLong("decisionTreeId"));
-                    List<DecisionTreeVersionVo> decisionTreeVersionList = decisionTree.getVersionList();
-                    for (DecisionTreeVersionVo decisionTreeVersionVo : decisionTreeVersionList) {
-                        if (decisionTreeVersionVo.getId().equals(jsonObject.getLong("versionId"))){
-                            resultFieldEn = decisionTreeVersionVo.getResultFieldEn();
-                            if (StringUtils.isBlank(resultFieldEn)){
-                                resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + decisionTreeVersionVo.getId() + "_result";
-                            }
-                            break;
-                        }
+                    DecisionTreeVersion decisionTreeVersion = decisionTreeVersionService.getById(jsonObject.getLong("versionId"));
+                    if (StringUtils.isNotBlank(decisionTreeVersion.getResultFieldEn())) {
+                        resultFieldEn = decisionTreeVersion.getResultFieldEn();
+                    } else {
+                        resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + decisionTreeVersion.getId() + "_result";
                     }
-                    resultFieldCn = "决策结果";
+                    resultFieldCn = "决策树结果";
                     valueType = 2;
                     break;
                 case MODEL_ENGINE:
-                    MachineLearningModels machineLearningModels = machineLearningModelsMapper.selectById(Integer.valueOf(engineNode.getNodeJson()));
-                    resultFieldEn = machineLearningModels.getResultFieldEn();
-                    if (StringUtils.isBlank(resultFieldEn)){
+                    jsonObject = JSON.parseObject(JSON.toJSONString(nodeJson.getJSONArray("modelList").get(0)));
+                    MachineLearningModels machineLearningModels = machineLearningModelsMapper.selectById(jsonObject.getLong("modelId"));
+                    if (StringUtils.isNotBlank(machineLearningModels.getResultFieldEn())) {
+                        resultFieldEn = machineLearningModels.getResultFieldEn();
+                    } else {
                         resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + machineLearningModels.getId() + "_result";
                     }
-                    resultFieldCn = "预测结果";
+                    resultFieldCn = "模型预测结果";
                     valueType = 1;
                     break;
                 case CHILD_ENGINE:
                     resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + engineNode.getNodeJson() + "_result";
-                    resultFieldCn = "引擎结果";
+                    resultFieldCn = "子引擎结果";
                     valueType = 2;
                     break;
                 case DECISION:
@@ -561,34 +558,34 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
 
     private List<NodeInfoResponse> getRuleNodeInfo(List<EngineNode> previousNodes, NodeTypeEnum nodeTypeEnum) {
         List<NodeInfoResponse> nodeInfoList = new ArrayList<>();
-        for(EngineNode engineNode : previousNodes){
+        for (EngineNode engineNode : previousNodes) {
             List<RuleInfoOutputResponse> ruleInfoList = new ArrayList<>();
             List<Long> ruleIds = new ArrayList<>();
             List<Long> complexRuleVersionIds = new ArrayList<>();
             List<Long> scriptRuleVersionIds = new ArrayList<>();
             JSONObject nodeJson = JSONObject.parseObject(engineNode.getNodeJson());
-            if(nodeJson == null){
+            if (nodeJson == null) {
                 return nodeInfoList;
             }
 
             JSONArray jsonArray = null;
             int groupType = nodeJson.getInteger("groupType") == null ? Constants.ruleNode.EXECUTEGROUP : nodeJson.getInteger("groupType");
-            if(groupType == Constants.ruleNode.MUTEXGROUP){
+            if (groupType == Constants.ruleNode.MUTEXGROUP) {
                 jsonArray = nodeJson.getJSONObject("mutexGroup").getJSONArray("rules");
             } else {
                 jsonArray = nodeJson.getJSONObject("executeGroup").getJSONArray("rules");
             }
             Integer difficulty = null;
-            for(int i = 0; i < jsonArray.size(); i++){
+            for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject ruleObj = jsonArray.getJSONObject(i);
                 difficulty = ruleObj.getInteger("difficulty");
-                Long  ruleVersionId = ruleObj.getLong("ruleVersionId");
+                Long ruleVersionId = ruleObj.getLong("ruleVersionId");
                 ruleIds.add(ruleObj.getLong("userId"));
-                if (difficulty==null){
+                if (difficulty == null) {
 //                    ruleIds.add(ruleObj.getLong("userId"));
                     continue;
                 }
-                switch (difficulty){
+                switch (difficulty) {
                     case 1:
                         ruleIds.add(ruleObj.getLong("userId"));
                         break;
@@ -602,13 +599,13 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
             }
             List<RuleSetNodeResultParam> ruleSetNodeResultParams = new ArrayList<>();
             List<RuleInfo> ruleList = new ArrayList<>();
-            Map<Long,RuleInfo> ruleMap = new HashMap<>();
-            if (CollectionUtils.isNotEmpty(ruleIds)){
+            Map<Long, RuleInfo> ruleMap = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(ruleIds)) {
                 ruleList.addAll(ruleService.listByIds(ruleIds));
-                if (CollectionUtils.isNotEmpty(ruleList)){
+                if (CollectionUtils.isNotEmpty(ruleList)) {
                     for (RuleInfo rule : ruleList) {
-                        ruleMap.put(rule.getId(),rule);
-                        if (rule.getDifficulty()==null||rule.getDifficulty()==1){
+                        ruleMap.put(rule.getId(), rule);
+                        if (rule.getDifficulty() == null || rule.getDifficulty() == 1) {
 //                            String resultEn = rule.getResultFieldEn();
 //                            String scoreEn = rule.getScoreFieldEn();
 //                            ruleSetNodeResultParams.add(new RuleSetNodeResultParam(rule.getId(),1,null,resultEn,scoreEn,rule.getCode(),rule.getName()));
@@ -617,9 +614,9 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
                 }
             }
 
-            if (CollectionUtils.isNotEmpty(complexRuleVersionIds)){
+            if (CollectionUtils.isNotEmpty(complexRuleVersionIds)) {
                 List<RuleVersion> ruleVersionList = ruleVersionService.listByIds(complexRuleVersionIds);
-                if (CollectionUtils.isNotEmpty(ruleVersionList)){
+                if (CollectionUtils.isNotEmpty(ruleVersionList)) {
                     for (RuleVersion ruleVersion : ruleVersionList) {
 //                        String resultEn = ruleVersion.getResultFieldEn();
 //                        String scoreEn = ruleVersion.getScoreFieldEn();
@@ -628,20 +625,20 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
                     }
                 }
             }
-            if (CollectionUtils.isNotEmpty(scriptRuleVersionIds)){
+            if (CollectionUtils.isNotEmpty(scriptRuleVersionIds)) {
                 List<RuleScriptVersion> ruleScriptVersionList = ruleScriptVersionService.listByIds(scriptRuleVersionIds);
-                if (CollectionUtils.isNotEmpty(ruleScriptVersionList)){
+                if (CollectionUtils.isNotEmpty(ruleScriptVersionList)) {
                     for (RuleScriptVersion ruleVersion : ruleScriptVersionList) {
                         String resultEn = "hitResult";
                         String scoreEn = "scoreResult";
                         RuleInfo rule = ruleMap.get(ruleVersion.getRuleId());
-                        ruleSetNodeResultParams.add(new RuleSetNodeResultParam(ruleVersion.getRuleId(),3,ruleVersion.getId(),resultEn,scoreEn,rule.getCode(),rule.getName()));
+                        ruleSetNodeResultParams.add(new RuleSetNodeResultParam(ruleVersion.getRuleId(), 3, ruleVersion.getId(), resultEn, scoreEn, rule.getCode(), rule.getName()));
                     }
                 }
             }
 
 //            List<Rule> ruleList = ruleMapper.selectnodeByInRoleid(ruleIds);
-            for(RuleSetNodeResultParam rule : ruleSetNodeResultParams){
+            for (RuleSetNodeResultParam rule : ruleSetNodeResultParams) {
                 RuleInfoOutputResponse ruleInfoOutputResponse = new RuleInfoOutputResponse();
                 ruleInfoOutputResponse.setId(rule.getId());
                 ruleInfoOutputResponse.setCode(rule.getCode());
@@ -650,13 +647,10 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
                 List<NodeStrategyOutputResponse> ruleOutputList = new ArrayList<>();
                 NodeStrategyOutputResponse hitOutputResponse = new NodeStrategyOutputResponse();
                 String resultEn = rule.getResultEn();
-                if (StringUtils.isBlank(resultEn)){
-                    if (null !=rule.getVersionId()){
-                        resultEn = "rule_"+rule.getDifficulty()+"_"+rule.getId()+"_"+rule.getVersionId()+"_hitResult";
-                    }else {
-                        resultEn = "rule_"+rule.getDifficulty()+"_"+rule.getId()+"_hitResult";
+                if (StringUtils.isBlank(resultEn)) {
+                    if (null != rule.getVersionId()) {
+                        resultEn = "rule_" + rule.getId() + "_" + rule.getVersionId() + "_hitResult";
                     }
-
                 }
                 hitOutputResponse.setFieldEn(resultEn);
                 hitOutputResponse.setFieldCn("是否命中");
@@ -665,11 +659,9 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
 
                 NodeStrategyOutputResponse scoreOutputResponse = new NodeStrategyOutputResponse();
                 String scoreEn = rule.getScoreEn();
-                if (StringUtils.isBlank(scoreEn)){
-                    if (null !=rule.getVersionId()){
-                        scoreEn = "rule_"+rule.getDifficulty()+"_"+rule.getId()+"_"+rule.getVersionId()+"_score";
-                    }else {
-                        scoreEn = "rule_"+rule.getDifficulty()+"_"+rule.getId()+"_score";
+                if (StringUtils.isBlank(scoreEn)) {
+                    if (null != rule.getVersionId()) {
+                        scoreEn = "rule_" + rule.getId() + "_" + rule.getVersionId() + "_score";
                     }
                 }
                 scoreOutputResponse.setFieldEn(scoreEn);
@@ -710,34 +702,34 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
 
     private List<NodeInfoResponse> getListDbNodeInfo(List<EngineNode> previousNodes, NodeTypeEnum nodeTypeEnum) {
         List<NodeInfoResponse> nodeInfoList = new ArrayList<>();
-        for(EngineNode engineNode : previousNodes){
+        for (EngineNode engineNode : previousNodes) {
             List<ListDbInfoOutputResponse> listDbInfoOutput = new ArrayList<>();
 
             List<Long> listDbIds = new ArrayList<>();
             String nodeJson = engineNode.getNodeJson();
-            if (StringUtils.isBlank(nodeJson)){
+            if (StringUtils.isBlank(nodeJson)) {
                 continue;
             }
             JSONArray jsonArray = JSON.parseObject(nodeJson).getJSONArray("listDbList");
-            if (jsonArray!=null&&jsonArray.size()>0){
+            if (jsonArray != null && jsonArray.size() > 0) {
                 for (Object o : jsonArray) {
-                    if (o==null){
+                    if (o == null) {
                         continue;
                     }
                     Long id = JSON.parseObject(JSON.toJSONString(o)).getLong("listDbId");
-                    if (id==null){
+                    if (id == null) {
                         continue;
                     }
                     listDbIds.add(id);
                 }
             }
-            if (listDbIds.isEmpty()){
+            if (listDbIds.isEmpty()) {
                 continue;
             }
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("listDbIds", listDbIds);
             List<ListDb> listDbList = listDbMapper.findListDbByIds(paramMap);
-            for(ListDb listDb : listDbList){
+            for (ListDb listDb : listDbList) {
                 ListDbInfoOutputResponse listDbInfoOutputResponse = new ListDbInfoOutputResponse();
                 listDbInfoOutputResponse.setId(listDb.getId());
                 listDbInfoOutputResponse.setListName(listDb.getListName());
@@ -775,10 +767,10 @@ public class EngineNodeServiceImpl extends ServiceImpl<EngineNodeMapper, EngineN
     @Override
     public List<EngineNode> getEngineNodeListByVersionId(Long versionId) {
         List<EngineNode> engineNodeList = null;
-        if(Constants.switchFlag.ON.equals(cacheSwitch)){
+        if (Constants.switchFlag.ON.equals(cacheSwitch)) {
             String key = RedisUtils.getForeignKey(TableEnum.T_ENGINE_NODE, versionId);
             engineNodeList = redisManager.getByForeignKey(key, EngineNode.class);
-            if(engineNodeList != null){
+            if (engineNodeList != null) {
                 // 按node_order升序排序
                 engineNodeList = engineNodeList.stream().sorted(Comparator.comparing(EngineNode::getNodeOrder)).collect(Collectors.toList());
             }
