@@ -20,6 +20,7 @@ import com.fibo.ddp.common.service.strategyx.strategyout.StrategyOutputService;
 import com.fibo.ddp.common.utils.constant.runner.RunnerConstants;
 import com.fibo.ddp.common.utils.constant.strategyx.StrategyType;
 import com.fibo.ddp.enginex.runner.node.EngineRunnerNode;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,7 @@ public class ListDbNode implements EngineRunnerNode {
             if (listDb != null && listDb.getSnapshot() != null) {
                 strategySnapshot.add(listDb.getSnapshot());
             }
-            boolean isfalg = this.executeListDb(listDb, inputParam, outMap,resultJsonArray);
+            boolean isfalg = this.executeListDb(engineNode, listDb, inputParam, outMap,resultJsonArray);
             if (isfalg) {
                 hitListDb.add(listDb);
             }
@@ -127,7 +128,7 @@ public class ListDbNode implements EngineRunnerNode {
         this.terminalCondition(engineNode, inputParam, outMap, count);
     }
 
-    private boolean executeListDb(ListDb listDb, Map<String, Object> inputParam, Map<String, Object> outMap,JSONArray resultJsonArray) {
+    private boolean executeListDb(EngineNode engineNode, ListDb listDb, Map<String, Object> inputParam, Map<String, Object> outMap,JSONArray resultJsonArray) {
         SessionData sessionData = RunnerSessionManager.getSession();
         Long organId = sessionData.getOrganId();
         JSONObject resultJson = new JSONObject();
@@ -202,11 +203,15 @@ public class ListDbNode implements EngineRunnerNode {
             revMatchs = custListMapper.revFindByQueryKey(inputParam);
         }
 
-        inputParam.put(listDb.getResultFieldEn(), "未命中");
+        String resultFieldEn = listDb.getResultFieldEn();
+        if (StringUtils.isBlank(resultFieldEn)) {
+            resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + listDb.getId() + "_result";
+        }
+        inputParam.put(resultFieldEn, "未命中");
         List<JSONObject> fieldList = new ArrayList<>();
 
         JSONObject hitResult = new JSONObject();
-        hitResult.put(listDb.getResultFieldEn(), "未命中");
+        hitResult.put(resultFieldEn, "未命中");
 
 //        resultJson.put("nodeId", inputParam.get("nodeId").toString());
 //        resultJson.put("nodeName", inputParam.get("nodeName").toString());
@@ -220,8 +225,8 @@ public class ListDbNode implements EngineRunnerNode {
         resultJson.put("fieldList", fieldList);
         resultJsonArray.add(resultJson);
         if (matchs + revMatchs > 0) {
-            inputParam.put(listDb.getResultFieldEn(), "命中");
-            hitResult.put(listDb.getResultFieldEn(), "命中");
+            inputParam.put(resultFieldEn, "命中");
+            hitResult.put(resultFieldEn, "命中");
             resultJson.put("result", "命中");
             List<JSONObject> jsonObjects = outputService.setOutput(new StrategyOutput(Long.valueOf(listDbId.toString()), StrategyType.LIST_DB), inputParam);
             fieldList.add(hitResult);

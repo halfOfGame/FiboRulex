@@ -181,7 +181,7 @@ public class ScorecardNode implements EngineRunnerNode {
             //给入参中放入评分卡执行结果
             String resultFieldEn = versionVo.getResultFieldEn();
             if (StringUtils.isBlank(resultFieldEn)) {
-                resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + versionVo.getId() + "_score";
+                resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + versionVo.getId() + "_result";
             }
             inputParam.put(resultFieldEn, totalScore);
             inputParam.put(scorecard.getCode(), totalScore);

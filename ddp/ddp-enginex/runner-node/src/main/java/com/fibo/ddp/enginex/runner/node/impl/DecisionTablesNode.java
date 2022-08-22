@@ -106,6 +106,9 @@ public class DecisionTablesNode implements EngineRunnerNode {
             DecisionTablesVersionVo version = decisionTablesVo.getExecuteVersion();
             //获取存放决策表执行结果的变量
             String resultFieldEn = version.getResultFieldEn();
+            if (StringUtils.isBlank(resultFieldEn)) {
+                resultFieldEn = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + versionId + "_result";
+            }
             //执行决策表
             Object executeResult = this.executeDecisionTables(version, inputParam);
             //处理结果
@@ -121,8 +124,6 @@ public class DecisionTablesNode implements EngineRunnerNode {
                 jsonObject.put("result", executeResult);
                 JSONObject resultField = new JSONObject();
                 resultField.put(resultFieldEn, executeResult);
-                //将执行结果按照固定格式存入参数map以供后续节点使用.
-//            inputParam.put("decisionTable_"+decisionTablesId+"_"+engineNode.getNodeId(),executeResult);
                 inputParam.put(resultFieldEn, executeResult);
                 List<JSONObject> fieldList = new ArrayList<>();
                 fieldList.add(resultField);
@@ -132,7 +133,6 @@ public class DecisionTablesNode implements EngineRunnerNode {
                 jsonObject.put("fieldList", fieldList);
             } else {
                 jsonObject.put("result", "");
-//            inputParam.put("decisionTable_"+decisionTablesId+"_"+engineNode.getNodeId(),"");
                 inputParam.put(resultFieldEn, "");
             }
             //将执行结果存入最终返回值

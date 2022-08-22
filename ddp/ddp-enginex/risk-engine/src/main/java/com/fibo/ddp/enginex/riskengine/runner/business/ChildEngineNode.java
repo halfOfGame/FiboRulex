@@ -85,6 +85,7 @@ public class ChildEngineNode implements EngineRunnerNode {
             resultJson.add(jsonObject);
             outMap.put("childEngineJson", resultJson);
         }
+
         String key = engineNode.getNodeType() + "_" + engineNode.getNodeId() + "_" + engineNode.getNodeJson() + "_result";
         inputParam.put(key, engineResult);
 
