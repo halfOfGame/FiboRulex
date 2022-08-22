@@ -216,10 +216,14 @@ public class RiskEngineBusinessImpl implements RiskEngineBusiness {
                 JSONObject tmpJsonObject = JSONObject.parseObject(result);
                 tmpJsonObject.remove("input");
                 resultSet.setOutput(JSONObject.toJSONString(tmpJsonObject));
-                resultSetMapper.insertResultSet(resultSet);
-                Integer resultId = resultSet.getId();
-                jsonObject.put("resultId", resultId);
-                this.monitorDecisionFlow(inputParam, engine, engineVersion, engineNodeList, outMap, paramJson, resultId);
+
+                CompletableFuture.runAsync(() -> {
+                    resultSetMapper.insertResultSet(resultSet);
+                    Integer resultId = resultSet.getId();
+//                    jsonObject.put("resultId", resultId);
+                    this.monitorDecisionFlow(inputParam, engine, engineVersion, engineNodeList, outMap, paramJson, resultId);
+                }, threadPoolTaskExecutor);
+
                 // 正常返回结果回调
                 decisionCallback(engine.getCallbackUrl(), paramJson, result);
             }
