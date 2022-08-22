@@ -46,7 +46,7 @@
 							 :cell-style="{padding: '10px'}">
 								<el-table-column type="selection" width="70">
 								</el-table-column>
-								<el-table-column v-for="item in getData.row" :key="item.id" :prop="item.row" :label="item.label" align="center">
+								<el-table-column v-for="item in getData.row" :key="item.id" :prop="item.row" :label="item.label" :width="item.width" align="center">
 									<template slot-scope="scope">
 										<span v-if="item.type==='Blooen'">
 											{{scope.row[item.row]?"是":"否"}}

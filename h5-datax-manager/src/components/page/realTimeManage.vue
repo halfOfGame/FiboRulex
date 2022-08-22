@@ -26,13 +26,16 @@
 					type:6,
 					row: [  {
 						label: '序号',
-						row: 'id'
+						row: 'id',
+						width:'100px'
 					}, {
 						label: '字段名称',
-						row: 'fieldEn'
+						row: 'fieldEn',
+						width:'230px'
 					}, {
 						label: '字段中文名',
-						row: 'fieldCn'
+						row: 'fieldCn',
+						width:'230px'
 					}, {
 						label: '消息队列类型',
 						row: 'mqSourceId',

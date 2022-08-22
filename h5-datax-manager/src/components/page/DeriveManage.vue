@@ -30,7 +30,8 @@
 					type: 3,
 					row: [{
 						label: '序号',
-						row: 'id'
+						row: 'id',
+						width:'100px'
 					}, {
 						label: '字段名称',
 						row: 'fieldEn'
