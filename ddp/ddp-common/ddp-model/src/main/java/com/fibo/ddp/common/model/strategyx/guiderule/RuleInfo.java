@@ -51,7 +51,7 @@ public class RuleInfo implements Serializable {
 
     private Date updated;
 
-    private Integer difficulty;//规则难度：1-简单规则，2复杂规则
+    private Integer difficulty;//规则难度：1-简单规则，2复杂规则，3-脚本规则
 
     private String scriptType;//脚本类型python，js，groovy
 

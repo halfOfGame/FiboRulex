@@ -31,4 +31,8 @@ public interface RuleConditionService extends IService<RuleConditionInfo> {
     RuleConditionVo queryByBlockId(Long blockId);
 
     List<String> queryFieldEnByVersionIds(List<Long> versionIds);
+
+    List<RuleConditionInfo> listObjectsByBlockId(Long blockId);
+
+    List<RuleConditionInfo> listObjectsByBlockIds(List<Long> blockIds);
 }
