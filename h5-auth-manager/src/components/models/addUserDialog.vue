@@ -19,6 +19,7 @@
 							</el-form-item>
 						</div>
 					</el-col>
+					<!-- {{form.sysRole}} -->
 					<el-col :span="8">
 						<div class="grid-conten">
 							<el-form-item label="角色">
@@ -180,9 +181,11 @@
 		},
 		methods: {
 			open() {
+				
 				if (this.listOrganArr.length == 1) {
-					this.form.organId = this.listOrganArr[0].id
-					this.organChange(this.listOrganArr[0].id)
+
+					this.form.organId = this.listOrganArr[0].organId
+					this.validRole(this.listOrganArr[0].id)
 				}
 			},
 			organChange(e) {
