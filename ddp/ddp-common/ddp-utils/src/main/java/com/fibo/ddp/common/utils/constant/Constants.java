@@ -13,9 +13,9 @@ public class Constants {
 
     // 规则集节点相关常量
     public interface ruleNode {
-        // 互斥组
+        // 互斥组/串行
         int MUTEXGROUP = 1;
-        // 执行组
+        // 执行组/并行
         int EXECUTEGROUP = 2;
     }
 

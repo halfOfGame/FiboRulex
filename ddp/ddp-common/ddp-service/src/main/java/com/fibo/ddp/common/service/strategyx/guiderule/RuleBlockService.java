@@ -15,5 +15,7 @@ public interface RuleBlockService extends IService<RuleBlock> {
 
     List<RuleBlock> listObjectsByVersionId(Long versionId);
 
+    List<RuleBlock> listObjectsByVersionIds(List<Long> versionIds);
+
     boolean removeObjects(Long ruleId, Long versionId);
 }

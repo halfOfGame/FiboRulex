@@ -24,7 +24,8 @@ public enum TableEnum {
      */
     T_RULE("t_rule", "id", ""),
     T_RULE_VERSION("t_rule_version", "id", "rule_id"),
-    T_RULE_CONDITION("t_rule_condition", "id", "version_id"),
+    T_RULE_BLOCK("t_rule_block", "id", "version_id"),
+    T_RULE_CONDITION("t_rule_condition", "id", "block_id"),
     T_RULE_LOOP_GROUP_ACTION("t_rule_loop_group_action", "id", "condition_for_id"),
 
     /**
@@ -52,6 +53,7 @@ public enum TableEnum {
     T_DECISION_TREE_VERSION("t_decision_tree_version", "id", "decision_tree_id"),
     T_DECISION_TREE_DETAIL("t_decision_tree_detail", "id", "decision_tree_version_id"),
     T_DECISION_TREE_DETAIL_CONDITION("t_decision_tree_detail_condition", "id", "detail_id"),
+
     /**
      * 模型
      */
@@ -71,6 +73,7 @@ public enum TableEnum {
     T_LIST_OPERATION_CONDITION("t_list_operation_condition","id","list_op_version_id"),
     T_LIST_OPERATION_FILTER_CONDITION("t_list_operation_filter_condition","id","list_op_version_id"),
     T_LIST_OPERATION_OUTPUT("t_list_operation_output","id","list_op_version_id"),
+
     /**
      * 数据清洗
      */
@@ -81,6 +84,7 @@ public enum TableEnum {
     T_DATA_CLEAN_CONDITION("t_data_clean_condition","id","data_clean_version_id"),
     T_DATA_CLEAN_FILTER_CONDITION("t_data_clean_filter_condition","id","data_clean_version_id"),
     T_DATA_CLEAN_OUTPUT("t_data_clean_output","id","data_clean_version_id");
+
     private String tableName;
     private String primaryId;
     private String foreignId;

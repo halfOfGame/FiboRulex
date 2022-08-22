@@ -100,7 +100,7 @@ public class RuleSetNode implements EngineRunnerNode {
             fieldEnList.addAll(ruleScriptVersionService.queryFieldEnByVersionIds(scriptVersionIds));
         }
 
-        //筛选调那些循环或者嵌套中的字段
+        //筛选掉那些循环或者嵌套中的字段
         fieldEnList = fieldEnList.stream().distinct().filter(f -> f != null && !f.contains(".") && !f.contains("%")).collect(Collectors.toList());
         if (fieldEnList != null && !fieldEnList.isEmpty()) {
             List<Field> fieldList = fieldService.selectFieldListByEns(fieldEnList);
@@ -131,7 +131,7 @@ public class RuleSetNode implements EngineRunnerNode {
         CopyOnWriteArrayList<Map> ruleResultList = new CopyOnWriteArrayList<>();// 规则执行结果集合
         List<RuleInfo> ruleHitList = new ArrayList<>(); // 命中的规则集合
 
-        // 互斥组(串行)
+        // 串行
         if (groupType == Constants.ruleNode.MUTEXGROUP) {
             JSONArray jsonArray = nodeJson.getJSONObject("mutexGroup").getJSONArray("rules");
             List<RuleInfo> ruleInfoList = getRuleFromJsonArray(jsonArray);
@@ -139,7 +139,7 @@ public class RuleSetNode implements EngineRunnerNode {
             recordStrategySnopshot(ruleInfoList, outMap,engineNode.getNodeId());
             ruleHitList = serialRule(inputParam, outMap, ruleInfoList, ruleResultList);
         }
-        // 执行组(并行)
+        // 并行
         else if (groupType == Constants.ruleNode.EXECUTEGROUP) {
             JSONArray jsonArray = nodeJson.getJSONObject("executeGroup").getJSONArray("rules");
             List<RuleInfo> ruleInfoList = getRuleFromJsonArray(jsonArray);

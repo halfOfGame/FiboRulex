@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fibo.ddp.common.dao.canal.TableEnum;
 import com.fibo.ddp.common.dao.strategyx.guiderule.RuleConditionInfoMapper;
+import com.fibo.ddp.common.model.strategyx.guiderule.RuleBlock;
 import com.fibo.ddp.common.model.strategyx.guiderule.RuleConditionInfo;
 import com.fibo.ddp.common.model.strategyx.guiderule.RuleLoopGroupAction;
 import com.fibo.ddp.common.model.strategyx.guiderule.vo.RuleConditionVo;
 import com.fibo.ddp.common.service.redis.RedisManager;
 import com.fibo.ddp.common.service.redis.RedisUtils;
+import com.fibo.ddp.common.service.strategyx.guiderule.RuleBlockService;
 import com.fibo.ddp.common.service.strategyx.guiderule.RuleConditionService;
 import com.fibo.ddp.common.service.strategyx.guiderule.RuleLoopGroupActionService;
 import com.fibo.ddp.common.utils.constant.Constants;
@@ -22,9 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,41 +44,17 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
     @Value("${switch.use.cache}")
     private String cacheSwitch;
 
-//    /**
-//     * 查询整个规则的节点并且装配成树
-//     *
-//     * @param versionId 规则版本id
-//     * @return
-//     */
-//    @Override
-//    public RuleConditionVo queryByVersionId(Long versionId) {
-//        if (versionId == null) {
-//            return null;
-//        }
-//        //构造查询条件，查询条件列表
-//        RuleConditionVo result = null;
-//        LambdaQueryWrapper<RuleConditionInfo> queryWrapper = new LambdaQueryWrapper<>();
-//        queryWrapper.eq(RuleConditionInfo::getVersionId,versionId);
-//        List<RuleConditionInfo> ruleConditionInfoList = ruleConditionInfoMapper.selectList(queryWrapper);
-//        //组装为需要的树形结构
-//        if (ruleConditionInfoList != null) {
-//            result = this.assemble(ruleConditionInfoList);
-//        }
-//        return result;
-//    }
+    @Autowired
+    private RuleBlockService ruleBlockService;
 
     @Override
     public RuleConditionVo queryByBlockId(Long blockId) {
         if (blockId == null) {
             return null;
         }
-        //构造查询条件，查询条件列表
-        RuleConditionVo result = null;
-        LambdaQueryWrapper<RuleConditionInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(RuleConditionInfo::getBlockId, blockId);
-        List<RuleConditionInfo> ruleConditionInfoList = this.list(queryWrapper);
-
+        List<RuleConditionInfo> ruleConditionInfoList = listObjectsByBlockId(blockId);
         //组装为需要的树形结构
+        RuleConditionVo result = null;
         if (ruleConditionInfoList != null) {
             result = this.assemble(ruleConditionInfoList);
         }
@@ -98,8 +74,8 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
             return null;
         }
         Long versionId = ruleConditionVo.getVersionId();
-        if (versionId==null){
-            versionId=0L;
+        if (versionId == null) {
+            versionId = 0L;
         }
         Long parentId = RuleConditionConst.DEFAULT_CONDITION_PARENT_ID;
         //将插入的条件树拆解
@@ -152,13 +128,13 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
      */
     @Override
     @Transactional
-    public boolean deleteRuleCondition(Long ruleId,Long versionId) {
+    public boolean deleteRuleCondition(Long ruleId, Long versionId) {
         if (ruleId == null) {
             return false;
         }
         //删除循环动作子表中的内容
         RuleConditionInfo info = new RuleConditionInfo();
-        if (ruleId!=null){
+        if (ruleId != null) {
             info.setRuleId(ruleId);
         }
         info.setVersionId(versionId);
@@ -169,9 +145,9 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
         }
         //删除条件表内容
         LambdaQueryWrapper<RuleConditionInfo> queryWrapper = new LambdaQueryWrapper();
-        queryWrapper.eq(RuleConditionInfo::getVersionId,versionId);
-        if (ruleId!=null){
-            queryWrapper.eq(RuleConditionInfo::getRuleId,ruleId);
+        queryWrapper.eq(RuleConditionInfo::getVersionId, versionId);
+        if (ruleId != null) {
+            queryWrapper.eq(RuleConditionInfo::getRuleId, ruleId);
         }
         int delete = ruleConditionInfoMapper.delete(queryWrapper);
         return delete > 0 ? true : false;
@@ -195,7 +171,6 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
         }
         return null;
     }
-
 
     // 拆解方法，将规则条件Vo转换未规则条件list
     @Override
@@ -230,8 +205,8 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
                 //递归保存每个节点和子节点
                 save(list, info);
                 //对有动作的循环条件保存循环动作表内容
-                if (root.getLogical()!=null&&RuleConditionConst.LOOP_RULE_LOGICAL.equals(root.getLogical())&&info.getLoopGroupActions()!=null){
-                    loopGroupActionService.addLoopGroupList(id,info.getId(),info.getLoopGroupActions());
+                if (root.getLogical() != null && RuleConditionConst.LOOP_RULE_LOGICAL.equals(root.getLogical()) && info.getLoopGroupActions() != null) {
+                    loopGroupActionService.addLoopGroupList(id, info.getId(), info.getLoopGroupActions());
                 }
             }
         }
@@ -247,25 +222,24 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
                 RuleConditionVo rcVo = coupling(list, rc);
                 String logical = root.getLogical();
 
-                if (logical!=null&&!"".equals(logical)){
-                    switch (logical){
+                if (logical != null && !"".equals(logical)) {
+                    switch (logical) {
                         //当root为for节点，则此子节点需要拼上循环动作
                         case RuleConditionConst.LOOP_RULE_LOGICAL:
-                            List<RuleLoopGroupAction> loopList = loopGroupActionService.getRuleLoopList(root.getId(),rc.getId());
+                            List<RuleLoopGroupAction> loopList = loopGroupActionService.getRuleLoopList(root.getId(), rc.getId());
                             rcVo.setLoopGroupActions(loopList);
-                            if (rc.getConditionType()==RuleConditionConst.LOOP_RULE_RESULT_CONDITION){
+                            if (rc.getConditionType() == RuleConditionConst.LOOP_RULE_RESULT_CONDITION) {
                                 root.setLoopResultCondition(rcVo);
                                 continue;
                             }
                             break;
                         //当root为条件组节点，则此子节点需要拼上条件组结果
                         case RuleConditionConst.CONDITION_GROUP_LOGICAL:
-                            if (rc.getConditionType()==RuleConditionConst.CONDITION_GROUP_RESULT_CONDITION){
+                            if (rc.getConditionType() == RuleConditionConst.CONDITION_GROUP_RESULT_CONDITION) {
                                 root.setCondGroupResultCondition(rcVo);
                                 continue;
                             }
                             break;
-
 
 
                     }
@@ -308,8 +282,8 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
         list.add(vo);
         //处理for条件的结果条件
         Integer conditionType = vo.getConditionType();
-        if (conditionType!=null){
-            switch (conditionType){
+        if (conditionType != null) {
+            switch (conditionType) {
                 case RuleConditionConst.LOOP_RULE_ROOT:
                     RuleConditionVo loopResult = vo.getLoopResultCondition();
                     loopResult.setRuleId(ruleId);
@@ -363,30 +337,48 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionInfoMappe
 
     @Override
     public List<String> queryFieldEnByVersionIds(List<Long> versionIds) {
-        List<RuleConditionInfo> ruleConditions = null;
-        if(Constants.switchFlag.ON.equals(cacheSwitch)){
-            List<String> keys = RedisUtils.getForeignKey(TableEnum.T_RULE_CONDITION, versionIds);
-            ruleConditions = redisManager.hgetAllBatchByForeignKeys(keys, RuleConditionInfo.class);
+        List<RuleBlock> ruleBlockList = ruleBlockService.listObjectsByVersionIds(versionIds);
+        List<Long> blockIds = ruleBlockList.stream().map(item -> item.getId()).collect(Collectors.toList());
+        List<RuleConditionInfo> ruleConditions = listObjectsByBlockIds(blockIds);
 
-            ruleConditions = ruleConditions.stream()
-                    .filter(item -> StringUtils.isNotBlank(item.getFieldEn()) && !"1".equals(item.getFieldType()))
-                    .collect(Collectors.toList());
+        ruleConditions = ruleConditions.stream()
+                .filter(item -> StringUtils.isNotBlank(item.getFieldEn()) && !"1".equals(item.getFieldType()))
+                .collect(Collectors.toList());
 
-        } else {
-            LambdaQueryWrapper<RuleConditionInfo> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.in(RuleConditionInfo::getVersionId,versionIds);
-            queryWrapper.isNotNull(RuleConditionInfo::getFieldEn);
-            queryWrapper.ne(RuleConditionInfo::getFieldType,1);
-            queryWrapper.select(RuleConditionInfo::getFieldEn);
-            ruleConditions = ruleConditionInfoMapper.selectList(queryWrapper);
-        }
-
-        List<String> result = new ArrayList<>();
-        if (ruleConditions != null){
+        Set<String> result = new HashSet<>();
+        if (ruleConditions != null) {
             for (RuleConditionInfo condition : ruleConditions) {
                 result.add(condition.getFieldEn());
             }
         }
-        return result;
+        return new ArrayList<>(result);
+    }
+
+    @Override
+    public List<RuleConditionInfo> listObjectsByBlockId(Long blockId) {
+        List<RuleConditionInfo> ruleConditionInfoList = null;
+        if (Constants.switchFlag.ON.equals(cacheSwitch)) {
+            String key = RedisUtils.getForeignKey(TableEnum.T_RULE_CONDITION, blockId);
+            ruleConditionInfoList = redisManager.getByForeignKey(key, RuleConditionInfo.class);
+        } else {
+            LambdaQueryWrapper<RuleConditionInfo> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(RuleConditionInfo::getBlockId, blockId);
+            ruleConditionInfoList = this.list(queryWrapper);
+        }
+        return ruleConditionInfoList;
+    }
+
+    @Override
+    public List<RuleConditionInfo> listObjectsByBlockIds(List<Long> blockIds) {
+        List<RuleConditionInfo> ruleConditionInfoList = null;
+        if (Constants.switchFlag.ON.equals(cacheSwitch)) {
+            List<String> keys = RedisUtils.getForeignKey(TableEnum.T_RULE_CONDITION, blockIds);
+            ruleConditionInfoList = redisManager.hgetAllBatchByForeignKeys(keys, RuleConditionInfo.class);
+        } else {
+            LambdaQueryWrapper<RuleConditionInfo> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.in(RuleConditionInfo::getBlockId, blockIds);
+            ruleConditionInfoList = this.list(queryWrapper);
+        }
+        return ruleConditionInfoList;
     }
 }
