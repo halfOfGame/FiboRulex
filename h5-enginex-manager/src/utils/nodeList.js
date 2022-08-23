@@ -24,32 +24,32 @@ export const nodes= [{
 		haveChildren: true
 	}
 }, 
-{
-	node: {
-		dataId: "19",
-		text: "并行",
-		type: 19,
-		url: "/parallelNode.png",
-		haveChildren: true
-	}
-},
- {
-	node: {
-		dataId: "20",
-		text: "聚合",
-		type: 20,
-		url: "/gettogether.png"
-	}
-}, 
-{
-	node: {
-		dataId: "21",
-		text: "冠军挑战",
-		type: 21,
-		url: "/champion.png",
-		haveChildren: true
-	}
-}, 
+// {
+// 	node: {
+// 		dataId: "19",
+// 		text: "并行",
+// 		type: 19,
+// 		url: "/parallelNode.png",
+// 		haveChildren: true
+// 	}
+// },
+//  {
+// 	node: {
+// 		dataId: "20",
+// 		text: "聚合",
+// 		type: 20,
+// 		url: "/gettogether.png"
+// 	}
+// }, 
+// {
+// 	node: {
+// 		dataId: "21",
+// 		text: "冠军挑战",
+// 		type: 21,
+// 		url: "/champion.png",
+// 		haveChildren: true
+// 	}
+// }, 
 {
 	node: {
 		dataId: "4",
@@ -101,15 +101,15 @@ export const nodes= [{
 		url2: '/heimingdan.png'
 	}
 },
-{
-	node: {
-		dataId: "18",
-		text: "远程调用",
-		type: 18,
-		url: "/rpc.png",
-		url2: '/rpcnode.png'
-	}
-}, 
+// {
+// 	node: {
+// 		dataId: "18",
+// 		text: "远程调用",
+// 		type: 18,
+// 		url: "/rpc.png",
+// 		url2: '/rpcnode.png'
+// 	}
+// }, 
 {
 	node: {
 		dataId: "7",
