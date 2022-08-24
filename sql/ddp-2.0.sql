@@ -2070,4 +2070,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
  ALTER TABLE `t_field`
   ADD COLUMN `is_local_variable` TINYINT (1) DEFAULT '0' COMMENT '是否局部变量';
+  
+ALTER TABLE `t_rule_condition`
+ MODIFY `field_value` VARCHAR(500) DEFAULT NULL COMMENT '表达式节点对应字段的限定值';
 
