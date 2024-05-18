@@ -37,9 +37,10 @@ public class ConfigurationContainor {
         JedisPool pool = new JedisPool(config,
                 configHolder.getRedisHost(),
                 configHolder.getRedisPort(),
-                configHolder.getRedisTimeout(),
-                configHolder.getRedisPwd(),
-                configHolder.getRedisDb());
+                configHolder.getRedisTimeout()
+//                configHolder.getRedisPwd(),
+//                configHolder.getRedisDb()
+        );
         return pool;
     }
 

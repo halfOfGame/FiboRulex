@@ -13,10 +13,10 @@ public class ConfigHolder {
     private String redisHost;
     @Value("${redis.port}")
     private int redisPort;
-    @Value("${redis.db}")
-    private int redisDb;
-    @Value("${redis.password}")
-    private String redisPwd;
+//    @Value("${redis.db}")
+//    private int redisDb;
+//    @Value("${redis.password}")
+//    private String redisPwd;
     @Value("${redis.pool.maxTotal}")
     private int redisMaxTotal;
     @Value("${redis.pool.maxIdle}")
